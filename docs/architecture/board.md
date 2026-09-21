@@ -28,7 +28,7 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
-| D1 | creative-director | Concept and voice | none | todo |
+| D1 | creative-director | Concept and voice | none | done |
 | D2 | creative-director | Tokens and style guide | D1 | todo |
 | D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo |
 | D4 | creative-director | Terminal command spec | D1 | todo |
@@ -104,7 +104,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ### B4 Auth and admin endpoints
 - Owner: backend-engineer. Depends: B3. Branch: `feat/api-auth`. Status: todo.
 - Deliverable: scrypt hash util and `npm run hash-password -w @site/api -- <password>`; session store (sha256 of id, 8 h expiry, expired-row cleanup); `POST /api/auth/login|logout`, `GET /api/auth/me`; `requireOperator` hook; `DELETE /api/admin/guestbook/:id`; `GET /api/admin/diagnostics`; login limit 5/min; dev random-password-at-startup; production refuses to start without `OPERATOR_PASSWORD_HASH`. Cookie attributes exactly per contract section 3.
-- Done when: tests cover the full access matrix (each admin route anonymous -> 401), identical `invalid_credentials` for unknown user vs wrong password, cookie flags, new session id per login, logout invalidates the old cookie, expired session -> anonymous, 6th login attempt -> 429, production start without hash exits non-zero; no password or cookie value in logs (assert on captured log output).
+- Done when: tests cover the full access matrix (each admin route anonymous -> 401), identical `invalid_credentials` for unknown user vs wrong password, cookie flags, new session id per login, logout invalidates the old cookie, expired session -> anonymous, 6th login attempt -> 429, production start without hash exits non-zero; a failed login emits a structured log line (requestId and client IP only, never the username, password or cookie), because the concept's voice says failed logins are logged; no password or cookie value in logs (assert on captured log output).
 
 ### B5 CI/CD workflows
 - Owner: backend-engineer. Depends: B2, and Q4 merged (uses `qa/tools/scan-secrets.mjs`). Branch: `feat/ci-workflows`. Status: todo.
@@ -155,7 +155,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ## Creative Director (worktree `.worktrees/design`)
 
 ### D1 Concept and voice
-- Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: todo.
+- Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
 - Deliverable: `docs/design/concept.md`: the system's name and premise, voice guide with do/don't sample lines, the 60-second visitor journey, three specific things that keep it from looking like a generic cyberpunk template, and an explicit list of ideas from the brief left out of the MVP with reasons. Personal facts only as `[PLACEHOLDER: ...]`.
 - Done when: fits the MVP scope in `roadmap.md`; Architect review.
 
