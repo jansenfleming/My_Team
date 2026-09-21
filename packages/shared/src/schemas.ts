@@ -38,6 +38,13 @@ export const IdSchema = z
   .min(1, { error: "must be a positive integer" });
 
 /**
+ * Length predicate in UTF-16 code units (JS `.length`), as the contract specifies. Zod 4's own
+ * `.min()/.max()` on strings count Unicode code points instead, so they are NOT used for text
+ * (a test pins this: 141 emoji are 282 code units and must be rejected).
+ */
+const unitLength = (min: number, max: number) => (s: string) => s.length >= min && s.length <= max;
+
+/**
  * Positive integer as it arrives in a URL (query string or path param): a plain digit string.
  * No coercion, so "", " ", "0", "-1", "1.5", "1e3", "0x10" and arrays (repeated params) all fail.
  */
@@ -61,15 +68,16 @@ const positiveIntFromUrl = (max: number, what: string) =>
 export const RoleSchema = z.enum(ROLES);
 
 export const UserSchema = z.object({
-  username: z.string().min(1).max(USERNAME_MAX),
+  username: z.string().refine(unitLength(1, USERNAME_MAX)),
   role: RoleSchema,
 });
 
 /** 2..24 chars of [A-Za-z0-9_-]. Not trimmed: a leading or trailing space is rejected. */
 export const HandleSchema = z
   .string({ error: "handle must be a string" })
-  .min(HANDLE_MIN, { error: `handle must be ${HANDLE_MIN} to ${HANDLE_MAX} characters` })
-  .max(HANDLE_MAX, { error: `handle must be ${HANDLE_MIN} to ${HANDLE_MAX} characters` })
+  .refine(unitLength(HANDLE_MIN, HANDLE_MAX), {
+    error: `handle must be ${HANDLE_MIN} to ${HANDLE_MAX} characters`,
+  })
   .regex(HANDLE_PATTERN, { error: "handle may only contain letters, digits, underscore and hyphen" });
 
 /**
@@ -80,12 +88,11 @@ export const HandleSchema = z
 export const MessageSchema = z
   .string({ error: "message must be a string" })
   .refine((s) => !MESSAGE_FORBIDDEN_PATTERN.test(s), {
-    error: "message must not contain control or bidirectional override characters",
+    error: "message must be a single line without control, bidirectional or invalid characters",
     abort: true,
   })
   .trim()
-  .min(1, { error: `message must be 1 to ${MESSAGE_MAX} characters` })
-  .max(MESSAGE_MAX, { error: `message must be 1 to ${MESSAGE_MAX} characters` });
+  .refine(unitLength(1, MESSAGE_MAX), { error: `message must be 1 to ${MESSAGE_MAX} characters` });
 
 export const GuestbookEntrySchema = z.object({
   id: IdSchema,
@@ -135,13 +142,11 @@ export const HealthResponseSchema = z.object({
 export const LoginRequestSchema = z.object({
   username: z
     .string({ error: "username must be a string" })
-    .min(1, { error: `username must be 1 to ${USERNAME_MAX} characters` })
-    .max(USERNAME_MAX, { error: `username must be 1 to ${USERNAME_MAX} characters` }),
+    .refine(unitLength(1, USERNAME_MAX), { error: `username must be 1 to ${USERNAME_MAX} characters` }),
   // Never trimmed or otherwise altered.
   password: z
     .string({ error: "password must be a string" })
-    .min(1, { error: `password must be 1 to ${PASSWORD_MAX} characters` })
-    .max(PASSWORD_MAX, { error: `password must be 1 to ${PASSWORD_MAX} characters` }),
+    .refine(unitLength(1, PASSWORD_MAX), { error: `password must be 1 to ${PASSWORD_MAX} characters` }),
 });
 export const LoginResponseSchema = z.object({ user: UserSchema });
 
