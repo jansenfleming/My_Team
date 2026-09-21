@@ -15,6 +15,7 @@ import {
   HANDLE_MIN,
   HANDLE_PATTERN,
   MESSAGE_FORBIDDEN_PATTERN,
+  MESSAGE_INVISIBLE_RUN_PATTERN,
   MESSAGE_MAX,
   MESSAGE_VISIBLE_PATTERN,
   PASSWORD_MAX,
@@ -82,15 +83,20 @@ export const HandleSchema = z
   .regex(HANDLE_PATTERN, { error: "handle may only contain letters, digits, underscore and hyphen" });
 
 /**
- * 1..280 chars after trimming, single line, at least one visible character. Order matters: the
- * forbidden-character check runs on the RAW input (so "hi\n" is rejected, not silently trimmed),
- * then the value is trimmed, then the length and visibility are checked. The parsed output is the
- * trimmed string, which is what gets stored.
+ * 1..280 chars after trimming, single line, at least one visible character, no run of more than
+ * 3 invisible characters. Order matters: the forbidden-character and invisible-run checks run on
+ * the RAW input (so "hi\n" is rejected, not silently trimmed), then the value is trimmed, then the
+ * length and visibility are checked. The parsed output is the trimmed string, which is what gets
+ * stored.
  */
 export const MessageSchema = z
   .string({ error: "message must be a string" })
   .refine((s) => !MESSAGE_FORBIDDEN_PATTERN.test(s), {
     error: "message must be a single line without control, bidirectional or invalid characters",
+    abort: true,
+  })
+  .refine((s) => !MESSAGE_INVISIBLE_RUN_PATTERN.test(s), {
+    error: "message must not contain a long run of invisible characters",
     abort: true,
   })
   .trim()
