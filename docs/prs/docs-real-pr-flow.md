@@ -8,5 +8,7 @@ Aligns the architecture docs with the lead's rule (`docs/project-brief.md`, 916c
 - `docs/architecture/board.md`: adds the `approved` status and updates the done-definition.
 - `docs/architecture/kickoff/{backend,frontend,security-qa}-engineer.md`: "Architect merges" wording replaced.
 
+- `docs/architecture/board.md`: records the site name PARZIVAL (owner's decision via the lead), releases the D2 and D4 hold, and marks the GRAYDOT draft of `feat/design-rename` as superseded.
+
 ## How to review
 Read the diff; no code, no tests apply. Wave 1 (F1, B1, Q1, Q4, D1, docs, scaffold) stays as merged locally.
