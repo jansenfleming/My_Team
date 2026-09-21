@@ -21,11 +21,23 @@ export const HANDLE_PATTERN = /^[A-Za-z0-9_-]+$/;
  * Characters a guestbook message must not contain (contract section 6, POST /api/guestbook):
  * every control character (\p{Cc}: C0, DEL, C1; includes newline, tab, NUL), lone surrogates
  * (\p{Cs}; valid surrogate pairs are single code points and are fine), the line and paragraph
- * separators U+2028/U+2029, the bidi overrides and isolates U+202A-U+202E and U+2066-U+2069, and
- * the bidi marks U+200E, U+200F, U+061C. Zero-width joiners (U+200B, U+200D) stay allowed so
- * emoji sequences work. Not global/sticky, safe to reuse.
+ * separators U+2028/U+2029, the bidi overrides and isolates U+202A-U+202E and U+2066-U+2069, the
+ * bidi marks U+200E, U+200F, U+061C, and the hidden-text channels (QA-001): tag characters
+ * U+E0000-U+E007F, variation selectors supplement U+E0100-U+E01EF, U+2060-U+2064, U+FFF9-U+FFFB
+ * and soft hyphen U+00AD. U+200B, U+200C, U+200D and variation selectors U+FE00-U+FE0F stay
+ * allowed so emoji sequences work. Not global/sticky, safe to reuse.
  */
-export const MESSAGE_FORBIDDEN_PATTERN = /[\p{Cc}\p{Cs}\u2028\u2029\u202A-\u202E\u2066-\u2069\u200E\u200F\u061C]/u;
+export const MESSAGE_FORBIDDEN_PATTERN =
+  // The class lists standalone code points on purpose (U+E0100-E01EF are combining marks), so the
+  // "misleading character class" rule does not apply here.
+  // eslint-disable-next-line no-misleading-character-class
+  /[\p{Cc}\p{Cs}\u2028\u2029\u202A-\u202E\u2066-\u2069\u200E\u200F\u061C\u{E0000}-\u{E007F}\u{E0100}-\u{E01EF}\u2060-\u2064\uFFF9-\uFFFB\u00AD]/u;
+/**
+ * A message must contain at least one visible character after trimming: one that is not a format
+ * character (\p{Cf}), a separator (\p{Z}) or a combining mark (\p{M}). So a message made only of
+ * zero-width, space-like or combining characters is rejected. Not global/sticky, safe to reuse.
+ */
+export const MESSAGE_VISIBLE_PATTERN = /[^\p{Cf}\p{Z}\p{M}]/u;
 
 // Section 1: request body limit (413 payload_too_large above this).
 export const BODY_LIMIT_BYTES = 4096;

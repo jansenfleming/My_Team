@@ -16,6 +16,7 @@ import {
   HANDLE_PATTERN,
   MESSAGE_FORBIDDEN_PATTERN,
   MESSAGE_MAX,
+  MESSAGE_VISIBLE_PATTERN,
   PASSWORD_MAX,
   ROLES,
   USERNAME_MAX,
@@ -81,9 +82,10 @@ export const HandleSchema = z
   .regex(HANDLE_PATTERN, { error: "handle may only contain letters, digits, underscore and hyphen" });
 
 /**
- * 1..280 chars after trimming, single line. Order matters: the control/bidi check runs on the
- * RAW input (so "hi\n" is rejected, not silently trimmed), then the value is trimmed, then the
- * length is checked. The parsed output is the trimmed string, which is what gets stored.
+ * 1..280 chars after trimming, single line, at least one visible character. Order matters: the
+ * forbidden-character check runs on the RAW input (so "hi\n" is rejected, not silently trimmed),
+ * then the value is trimmed, then the length and visibility are checked. The parsed output is the
+ * trimmed string, which is what gets stored.
  */
 export const MessageSchema = z
   .string({ error: "message must be a string" })
@@ -92,7 +94,13 @@ export const MessageSchema = z
     abort: true,
   })
   .trim()
-  .refine(unitLength(1, MESSAGE_MAX), { error: `message must be 1 to ${MESSAGE_MAX} characters` });
+  .refine(unitLength(1, MESSAGE_MAX), {
+    error: `message must be 1 to ${MESSAGE_MAX} characters`,
+    abort: true,
+  })
+  .refine((s) => MESSAGE_VISIBLE_PATTERN.test(s), {
+    error: "message must contain at least one visible character",
+  });
 
 export const GuestbookEntrySchema = z.object({
   id: IdSchema,

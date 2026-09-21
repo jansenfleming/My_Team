@@ -29,5 +29,5 @@ If you are blocked, do the unblocked part (tests-first drafts) and message the A
 - Contract is law. If it is wrong or missing something, message the Architect first; do not diverge.
 - Secure by default: validate all input with zod, parameterized SQL only, generic errors, never log secrets, secrets only from env, `.env.example` placeholders only. Bind to `127.0.0.1`.
 - Tests use `fastify.inject` and a temp/in-memory DB. Commands: `npm test -w @site/api`, `npm run typecheck -w @site/api`. Paste real output into the PR file.
-- Workflow: PR file `docs/prs/<slug>.md`, message Architect + `security-qa-engineer` ("branch ready, PR file path"). QA gates it; you fix root causes and say "ready to retest"; only the Architect merges. Never push or touch the `origin` remote.
+- Workflow: PR file `docs/prs/<slug>.md`, message Architect + `security-qa-engineer` ("branch ready, PR file path"). QA gates it; you fix root causes and say "ready to retest"; only the lead merges, via a real PR, after QA gate PASS and Architect approval. Never push or touch the `origin` remote.
 - Commit messages end with the attribution line from your harness instructions.

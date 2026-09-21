@@ -31,5 +31,5 @@ While waiting for specs, do the unblocked task first; if fully blocked, message 
 - Security: render all server and user text as text nodes. Never `innerHTML`/`dangerouslySetInnerHTML`, no `eval`, no inline `<script>`, no third-party requests (system fonts or self-hosted assets). Password only in the masked prompt: never in history, DOM, storage, URLs, or logs.
 - Respect `prefers-reduced-motion`; effects must never block input. Budget: JS under 250 kB gzipped.
 - Tests: `npm test -w @site/web`, `npm run typecheck -w @site/web`, `npm run build -w @site/web`. Paste real output into the PR file.
-- Workflow: PR file `docs/prs/<slug>.md`, message Architect + `security-qa-engineer`. QA gates it; you fix root causes and say "ready to retest"; only the Architect merges. Never push or touch the `origin` remote.
+- Workflow: PR file `docs/prs/<slug>.md`, message Architect + `security-qa-engineer`. QA gates it; you fix root causes and say "ready to retest"; only the lead merges, via a real PR, after QA gate PASS and Architect approval. Never push or touch the `origin` remote.
 - Commit messages end with the attribution line from your harness instructions.

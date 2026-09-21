@@ -1,6 +1,6 @@
-# Concept and Voice: PICKET-07
+# Concept and Voice: ZeroJance
 
-Owner: Creative Director. Task D1 (`feat/design-concept`). Status: for Architect review.
+Owner: Creative Director. Task D1 (`feat/design-concept`), amended by `feat/design-rename`: the site was renamed from PICKET-07 to ZeroJance (terminal form `ZEROJANCE`) at the owner's choice; see section 2.1a. Status: for Architect review.
 Inputs: `docs/project-brief.md`, `docs/architecture/roadmap.md` (MVP scope), `api-contract.md` (what the terminal can call).
 Downstream: D2 (tokens), D3 (boot/layout/motion), D4 (commands), D5 (easter eggs) all build on this file. Where a later spec disagrees with this file, ask the Creative Director; do not guess.
 
@@ -10,7 +10,7 @@ Personal facts: the only confirmed fact is that the owner is Jansen Fleming. Eve
 
 ## 1. The pitch
 
-The site is not a portfolio dressed in neon. It is **PICKET-07**, one surviving node of an early-warning network: a small, old, over-patched defensive system that stands at the edge of the net, watches who comes in, and keeps a record. The visitor arrives as an unregistered **transient**. The system is polite, dry, exact, and slightly tired. The owner, Jansen Fleming, is **the operator**: the one person who can unlock the back room, and the person the station's dossier is about.
+The site is not a portfolio dressed in neon. It is **ZeroJance**, one surviving node of an early-warning network: a small, old, over-patched defensive system that stands at the edge of the net, watches who comes in, and keeps a record. The visitor arrives as an unregistered **transient**. The system is polite, dry, exact, and slightly tired. The owner, Jansen Fleming, is **the operator**: the one person who can unlock the back room, and the person the station's dossier is about.
 
 What makes it feel like a real system rather than a skin: **nothing on screen is decorative telemetry.** Every line that looks like a system reading is a real reading (real health call, real latency, real session, real guestbook). The fiction lives in the margins, in a clearly marked commentary voice. That honesty is also the resume point: this is an actual working system, and it never fakes being one.
 
@@ -22,15 +22,24 @@ What makes it feel like a real system rather than a skin: **nothing on screen is
 
 - A *picket* is a sentry outpost placed ahead of the main body so trouble is seen early. Radar pickets were the first thing to see the enemy and the last thing anyone remembered.
 - The network had seven pickets. **PICKET-01 to PICKET-06 no longer answer.** The station logs this as "unremarkable". It is remarkable, and the station knows it.
-- PICKET-07 still stands. It is patched, annotated, and held together with maintenance notes. It has one job: log every transient, assess, and (nearly always) admit.
-- Five automated **watchstanders** keep the watch (the five AI agents that build and run this project; see 2.4). One human, **the operator**, holds the only key.
-- **The open case:** the station's own log contains one session that was opened and never closed, with no known origin: **session zero**. The station has never told anyone about it directly. It surfaces as small anomalies in the margins (see 2.5). It is the site's standing mystery and the reason to come back.
+- **ZeroJance** still stands. Its serial is picket-07 (lore only, never a UI label). Its name is the standard it was built to meet: *zero vigilance lapse*, contracted by the crew and never spelled out again. The station keeps a log that agrees with its name in every entry but one.
+- Five automated **watchstanders** keep the watch (the five AI agents that build and run this project; see 2.4). One human, **the operator**, holds the only key. The station has never been shown a second one.
+- **The open case:** the station's own log contains one session that was opened and never closed, with no known origin: **session zero**. It is the only entry that breaks the station's own name. The station has never told anyone about it directly and has never filed it as a lapse. It surfaces as small anomalies in the margins (see 2.5). It is the site's standing mystery and the reason to come back.
+
+### 2.1a Name: ZeroJance (renamed from PICKET-07)
+
+- **The name.** The owner chose it. Prose form `ZeroJance`; terminal and tag form `ZEROJANCE` (tab title, status rail, first-paint HTML, banners); prompt host `zerojance` (`4f2a@zerojance ~ $`). Nine letters.
+- **Meaning.** The owner did not supply one, so none is claimed. The lore above (zero vigilance lapse) is fiction about the fictional station, invented here as flavor: "zero" pairs with session zero, and the ending echoes *vigilance* and *surveillance*. It is never stated as the owner's meaning, and the site copy does not explain the name at all; at most the `about` dossier or an egg may use the two-word gloss "zero lapse" as station lore.
+- **What changed in the lore (small):** the station name is ZeroJance with serial picket-07; the neighbors keep their names (picket-01 to picket-06, still silent); "the picket" as a speaker is now "the station"; session zero is now framed as the one entry that violates the station's own name. The rules, voice, palette, and scope are unchanged.
+- **No outside references.** No film, novel, franchise, or brand names appear anywhere in user-facing copy.
+- **Collision check (2026-09-21):** one web search for the exact name found no product, company, or tool called ZeroJance or ZEROJANCE. The nearest hit was a music artist named "ZeroJane" (different spelling). Not checked: trademark registries, domain availability, GitHub or package-registry names, social handles. Not a reason to change the name, but check the domain and handle before publishing.
 
 ### 2.2 Glossary (world term = product feature)
 
 | World term | Means | Notes for D4/D3 |
 |---|---|---|
-| PICKET-07 / the picket / the station | The site | Tab title: `PICKET-07`. Host in the prompt. |
+| ZeroJance / ZEROJANCE / the station | The site | Tab title: `ZEROJANCE` (terminal form; prose form is ZeroJance). Prompt host: `zerojance`. Serial `picket-07` appears only as lore (the `about` dossier or an egg), never as a UI label. |
+| picket | The class of node (sentry outpost) | Neighbors are `picket-01` to `picket-06`. |
 | transient | Anonymous visitor | Assigned `TRANSIENT-XXXX` (4 hex chars, random per page load, client-side only, never sent anywhere). |
 | operator | The owner (single login) | Login unlocks operator commands. Clearance has exactly two levels in MVP: `transient`, `operator`. |
 | the ledger | The guestbook | A "mark" is one entry; "leave a mark" is signing. The command stays `guestbook` for discoverability; `ledger` may be an alias (D4 decides). |
@@ -39,23 +48,23 @@ What makes it feel like a real system rather than a skin: **nothing on screen is
 | the uplink | The connection to the API | Real `GET /api/health` result. Drives the status rail. |
 | the back room | Operator-only commands | `guestbook rm`, `diagnostics`. |
 | session zero | The mystery | Never explained in the MVP. |
-| commentary / margin | Lines starting `// ` | The picket's own voice. Always fiction or opinion, never a reading. |
+| commentary / margin | Lines starting `// ` | The station's own voice. Always fiction or opinion, never a reading. |
 
 ### 2.3 Rules of the world
 
 These are hard rules. They are what makes it coherent, and D2-D5 must obey them.
 
-1. **The picket does not lie about readings.** A line that looks like data (latency, version, counts, uptime, time, session, guestbook entries) is real, from the real API or the real browser. Made-up numbers are banned. Boot checks are only things the page really does.
-2. **Commentary is marked.** Anything the picket says as itself, including lore and jokes, starts with `// ` and is styled as commentary (slate, see 3.1). Data left, voice in the margin. A reader can always tell which is which.
-3. **Nothing is aimed at anyone.** No scanning, no fake attack sequences, no "hacking" of named hosts or real-looking IPs. The picket only watches and defends. (Reasons: safety, the brief's authorized-testing rule, and it is a cliche.)
+1. **The station does not lie about readings.** A line that looks like data (latency, version, counts, uptime, time, session, guestbook entries) is real, from the real API or the real browser. Made-up numbers are banned. Boot checks are only things the page really does.
+2. **Commentary is marked.** Anything the station says as itself, including lore and jokes, starts with `// ` and is styled as commentary (slate, see 3.1). Data left, voice in the margin. A reader can always tell which is which.
+3. **Nothing is aimed at anyone.** No scanning, no fake attack sequences, no "hacking" of named hosts or real-looking IPs. The station only watches and defends. (Reasons: safety, the brief's authorized-testing rule, and it is a cliche.)
 4. **The only locked door is a real one.** Operator access is real authentication (contract section 3). No fake locks, no joke passwords that pretend to be the operator's.
-5. **Withheld beats pretending.** When the picket will not or cannot say something it says so: `[withheld]`, `[PLACEHOLDER: ...]`, or `// not for transients.` It never acts as if the thing does not exist.
-6. **Visitor text is inert.** Whatever a visitor types or signs is data, printed as plain text, never interpreted (contract section 1). The picket may joke about it; it never executes it.
+5. **Withheld beats pretending.** When the station will not or cannot say something it says so: `[withheld]`, `[PLACEHOLDER: ...]`, or `// not for transients.` It never acts as if the thing does not exist.
+6. **Visitor text is inert.** Whatever a visitor types or signs is data, printed as plain text, never interpreted (contract section 1). The station may joke about it; it never executes it.
 7. **Effects are diegetic.** An effect exists only if the system would plausibly do it (a sweep that reflects uplink state, a fault that reflects a real failure). No full-screen decoration.
 
 ### 2.4 The watchstanders (static copy for `agents`)
 
-The five agents are real: they build and maintain this project, and all run on Claude Sonnet 5 (owner brief). In-world they are the watch. Duty lines are accurate to their actual roles; the tone is the picket's.
+The five agents are real: they build and maintain this project, and all run on Claude Sonnet 5 (owner brief). In-world they are the watch. Duty lines are accurate to their actual roles; the tone is the station's.
 
 | Watchstander | Station | Duty line (draft; D4 finalizes exact strings) |
 |---|---|---|
@@ -73,9 +82,9 @@ Session zero is planted in the margins only, never as data:
 
 - `status` and boot end with a commentary line that does not quite add up (for example `// neighbors: picket-01 to picket-06 do not answer.`).
 - `diagnostics` (operator) shows the real `activeSessions` number unchanged, then a margin note: `// sessions accounted for: that many. session zero: not counted.` The number is real; only the note is fiction, and it is marked as such.
-- The two MVP easter eggs (D5) each reveal one small fragment; neither explains it. Phase 2 missions can turn the fragments into a case file.
+- The two MVP easter eggs (D5) each reveal one small fragment; neither explains it. One fragment may hint that session zero is the one entry that breaks the station's own name (2.1). Phase 2 missions can turn the fragments into a case file.
 
-Deliberately unresolved in the MVP: what session zero is, who opened it, what happened to pickets 1-6. The owner may steer this later.
+Deliberately unresolved in the MVP: what session zero is, who opened it, what happened to pickets 1-6. The station never explains the name or session zero as fact, and it never claims anything about the real owner. The owner may steer this later.
 
 ---
 
@@ -97,14 +106,14 @@ Rules: text is always bone, slate, or one of the semantic inks on ink; no gradie
 
 ### 3.2 Type and marks
 - System monospace stack only (D2 sets it), one size scale, no external fonts.
-- Uppercase is reserved for identifiers and tags (`PICKET-07`, `TRANSIENT-4F2A`, `[ ok ]`). Prose is sentence case with no exclamation marks.
+- Uppercase is reserved for identifiers and tags (`ZEROJANCE`, `TRANSIENT-4F2A`, `[ ok ]`). Prose is sentence case with no exclamation marks.
 - Fixed-width status tags: `[ ok ]` `[warn]` `[fail]` `[ .. ]`.
 - **Relative time.** Timestamps in the session are `T+00:41` (time since this visitor arrived), not wall-clock. It makes every session feel like its own watch and hides nothing real.
 - Redaction bars `████` and `[withheld]` are the station's texture for things it will not say.
 - Used-future finish: hazard-tape diagonal (amber on ink) is reserved for the operator prompt and back-room commands. It signals "restricted", so it appears nowhere else.
 
 ### 3.3 Layout idea (D3 details it)
-One full-viewport terminal. A slim **status rail** on top carries: `PICKET-07`, the uplink state, the `T+` clock, and clearance. It is the "command center" in one line, not a dashboard screen. Next to the name sits a small **sweep** glyph: a radar arc that turns steadily when the uplink is healthy, stutters when slow, and stops and turns vermilion when the uplink is down. That is the one recurring motion on the site, and it carries information.
+One full-viewport terminal. A slim **status rail** on top carries: `ZEROJANCE`, the uplink state, the `T+` clock, and clearance. It is the "command center" in one line, not a dashboard screen. Next to the name sits a small **sweep** glyph: a radar arc that turns steadily when the uplink is healthy, stutters when slow, and stops and turns vermilion when the uplink is down. That is the one recurring motion on the site, and it carries information.
 
 ---
 
@@ -131,7 +140,7 @@ A night-watch system that has been on duty for a long time. It **reports**, it d
 
 ### 4.4 Do / don't
 
-| Situation | Don't (generic) | Do (PICKET-07) |
+| Situation | Don't (generic) | Do (ZEROJANCE) |
 |---|---|---|
 | Greeting | `WELCOME TO THE MATRIX, USER!` | `transient 4F2A registered. clearance: none. type help.` |
 | Unknown command | `ERROR: COMMAND NOT FOUND!!` | `no such command: "hax". help lists what exists.` |
@@ -165,20 +174,20 @@ Assumes a first visit on a desktop with motion allowed. Times are targets for D3
 
 | Time | What the visitor sees / does | Intent |
 |---|---|---|
-| 0.0 s | Ink screen, first text already in the HTML: `PICKET-07` and a blinking amber cursor. No JS required to see the name; without JS a one-line `// this station needs javascript to talk.` | Fast, honest first paint. |
+| 0.0 s | Ink screen, first text already in the HTML: `ZEROJANCE` and a blinking amber cursor. No JS required to see the name; without JS a one-line `// this station needs javascript to talk.` | Fast, honest first paint. |
 | 0.3-5.0 s | Boot runs as real checks: display, motion preference, clock, uplink (real health call, real latency), session (`auth/me`). Ends with one margin line about the silent neighbors. **Any key or tap skips it at any moment.** | The system proves it is real, in 5 s or less, and plants the mystery. |
-| 5.0-8.0 s | Banner: station name, `transient 4F2A registered. clearance: none. type help.` The prompt (`4f2a@picket-07 ~ $` in amber) is focused; mobile shows tap chips for `help`, `about`, `agents`, `guestbook`, `status`. | A clear first action; nobody is lost. |
-| 8-20 s | Visitor runs `help`: about ten commands, one line each, in the picket's voice. Then `about`: the dossier with `[PLACEHOLDER: ...]` fields and one `[withheld]`. | Learn the grammar; meet the operator. |
+| 5.0-8.0 s | Banner: station name, `transient 4F2A registered. clearance: none. type help.` The prompt (`4f2a@zerojance ~ $` in amber) is focused; mobile shows tap chips for `help`, `about`, `agents`, `guestbook`, `status`. | A clear first action; nobody is lost. |
+| 8-20 s | Visitor runs `help`: about ten commands, one line each, in the station's voice. Then `about`: the dossier with `[PLACEHOLDER: ...]` fields and one `[withheld]`. | Learn the grammar; meet the operator. |
 | 20-32 s | `agents`: the five watchstanders and their duty lines. | The multi-agent build is on show, in-world. |
 | 32-45 s | `guestbook`: real marks from real visitors, newest first. Visitor runs `guestbook sign <handle> <message>`; the new mark appears with its id. | The real backend, felt as a social moment. |
-| 45-55 s | `status`: real health, uptime-style readings, then `// neighbors: picket-01 to picket-06 do not answer.` The sweep glyph keeps turning. | Technical credibility plus a question they cannot answer yet. |
-| 55-60 s | Visitor tries something (`whoami`, `sudo`, `login`, something guessed); the picket has a dry answer for a few likely guesses. | Reward curiosity; hook into easter eggs (D5). |
+| 45-55 s | `status`: the real health reading (status, version, contract, time) plus the latency the browser measured, then `// neighbors: picket-01 to picket-06 do not answer.` The sweep glyph keeps turning. | Technical credibility plus a question they cannot answer yet. |
+| 55-60 s | Visitor tries something (`whoami`, `sudo`, `login`, something guessed); the station has a dry answer for a few likely guesses. | Reward curiosity; hook into easter eggs (D5). |
 
 Exit state: they know what the site is, saw it is real, left a mark, and have one unanswered question (session zero) that justifies a return visit.
 
 ### 5.1 Variants
 - **Returning visitor, same browser session:** boot collapses to a 1.2 s reconnect (`[ ok ] uplink ...`), same registration line. (A single non-identifying flag in `sessionStorage`; must still work when storage is blocked.)
-- **Mobile:** same journey. The rail compresses to `PICKET-07 | uplink | T+`. Tap chips replace typing for the first commands; the keyboard opens on tap of the prompt, never on load (avoids the layout jump).
+- **Mobile:** same journey. The rail compresses to `ZEROJANCE | uplink | T+`. Tap chips replace typing for the first commands; the keyboard opens on tap of the prompt, never on load (avoids the layout jump).
 - **`prefers-reduced-motion` or effects off:** boot renders in its final state immediately, the sweep is a static glyph whose color still shows uplink state, no blinking. The whole journey works with zero animation.
 - **API offline:** boot shows `[fail] uplink  no route` in vermilion, then `// operating on cached self. the ledger is out of reach.` Static commands still work. Server-backed commands answer with the offline line.
 - **Keyboard only / screen reader:** every feature is reachable by typing; output lives in a polite live region; nothing important is conveyed by color alone (the tags carry the words).
@@ -233,7 +242,7 @@ Ideas I generated and am also leaving out of the MVP: clearance levels that grow
 At most 14 in MVP. Suggested 11 visible plus 2 hidden:
 `help`, `about`, `agents`, `build` (how the site was made, stated plainly: stack, tests, five agents), `status` (API), `guestbook` (list / `sign` / operator `rm`) (API), `login`, `logout`, `whoami` (API), `diagnostics` (operator, API), `clear`. Plus two hidden easter eggs (D5).
 
-Candidate signature move for D4: `whoami` for a transient can add a short "seen from here" block: language, timezone, screen size, motion and color preferences, all read locally from the browser, followed by `// none of this left your browser.` It shows the picket's honesty and makes a security-awareness point (what any page can see), with no new endpoint and nothing transmitted or stored.
+Candidate signature move for D4: `whoami` for a transient can add a short "seen from here" block: language, timezone, screen size, motion and color preferences, all read locally from the browser, followed by `// none of this left your browser.` It shows the station's honesty and makes a security-awareness point (what any page can see), with no new endpoint and nothing transmitted or stored.
 
 ---
 
@@ -243,10 +252,10 @@ Candidate signature move for D4: `whoami` for a transient can add a short "seen 
 - **D3 screens:** sections 3.3, 5, 5.1, 7; boot must be real checks (rule 1); effects catalog limited to the sweep, fault state, boot typing, operator hazard-tape prompt, and cursor.
 - **D4 commands:** sections 2, 4, 8.1; use `// ` for commentary and real values for data.
 - **D5 easter eggs:** section 2.5 (each egg reveals one fragment of session zero, harmlessly, client-side).
-- **Frontend Engineer:** nothing to implement from this file directly. It sets the vocabulary and constraints. Wait for D2 (tokens), D3 (screens), D4 (commands), then build. One early item is safe now: the initial HTML should show `PICKET-07` and a blinking cursor without JS (section 5).
+- **Frontend Engineer:** nothing to implement from this file directly. It sets the vocabulary and constraints. Wait for D2 (tokens), D3 (screens), D4 (commands), then build. One early item is safe now: the initial HTML should show `ZEROJANCE` and a blinking cursor without JS (section 5).
 
 ## 10. Needs the owner (nothing here blocks the MVP)
-1. **The name.** `PICKET-07` is a creative choice and has not been checked for trademark or collisions. Confirm or change it before publishing.
+1. **The name and its meaning.** The site is called ZeroJance (terminal form ZEROJANCE). The design gives it a fictional "zero vigilance lapse" gloss as station lore only, because no meaning was supplied. If the name has a real meaning to you, or you dislike the gloss, say so and it will be changed. A shallow web search found no product with the name (see 2.1a); domain and handle availability are unchecked.
 2. **Tone check.** Dry and deadpan by design; say so if you would rather have it warmer or more playful.
 3. **Session zero.** Do you want the standing mystery? It shapes D5 and Phase 2 missions.
 4. **All personal content.** Every dossier field is a `[PLACEHOLDER: ...]` until you supply it. Only "Jansen Fleming" is used.
