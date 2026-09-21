@@ -1,0 +1,21 @@
+/* Neutral placeholder styles for the F1 shell. Replaced by the design tokens in F5. */
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0b0d10;
+  color: #d7dde5;
+}
+
+.shell {
+  padding: 1.5rem;
+}
