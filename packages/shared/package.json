@@ -1,0 +1,7 @@
+{
+  "name": "@site/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared API types, zod schemas, and constants (see docs/architecture/board.md, task B1)."
+}
