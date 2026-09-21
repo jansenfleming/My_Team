@@ -10,7 +10,7 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 ## Index
 | ID | Owner | Title | Depends on | Status |
 |---|---|---|---|---|
-| A1 | architect | Phase 0 plan and scaffold | none | in-progress (merge pending) |
+| A1 | architect | Phase 0 plan and scaffold | none | done |
 | A2 | architect | Contract change control and CD request triage | ongoing | in-progress |
 | A3 | architect | Review and merge backend branches (B1-B6) | B* | todo |
 | A4 | architect | Review and merge frontend and design branches | F*, D* | todo |
@@ -53,7 +53,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ## Architect
 
 ### A1 Phase 0 plan and scaffold
-- Owner: architect. Branches: `docs/architecture`, `chore/scaffold`. Status: in-progress until both are merged.
+- Owner: architect. Branches: `docs/architecture`, `chore/scaffold`. Status: done (both merged `--no-ff`).
 - Deliverable: ADR 0001, roadmap, api-contract, ownership-map, this board, kickoff briefs, root workspace scaffold, `docs/prs/chore-scaffold.md`.
 - Done when: `npm install` succeeds at the root; both branches merged `--no-ff`.
 
