@@ -28,6 +28,7 @@ Open QA findings: QA-001 verified (fixed, PR #4). QA-002 (Low): contract amended
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
+| B7 | backend-engineer | Pages deploy workflow (manual only) | B5, F7, lead-supplied action SHAs | todo |
 | B-fix | backend-engineer | QA-002 fix: cap invisible-character runs | contract merged (PR #6) | todo (after B2; `fix/qa-002-invisible-runs`) |
 | F1 | frontend-engineer | Web shell | none | done |
 | F2 | frontend-engineer | Terminal engine | F1 | in-progress (`feat/terminal-engine`) |
@@ -35,19 +36,24 @@ Open QA findings: QA-001 verified (fixed, PR #4). QA-002 (Low): contract amended
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
+| F7 | frontend-engineer | Static build for GitHub Pages | F3, F4 | todo |
 | D1 | creative-director | Concept and voice | none | done; renamed to ZeroJance (PR #5) |
 | D2 | creative-director | Tokens and style guide | D1 | in-progress (`feat/design-tokens`) |
 | D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo (waits on D2) |
 | D4 | creative-director | Terminal command spec | D1 | todo (after D2) |
 | D5 | creative-director | Easter eggs and backlog | D4 | todo (waits on D4) |
 | D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
+| D7 | creative-director | Static-build (uplink off) copy amendment | D4 | todo (small, after D5) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
 | Q2 | security-qa-engineer | QA harness | B2 | todo |
 | Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
 | Q4 | security-qa-engineer | Secret scan and dependency audit tooling | none | done |
 | Q5 | security-qa-engineer | Web security and a11y review | F4, F5 | todo |
 | Q6 | security-qa-engineer | MVP security review | B6, F6, Q3, Q5 | todo |
+| Q7 | security-qa-engineer | Pages threat model and static checks | F7, B7 | todo |
 | G | security-qa-engineer | Standing: gate + retest for every code branch | each branch | ongoing |
+
+Hosting (ADR 0002): GitHub Pages, frontend only, static build with uplink off; the API is not deployed. Rows B7, F7, D7, Q7 were added for it.
 
 ## Suggested waves (parallel starts)
 1. Start now: B1, D1, F1, Q1, Q4.
@@ -86,7 +92,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 
 ### A6 Release-readiness report and Phase 2 board
 - Owner: architect. Depends: all Phase 1 tasks done.
-- Deliverable: `docs/architecture/release-readiness.md` (MVP exit criteria checked one by one, open risks, what the owner must do to publish: create remote, push, enable Actions, hosting choice, real password hash, real content); `docs/architecture/board-phase2.md`.
+- Deliverable: `docs/architecture/release-readiness.md` (MVP exit criteria checked one by one, open risks, what the owner must do to publish: approve the first Pages publish (ADR 0002), lead sets Pages source to GitHub Actions and runs `deploy-pages.yml` once; real password hash and hosted API only if a Phase 2 API host is chosen; real content replacing placeholders); `docs/architecture/board-phase2.md`.
 - Done when: the report cites evidence for each exit criterion; recommendations only, no deploy.
 
 ---
@@ -121,7 +127,12 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ### B6 Runbook, README, hardening
 - Owner: backend-engineer. Depends: B4, B5. Branch: `feat/api-runbook`. Status: todo.
 - Deliverable: `apps/api/README.md` (env vars, endpoints with curl examples against localhost, how to create the operator hash), `infra/RUNBOOK.md` (owner-executed steps to go live: remote, push, Actions, hosting options, env/secret checklist, SQLite backup, rollback; marked NOT EXECUTED), graceful shutdown (SIGTERM closes DB), pino log redaction of cookie/authorization/password, plus fixes for any Critical/High QA finding open against the backend.
-- Done when: tests prove redaction and clean shutdown; runbook contains no real secrets or invented owner facts; QA gate PASS.
+- Also: QA-003 (Low, from the B2 gate): HTTP-parse-level errors (garbage request line, bad Content-Length, 431 oversized headers) must return the contract error body with a request id, via `clientErrorHandler` or a documented exception; and a runbook note that helmet's HSTS with `includeSubDomains` must only be served over real HTTPS on a domain the owner controls. The runbook's Pages section is owner/lead steps per ADR 0002, marked NOT EXECUTED. Done when: tests prove redaction and clean shutdown; runbook contains no real secrets or invented owner facts; QA gate PASS.
+
+### B7 Pages deploy workflow
+- Owner: backend-engineer. Depends: B5, F7 merged, and the lead supplying the full commit SHAs. Branch: `feat/deploy-pages-workflow`. Status: todo.
+- Deliverable: `.github/workflows/deploy-pages.yml` exactly per ADR 0002 requirement 6: `workflow_dispatch` only; job-level minimal permissions; `environment: github-pages`; `actions/checkout`, `actions/setup-node`, `actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages` each pinned to a 40-character SHA with the tag in a comment; `npm ci` then `npm run build:static -w @site/web`; upload `apps/web/dist`. Agents cannot query GitHub: list the five actions you need in your PR file and ask the Architect, who asks the lead for the SHAs; do not guess or invent a SHA.
+- Done when: the YAML parses; every `uses:` is a 40-hex SHA; no `push`/`pull_request`/`schedule` trigger; the build commands run locally in order with real output pasted; the PR file says the workflow has not run on GitHub; QA gate PASS (including the G-CI review). Nothing may publish automatically.
 
 ---
 
@@ -156,6 +167,11 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Owner: frontend-engineer. Depends: F4, F5, D5 merged. Branch: `feat/web-polish`. Status: todo.
 - Deliverable: the easter eggs in `easter-eggs.md`; a11y pass (output region `aria-live`, focus never lost, keyboard-only use, contrast per D2 table, tap-to-focus and visible prompt with the mobile keyboard); fixes for every Critical/High QA finding open against the web app (each fix on its own `fix/<id>` branch and PR file).
 - Done when: tests for each easter egg and the a11y roles; QA gate PASS; Creative Director has no open blocking feedback.
+
+### F7 Static build for GitHub Pages
+- Owner: frontend-engineer. Depends: F3, F4 merged. Branch: `feat/web-static-build`. Status: todo.
+- Deliverable: per ADR 0002: Vite `base` from `VITE_BASE` (build default `/My_Team/`, dev `/`); no root-absolute asset paths; single view (hash routes only if ever needed); the build-time `VITE_UPLINK=off` mode: the API client makes no `fetch` call at all and returns the same offline failure the D4 lines already handle, so every API-backed command prints its D4 offline lines and `status` reports the uplink as offline; script `build:static` (`VITE_UPLINK=off`, base `/My_Team/`); a CSP `<meta http-equiv="Content-Security-Policy">` injected into `dist/index.html` at build only (no inline scripts, no third-party hosts; suggested policy in ADR 0002); `<meta name="referrer" content="no-referrer">`. Confirm the policy against the built output and note anything that needed loosening.
+- Done when: tests over the built `dist/`: CSP meta present, no `src="/` or `href="/` root-absolute references, no inline script, assets resolve under `/My_Team/` (serve `dist` under that prefix locally and request `/My_Team/`, the JS and the CSS: 200); the app renders in jsdom with uplink off and a `fetch` spy is never called, and each API-backed command prints its D4 offline lines; `npm run build:static -w @site/web` output and gzip size pasted; QA gate PASS.
 
 ---
 
@@ -193,6 +209,11 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Deliverable: `docs/design/reviews/mvp-review.md`: run the site locally (`npm run dev`), check every spec item pass/fail, list the top five fixes in priority order, message the Frontend Engineer with the path.
 - Done when: every spec item is marked; a verdict on "does it feel like its own thing"; Architect review.
 
+### D7 Static-build (uplink off) copy amendment
+- Owner: creative-director. Depends: D4 merged (small; after D5). Branch: `feat/design-static-lines`. Status: todo.
+- Deliverable: a short amendment to `docs/design/terminal-commands.md` and the boot spec (`screens.md` when D3 exists): the honest lines for a build that has no backend by design (ADR 0002), which differs from a failed connection. For example the boot check, `status`, `guestbook`, `login`, `diagnostics` and the `whoami` clearance line when the uplink is off by design. Keep rule 1 (real readings only): the site really has no backend, so say so plainly and point to the local full-stack mode without claiming a repo URL that does not exist (`[PLACEHOLDER: repository URL]` until the owner supplies it).
+- Done when: exact strings for each affected command; Architect review.
+
 ---
 
 ## Security / QA Engineer (worktree `.worktrees/qa`)
@@ -226,6 +247,11 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Owner: security-qa-engineer. Depends: B6, F6, Q3, Q5. Branch: `feat/qa-mvp-review`. Status: todo.
 - Deliverable: `qa/reports/security-review-mvp.md`: all findings with status and retest evidence, `npm audit` and secret-scan output (history included), authz matrix result, residual risks, and a list of every merged branch with its gate file.
 - Done when: no open Critical/High findings, or an explicit list for the Architect to decide on.
+
+### Q7 Pages threat model and static checks
+- Owner: security-qa-engineer. Depends: F7 and B7 reaching review. Branch: `feat/qa-pages-threat-model`. Status: todo.
+- Deliverable: amend `qa/threat-model.md` with the GitHub Pages threats from ADR 0002 (no `X-Frame-Options` or CSP `frame-ancestors` so clickjacking cannot be prevented; header-only protections unavailable and only meta CSP and referrer meta available; `Referrer-Policy`/`nosniff` absent; deploy caching; public repo and build contents; the deploy workflow as supply-chain surface: pinned SHAs, permissions, dispatch-only trigger; project-page base path and root-absolute links; the future hosted-API option requires its own review); extend `qa/tools/check-dist.mjs` (Q5) to assert CSP meta, no root-absolute paths and no inline script on the static build; G-CI review of `deploy-pages.yml` (all `uses:` are 40-hex SHAs, no unexpected triggers, permissions minimal, no `pull_request_target`, no secrets echoed).
+- Done when: results with real output; each finding reported to the owning engineer.
 
 ### G Standing gates (per code branch)
 - Owner: security-qa-engineer. Ongoing. Output: `qa/reports/gate-<slug>.md` with `Verdict: PASS|FAIL`, what was run (real commands and output), and links to any finding reports. Retest each fix with the original reproduction plus adjacent cases; record verified / not fixed / regression. Never approve your own work (you write no application code, so there is nothing of yours to approve in code branches).
