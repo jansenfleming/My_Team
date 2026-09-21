@@ -2,14 +2,16 @@
  * All site-identity copy lives here so a rename is a one-file change: the site name, the
  * prompt, the welcome banner, and every string the terminal engine shows.
  *
- * The site name is not chosen yet (owner is renaming it). Everything below is a neutral
- * placeholder. Do not hardcode the name, the prompt host, or lore strings anywhere else in
- * apps/web/src; import them from this module. (index.html keeps a neutral <title> as a
- * fallback; the runtime title comes from PAGE_TITLE.)
+ * The owner chose the name ZeroJance (recorded in docs/architecture/board.md; the terminal
+ * form is ZEROJANCE). The prompt host, welcome banner and lore strings stay placeholders until
+ * the Creative Director's screen and command specs land (D3, D4). Do not hardcode the name,
+ * the prompt host, or lore strings anywhere else in apps/web/src; import them from this
+ * module. (index.html keeps a neutral <title> as a fallback; the runtime title comes from
+ * PAGE_TITLE.)
  */
 import type { TerminalText } from "../terminal";
 
-export const SITE_NAME = "[PLACEHOLDER: site name]";
+export const SITE_NAME = "ZeroJance";
 export const PAGE_TITLE = SITE_NAME;
 
 /** Shown in front of every command line. */
