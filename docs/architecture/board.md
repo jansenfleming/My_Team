@@ -7,7 +7,9 @@ Every code task is done only when: owner tests pass with real output in the PR f
 
 Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`, `security-qa-engineer`. Worktree dirs: `.worktrees/{design,web,api,qa}`.
 
-Site name: **PARZIVAL** (all working names in earlier docs, PICKET-07 and GRAYDOT, are superseded).
+Site name: **ZEROJANCE** (typed "ZeroJance" in prose; uppercase ZEROJANCE in the terminal). Owner's decision, relayed by the lead. The earlier working names PICKET-07, GRAYDOT and PARZIVAL are superseded.
+
+Process: from wave 2, PRs are real (lead pushes and merges). PR #1 (`docs/real-pr-flow`) is merged: b7227a9, done.
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
@@ -156,7 +158,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 
 ## Creative Director (worktree `.worktrees/design`)
 
-**Site name: PARZIVAL** (owner's decision, relayed by the lead, 2026-09-21). D1 merged under the old working name PICKET-07. The rename amendment (`feat/design-rename`, docs-only, `docs/design/concept.md`) goes first, then D2, then D4, each as its own docs-only branch. The GRAYDOT draft of `feat/design-rename` is superseded and must not be merged. The hold on D2 and D4 is released; D3, D5, D6 follow their dependencies.
+**Site name: ZEROJANCE** (owner's decision, relayed by the lead, 2026-09-21; supersedes PICKET-07, GRAYDOT and PARZIVAL). D1 merged under the old working name PICKET-07. The rename amendment (`feat/design-rename`, docs-only, `docs/design/concept.md`) goes first, then D2, then D4, each as its own docs-only branch. Earlier rename drafts (GRAYDOT, PARZIVAL) must not be merged. The hold on D2 and D4 is released; D3, D5, D6 follow their dependencies.
 
 ### D1 Concept and voice
 - Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
