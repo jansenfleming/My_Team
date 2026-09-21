@@ -1,7 +1,7 @@
 # QA-001: guestbook message accepts invisible format characters and invisible-only messages
 
 - Severity: Low
-- Status: open (non-blocking; needs an Architect decision because the contract currently permits it)
+- Status: verified (2026-09-21, fix commit `8d11767`; see retest log and `qa/reports/gate-fix-qa-001-message-invisible-chars.md`)
 - Found: 2026-09-21, against `feat/shared-contract` at commit `9d8f515`
 - Owner to fix: backend-engineer (`packages/shared/src/constants.ts`, `MESSAGE_FORBIDDEN_PATTERN`), after the Architect amends the contract if needed
 - Affected: `MessageSchema` / `CreateGuestbookRequestSchema` (future `POST /api/guestbook`)
@@ -38,3 +38,4 @@ Keep U+200D and U+FE0F only when adjacent to an emoji (or simply keep them but r
 ## Retest log
 | Date | Commit | Result | Evidence and adjacent cases run |
 |---|---|---|---|
+| 2026-09-21 | `8d11767` on `fix/qa-001-message-invisible-chars` | **verified** | Original repro inputs (lone U+200B, U+2060/2062/2063, tag characters, U+00AD, U+FFF9) all rejected; every code point in each newly rejected range rejected in leading, inner and trailing positions; invisible-only messages (ZWSP/ZWNJ/ZWJ, lone U+FE0F, combining marks only) rejected; ZWJ families, keycaps, flags, skin tones, FE0F, accented and Indic/Arabic/Thai text still accepted; run against the pre-fix code the same file fails 6 of 24, against the fix it passes 24/24. Adjacent residual channels tracked as QA-002. |
