@@ -2,10 +2,12 @@
 
 Owner: Architect. This file is the source of truth for task state (the native task list is unavailable). Teammates report status by message; the Architect updates this file after each merge. Read the main checkout's copy, not your worktree's.
 
-Status values: `todo`, `in-progress`, `review` (PR file written, waiting on QA gate or Architect), `done` (merged to `main`).
-Every code task is done only when: owner tests pass with real output in the PR file, QA gate PASS in `qa/reports/gate-<slug>.md`, Architect merged `--no-ff`. Docs-only design tasks need Architect review only. QA tasks need Architect review and a green suite run. Process details: `ownership-map.md`.
+Status values: `todo`, `in-progress`, `review` (PR file written, waiting on QA gate or Architect), `approved` (QA gate PASS and Architect approved; waiting for the lead to merge the real PR), `done` (lead confirmed the merge to `main`).
+Every code task is done only when: owner tests pass with real output in the PR file, QA gate PASS in `qa/reports/gate-<slug>.md`, Architect approved and the lead merged the real PR (`gh pr merge --merge`) from wave 2 on; wave 1 was merged locally `--no-ff`. Docs-only design tasks need Architect review only. QA tasks need Architect review and a green suite run. Process details: `ownership-map.md`.
 
 Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`, `security-qa-engineer`. Worktree dirs: `.worktrees/{design,web,api,qa}`.
+
+Site name: **PARZIVAL** (all working names in earlier docs, PICKET-07 and GRAYDOT, are superseded).
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
@@ -28,12 +30,12 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
-| D1 | creative-director | Concept and voice | none | done |
-| D2 | creative-director | Tokens and style guide | D1 | ON HOLD (site rename pending, lead) |
-| D3 | creative-director | Boot, layout, motion spec | D1, D2 | ON HOLD (site rename pending, lead) |
-| D4 | creative-director | Terminal command spec | D1 | ON HOLD (site rename pending, lead) |
-| D5 | creative-director | Easter eggs and backlog | D4 | ON HOLD (site rename pending, lead) |
-| D6 | creative-director | Design review of the build | F4, F5 | ON HOLD (site rename pending, lead) |
+| D1 | creative-director | Concept and voice | none | done; rename amendment `feat/design-rename` in progress |
+| D2 | creative-director | Tokens and style guide | D1, D1-rename | todo (hold released) |
+| D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo (waits on D2) |
+| D4 | creative-director | Terminal command spec | D1, D1-rename | todo (hold released; after D2) |
+| D5 | creative-director | Easter eggs and backlog | D4 | todo (waits on D4) |
+| D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
 | Q2 | security-qa-engineer | QA harness | B2 | todo |
 | Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
@@ -154,7 +156,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 
 ## Creative Director (worktree `.worktrees/design`)
 
-**ON HOLD (lead, 2026-09-21):** the owner is renaming the site (PICKET-07 is being replaced). Do not start D2-D6 until the lead gives the new name. D1 is merged under the old name and will need a rename pass by the Creative Director.
+**Site name: PARZIVAL** (owner's decision, relayed by the lead, 2026-09-21). D1 merged under the old working name PICKET-07. The rename amendment (`feat/design-rename`, docs-only, `docs/design/concept.md`) goes first, then D2, then D4, each as its own docs-only branch. The GRAYDOT draft of `feat/design-rename` is superseded and must not be merged. The hold on D2 and D4 is released; D3, D5, D6 follow their dependencies.
 
 ### D1 Concept and voice
 - Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
