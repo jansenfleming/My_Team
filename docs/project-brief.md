@@ -75,11 +75,11 @@ Build the system incrementally. Start with a simple working version, then allow 
 ### Environment (checked 2026-09-21)
 - macOS, Node v22.12.0, npm 11.6.1, git 2.52.0, Python 3.14.2.
 - **Not installed:** `gh` (GitHub CLI), Docker, pnpm. Use npm only. Do not assume Docker or `gh`.
-- Repo root is `/Users/jansenfleming/Documents/My_Team` (local git, branch `main`). No remote exists yet.
+- Repo root is `/Users/jansenfleming/Documents/My_Team` (branch `main`). Remote `origin` is https://github.com/jansenfleming/My_Team.git, added by the lead on 2026-09-21. **Only the lead pushes.**
 
 ### Approval boundaries (hard rules)
-- **Local only.** Never push, create a remote, open a real GitHub PR, deploy, publish, or send anything to an external service without the owner's explicit approval, relayed through the lead. Prepare everything so it can be done in one step later (branches, PR description files, a deploy runbook).
-- **Pull requests, until a remote exists:** simulate them locally. Work on a feature branch, write the PR description to `docs/prs/<branch>.md`, and the Architect reviews and merges (`--no-ff`) into `main`.
+- **Agents never touch the remote.** Never push, fetch, rebase or rewrite `main`, open a real GitHub PR, deploy, publish, or send anything to an external service. The owner approved (2026-09-21) that the **lead** pushes `main` and feature branches to `origin`. Real GitHub PRs, deploys, publishing, and any other external service still need the owner's explicit approval, relayed through the lead. Prepare everything so it can be done in one step later (branches, PR description files, a deploy runbook).
+- **Pull requests, until `gh` is installed and authenticated:** simulate them locally. Work on a feature branch, write the PR description to `docs/prs/<branch-slug>.md`, and the Architect reviews and merges (`--no-ff`) into `main`.
 - **No real secrets in the repo, ever.** Use `.env.example` with placeholders. Never read or print the owner's real credentials or files outside this repo.
 - **No fabricated facts about the owner.** Any personal details, employers, credentials, or resume claims on the site must be clearly marked placeholders (e.g. `[PLACEHOLDER: ...]`) until the owner supplies them. The owner's name is Jansen Fleming; nothing else is confirmed.
 - **Security testing scope:** authorized testing only, against this project's own code and its own locally running instance (localhost). Never scan or probe any other host, network, or third-party service.
