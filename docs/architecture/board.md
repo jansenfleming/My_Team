@@ -16,7 +16,7 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | A4 | architect | Review and merge frontend and design branches | F*, D* | todo |
 | A5 | architect | Review and merge QA branches, run integration check | Q*, B4, F4 | todo |
 | A6 | architect | Release-readiness report and Phase 2 board | all | todo |
-| B1 | backend-engineer | Shared contract package | none | todo |
+| B1 | backend-engineer | Shared contract package | none | review (architect approved; awaiting QA gate) |
 | B2 | backend-engineer | API core | B1 | todo |
 | B3 | backend-engineer | SQLite and guestbook | B2 | todo |
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |

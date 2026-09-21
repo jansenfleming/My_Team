@@ -33,6 +33,7 @@ Node 22.12 + npm only. No Docker, pnpm, or `gh`. Everything must run locally aft
 - Package names: `@site/web`, `@site/api`, `@site/shared`, `@site/qa`. Each is `"private": true, "type": "module"`, extends `tsconfig.base.json`.
 - Script names (only define what applies): `dev`, `build`, `test`, `typecheck`. Root scripts fan out with `--workspaces --if-present`.
 - `packages/shared` (`@site/shared`) exports TypeScript source directly (`exports` points to `src/index.ts`); no build step. The web app uses `import type` only, so zod is not bundled into the browser.
+- Text length limits count UTF-16 code units (`.length`), matching HTML `maxlength`. Zod 4's `.min()/.max()` on strings count code points, so `@site/shared` uses explicit `.length` refines; do not "simplify" them.
 - Ports: web dev server `5173`, API `3001`, bound to `127.0.0.1`. Vite proxies `/api` to the API, so the browser sees one origin (no CORS, cookies work with `SameSite=Strict`). The API sends no CORS headers.
 - Web must be CSP-clean so a strict production policy is possible: no inline `<script>`, no `eval`, no third-party requests (fonts and assets are self-hosted or system fonts).
 - All user-supplied text (guestbook, terminal input) is treated as data: rendered as text nodes, never `innerHTML`/`dangerouslySetInnerHTML`.
