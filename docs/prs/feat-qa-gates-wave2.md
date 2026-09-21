@@ -5,7 +5,7 @@ Author: security-qa-engineer. Branch: `feat/qa-gates-wave2`. Base: main. Files: 
 ## Gate reports (each names the exact head tested)
 | Branch | Head | Verdict | Report |
 |---|---|---|---|
-| `feat/api-core` (B2) | `170d002` | PASS | `qa/reports/gate-feat-api-core.md` |
+| `feat/api-core` (B2) | `170d002` | PASS (already merged to main via PR #12; unchanged here) | `qa/reports/gate-feat-api-core.md` |
 | `feat/terminal-engine` (F2) | `b650566` | PASS | `qa/reports/gate-feat-terminal-engine.md` |
 | `fix/qa-002-invisible-runs` | `c9b6a32` | PASS (QA-002 verified as decided, residual quantified) | `qa/reports/gate-fix-qa-002-invisible-runs.md` |
 | `feat/api-client` (F3) | `c020aa9` | PASS | `qa/reports/gate-feat-api-client.md` |
