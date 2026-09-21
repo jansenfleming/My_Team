@@ -1,0 +1,7 @@
+{
+  "name": "@site/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vite + React terminal UI (see docs/architecture/board.md, tasks F1-F6)."
+}
