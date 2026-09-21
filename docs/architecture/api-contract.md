@@ -105,7 +105,7 @@ Public. Query: `limit` (1..50, default 20), `before` (positive int, optional). N
 ### POST /api/guestbook
 Public, rate limited. Request: `{ "handle": string, "message": string }`.
 - `handle`: 2..24 chars, `^[A-Za-z0-9_-]+$`.
-- `message`: 1..280 chars after trimming, single line. Rejected if it contains C0/C1 control characters (including newline and tab) or Unicode bidi-override characters (U+202A-U+202E, U+2066-U+2069). Stored verbatim otherwise (no HTML escaping server-side; clients render as text).
+- `message`: 1..280 chars after trimming, single line. Rejected if it contains any Unicode control character `\p{Cc}` (C0, DEL U+007F, C1; includes newline and tab), line/paragraph separators U+2028/U+2029, bidi override/isolate characters (U+202A-U+202E, U+2066-U+2069), bidi marks U+200E, U+200F, U+061C, or lone surrogates. The check runs on the raw input before trimming (so `"hi\n"` is rejected). Zero-width characters such as U+200B/U+200D are accepted (needed for emoji sequences). Lengths of `handle`, `message`, `username`, `password` count UTF-16 code units (JS `.length`). Stored verbatim otherwise (no HTML escaping server-side; clients render as text).
 
 `201` `{ "entry": GuestbookEntry }`. `400 validation_error`, `403 origin_rejected`, `429 rate_limited`.
 
@@ -145,3 +145,4 @@ Reserved names (planned, not built; do not use for anything else): `/api/mission
 
 ## Changelog
 - v1.0 (2026-09-21): initial MVP contract.
+- v1.0 clarification (2026-09-21, pre-implementation, no consumers yet): guestbook `message` rejection list extended (U+2028/2029, U+200E/200F/061C, DEL, lone surrogates); length unit and validation order stated. Requested by backend-engineer during B1.

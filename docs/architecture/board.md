@@ -22,7 +22,7 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
-| F1 | frontend-engineer | Web shell | none | todo |
+| F1 | frontend-engineer | Web shell | none | review (architect approved; awaiting QA gate) |
 | F2 | frontend-engineer | Terminal engine | F1 | todo |
 | F3 | frontend-engineer | API client and session | F1, B1 | todo |
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |

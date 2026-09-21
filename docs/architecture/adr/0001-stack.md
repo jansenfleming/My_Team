@@ -26,7 +26,7 @@ Node 22.12 + npm only. No Docker, pnpm, or `gh`. Everything must run locally aft
 ## Verified on this machine (Node 22.12.0, npm 11.6.1, 2026-09-21)
 - Installed and smoke-tested together: vite 7.3, react 19.3, vitest 5.0, jsdom 28.1, @testing-library/react 16, fastify 5.12, zod 4.6, better-sqlite3 12.11, typescript 5.9, eslint 9.39, tsx 4.
 - **`better-sqlite3@13.0.3` segfaults (exit 139) on Node 22.12.0 here; `12.11.1` works.** Pin `^12`. Do not upgrade to 13 without re-testing on the CI Node version.
-- **Version traps for Node 22.12:** `jsdom` 29/30 and `eslint` 10 require a newer Node 22 minor. Stay on `jsdom ^28`, `eslint ^9`, `vite ^7` with `@vitejs/plugin-react ^5` (plugin-react 6 needs Vite 8). Use caret ranges within these majors. Root `engines` and `.nvmrc` say Node 22. `npm install` prints `eslint@9.x is no longer supported` as a deprecation warning; it is expected and harmless until the Node baseline moves to >=22.13 (then adopt ESLint 10 via a new ADR).
+- **Version traps for Node 22.12:** `jsdom` 29/30 and `eslint` 10 require a newer Node 22 minor. Stay on `jsdom ^28`, `eslint ^9`, `vite ^7` with `@vitejs/plugin-react ^5` (plugin-react 6 needs Vite 8). Use caret ranges within these majors. Root `engines` and `.nvmrc` say Node 22. `npm install` prints `eslint@9.x is no longer supported` as a deprecation warning; it is expected and harmless until the Node baseline moves to >=22.13 (then adopt ESLint 10 via a new ADR). It also prints `EBADENGINE` for `eslint-visitor-keys@5` (needs Node ^22.13, pulled in by `typescript-eslint`); warning only, lint passes on 22.12.
 - `better-sqlite3@12` ships prebuilt binaries inside the package (no compile step, no download at install time).
 
 ## Conventions every workspace follows
