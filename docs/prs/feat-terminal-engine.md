@@ -40,7 +40,7 @@ npm run build -w @site/web
  Test Files  9 passed (9)
       Tests  77 passed (77)
 ```
-By file: `parser.test.ts` (22 tests: empty, whitespace, quotes, escapes, unicode incl. astral/CJK/RTL/combining/NBSP, markup and shell text stays inert, 10 kB rejected by default and parsed quickly when the limit is raised, UTF-16 counting), `registry.test.ts` (5, incl. prototype-name lookups), `history.test.ts` (8), `dispatch.test.ts` (14: args, alias, async, unknown command, parse errors, too-long never runs, throw leaks nothing, malformed lines dropped, abort), `Terminal.test.tsx` (17), `content/content.test.ts` (4), `App.test.tsx` (4), plus the two F1 test files.
+By file: `parser.test.ts` (20 tests: empty, whitespace, quotes, escapes, unicode incl. astral/CJK/RTL/combining/NBSP, markup and shell text stays inert, 10 kB rejected by default and parsed quickly when the limit is raised, UTF-16 counting), `registry.test.ts` (5, incl. prototype-name lookups), `history.test.ts` (8), `dispatch.test.ts` (14: args, alias, async, unknown command, parse errors, too-long never runs, throw leaks nothing, malformed lines dropped, abort), `Terminal.test.tsx` (17), `content/content.test.ts` (4), `App.test.tsx` (4), plus the two F1 test files.
 
 The Testing Library XSS test types `<img src=x onerror=alert(1)>` as a command: the log shows `unknown command: <img`, `log.innerHTML` contains `&lt;img`, and `container.querySelector("img, script, [onerror]")` is null. A second test makes a command return `<img src=x onerror=alert(1)>` and `<script>alert(2)</script>`; both render as text.
 
