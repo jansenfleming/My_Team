@@ -18,10 +18,10 @@ esbuild packages/shared/src/index.ts --bundle --format=esm --platform=node --out
 SHARED_BUNDLE=$SCRATCH/shared.bundle.mjs node --test qa/gates/b1-shared-contract.adversarial.test.mjs
 ```
 Test 15 ("observation QA-001") asserts that all of these currently PARSE successfully as `message`:
-- `"​"` (a single zero-width space: the whole message is invisible)
-- `"⁠⁢⁣"` (word joiner, invisible times, invisible separator)
+- `"<U+200B>"` (a single zero-width space: the whole message is invisible)
+- `"<U+2060><U+2062><U+2063>"` (word joiner, invisible times, invisible separator)
 - `"a\u{e0041}\u{e0042}b"` (Unicode tag characters: invisible ASCII-shaped payload)
-- `"a️b"` (variation selector), `"a­b"` (soft hyphen), `"a￹b"` (interlinear annotation)
+- `"a<U+FE0F>b"` (variation selector), `"a<U+00AD>b"` (soft hyphen), `"a<U+FFF9>b"` (interlinear annotation)
 
 ## Expected
 Contract section 6 says a message is 1..280 chars after trimming and single line. Its clarification deliberately allows zero-width joiners so emoji sequences work. It does not say a message may be visually empty. Reasonable expectation: a message must contain at least one visible character, and characters with no legitimate use in a guestbook (tag characters U+E0000-E007F, U+2060-2064, U+FFF9-FFFB, soft hyphen) are rejected.

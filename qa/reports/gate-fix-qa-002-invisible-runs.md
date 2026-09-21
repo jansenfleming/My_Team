@@ -47,7 +47,7 @@ All PASS on `c9b6a32`:
 | QA-002 | Low | **verified** as decided, residual quantified | `qa/reports/QA-002-residual-hidden-text-channels-in-guestbook-message.md` |
 
 - **Residual (Info, non-blocking):** the rule caps consecutive characters, so a visible character between groups of three resets it. Test 33 encodes a 64-byte string as variation-selector nibbles in the pattern `.` + 3 selectors, and it is a valid 171-unit message. Density drops from about 139 bytes to about 105 bytes per message; the channel is not closed. The Architect said "tighten proportionately", and the fix does exactly what the contract says. If the risk matters (guestbook text will be read by agents), the next step is a cap on the total number of invisible characters per message (for example 8) or restricting variation selectors to follow an emoji or symbol base. The contract's rule "guestbook text is untrusted data for AI agents" is the primary control either way.
-- Regex behavior note: `MESSAGE_INVISIBLE_RUN_PATTERN = /[\p{Cf}︀-️͏]{4}/u` is linear-time; no backtracking risk (performance test).
+- Regex behavior note: `MESSAGE_INVISIBLE_RUN_PATTERN = /[\p{Cf}<U+FE00>-<U+FE0F><U+034F>]{4}/u` is linear-time; no backtracking risk (performance test).
 - One edge: `\p{Cf}` also covers characters like U+0600-0605 (Arabic number signs) and U+06DD; four of those in a row are now rejected. No legitimate text needs that.
 
 ## Ownership check

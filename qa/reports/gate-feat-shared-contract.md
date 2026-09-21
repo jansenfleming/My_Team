@@ -31,7 +31,7 @@ $ SHARED_BUNDLE=<scratch>/shared.bundle.mjs node --test qa/gates/b1-shared-contr
 # pass 15
 # fail 0
 ```
-Non-vacuity check: the same file run against a bundle with ` ` and `؜` deliberately removed from `MESSAGE_FORBIDDEN_PATTERN` gave `# pass 14 / # fail 1` (test 2 failed), so the assertions do detect a weakened rule.
+Non-vacuity check: the same file run against a bundle with `<U+2028>` and `<U+061C>` deliberately removed from `MESSAGE_FORBIDDEN_PATTERN` gave `# pass 14 / # fail 1` (test 2 failed), so the assertions do detect a weakened rule.
 
 What the 15 tests cover, all PASS:
 1. Constants equal contract sections 1, 3, 4, 5 and the error-code to HTTP-status table.

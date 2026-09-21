@@ -28,7 +28,7 @@ Accepted, stored verbatim, and returned to every reader including the operator a
 Low. This is the same prompt-injection concern that motivated QA-001 (hidden instructions for a model reading guestbook content), with a smaller and more awkward channel: it needs a purpose-built encoder, and a model must decode it. No script execution; browsers render the message as text. The practical risk grows only if the site later feeds guestbook text to an agent.
 
 ## Suggested fix direction
-Bound the run length instead of banning the characters: for example reject more than 2 consecutive characters from `[​-‍︀-️﻿᠎͏⁪-⁯]` (real emoji sequences need at most a ZWJ plus a variation selector adjacent to a base character). Optionally require a variation selector to follow an emoji or symbol base. Alternatively record `wontfix` and rely on never feeding guestbook text to an agent unsanitized; if so, add that rule to the agent design docs. Keep test 24 as a change detector.
+Bound the run length instead of banning the characters: for example reject more than 2 consecutive characters from `[<U+200B>-<U+200D><U+FE00>-<U+FE0F><U+FEFF><U+180E><U+034F><U+206A>-<U+206F>]` (real emoji sequences need at most a ZWJ plus a variation selector adjacent to a base character). Optionally require a variation selector to follow an emoji or symbol base. Alternatively record `wontfix` and rely on never feeding guestbook text to an agent unsanitized; if so, add that rule to the agent design docs. Keep test 24 as a change detector.
 
 ## Retest log
 | Date | Commit | Result | Evidence and adjacent cases run |

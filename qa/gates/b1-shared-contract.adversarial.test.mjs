@@ -42,8 +42,8 @@ test("message: forbidden characters are rejected (raw input, before trim)", () =
   const bad = {
     "trailing LF": "hi\n", "trailing CR": "hi\r", "leading TAB": "\thi", "inner LF": "a\nb", "CRLF": "a\r\nb", NUL: "a\u0000b", DEL: "a\u007fb",
     "C1 NEL U+0085": "a\u0085b", "C1 U+009F": "a\u009fb", "ESC ANSI": "\u001b[31mred", "VT": "a\u000bb", "FF": "a\u000cb",
-    "U+2028": "a b", "U+2029": "a b", "lone high surrogate": "a\ud800b", "lone low surrogate": "a\udc00b", "trailing lone high": "a\ud83d",
-    "U+200E": "a‎b", "U+200F": "a‏b", "U+061C": "a؜b",
+    "U+2028": "a\u2028b", "U+2029": "a\u2029b", "lone high surrogate": "a\ud800b", "lone low surrogate": "a\udc00b", "trailing lone high": "a\ud83d",
+    "U+200E": "a\u200eb", "U+200F": "a\u200fb", "U+061C": "a\u061cb",
   };
   for (let cp = 0x202a; cp <= 0x202e; cp++) bad[`bidi U+${cp.toString(16)}`] = `a${String.fromCodePoint(cp)}b`;
   for (let cp = 0x2066; cp <= 0x2069; cp++) bad[`bidi U+${cp.toString(16)}`] = `a${String.fromCodePoint(cp)}b`;
@@ -53,7 +53,7 @@ test("message: forbidden characters are rejected (raw input, before trim)", () =
 
 test("message: accepted values and trimming", () => {
   assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  hello grid  " }).message, "hello grid");
-  for (const v of ["hello", "a", "emoji \u{1f600}", "family \u{1f468}‍\u{1f469}‍\u{1f467}", "zwsp​ok", "nbsp inner", "<script>alert(1)</script>", "'; DROP TABLE guestbook_entries;--", "%00 %0d%0a ${jndi:x} {{7*7}}"]) {
+  for (const v of ["hello", "a", "emoji \u{1f600}", "family \u{1f468}\u200d\u{1f469}\u200d\u{1f467}", "zwsp\u200bok", "nbsp\u00a0inner", "<script>alert(1)</script>", "'; DROP TABLE guestbook_entries;--", "%00 %0d%0a ${jndi:x} {{7*7}}"]) {
     assert.equal(msgOk(v), true, `should accept: ${JSON.stringify(v)}`);
   }
   // stored verbatim (only trimmed): payloads unchanged
@@ -63,7 +63,7 @@ test("message: accepted values and trimming", () => {
 test("message: length rule counts UTF-16 units, after trim", () => {
   assert.equal(msgOk(""), false);
   assert.equal(msgOk("   "), false);
-  assert.equal(msgOk(" 　﻿"), false, "unicode-whitespace-only is empty after trim");
+  assert.equal(msgOk("\u00a0\u3000\ufeff"), false, "unicode-whitespace-only is empty after trim");
   assert.equal(msgOk("a".repeat(280)), true);
   assert.equal(msgOk("a".repeat(281)), false);
   assert.equal(msgOk(" " + "a".repeat(280) + " "), true, "280 after trim");
@@ -85,7 +85,7 @@ test("handle: boundaries and charset", () => {
   assert.equal(handleOk("a".repeat(25)), false);
   assert.equal(handleOk("a_b-c9"), true);
   assert.equal(handleOk("__"), true);
-  for (const v of [" ab", "ab ", "ab\n", "\nab", "a b", "a.b", "a<b", "a'b", "a\"b", "a;b", "a\u0000b", "ａｂｃ", "аdmin", "ab​", "\u{1f600}\u{1f600}", "../..", "a%20b", "ab "]) {
+  for (const v of [" ab", "ab ", "ab\n", "\nab", "a b", "a.b", "a<b", "a'b", "a\"b", "a;b", "a\u0000b", "\uff41\uff42\uff43", "\u0430dmin", "ab\u200b", "\u{1f600}\u{1f600}", "../..", "a%20b", "ab\u2028"]) {
     assert.equal(handleOk(v), false, `should reject handle ${JSON.stringify(v)}`);
   }
 });
@@ -94,7 +94,7 @@ test("limit / before / id: strict digit strings, no coercion", () => {
   for (const v of ["1", "20", "50"]) assert.equal(limitOk(v), true, `limit ${v}`);
   assert.equal(parsed(S.GuestbookQuerySchema, {}).limit, 20, "default limit");
   assert.equal(parsed(S.GuestbookQuerySchema, {}).before, undefined);
-  const badNums = ["", " ", "0", "-1", "+1", "1.5", "1.0", "1e1", "1e3", "0x10", "0b1", "0o7", " 1", "1 ", "1\n", "NaN", "Infinity", "-Infinity", "1_0", "１", "١", "١٢", "null", "undefined", "true", "1,2", "1;2", "1/**/", "1 OR 1=1", "1;DROP TABLE x"];
+  const badNums = ["", " ", "0", "-1", "+1", "1.5", "1.0", "1e1", "1e3", "0x10", "0b1", "0o7", " 1", "1 ", "1\n", "NaN", "Infinity", "-Infinity", "1_0", "\uff11", "\u0661", "\u0661\u0662", "null", "undefined", "true", "1,2", "1;2", "1/**/", "1 OR 1=1", "1;DROP TABLE x"];
   for (const v of badNums) {
     assert.equal(limitOk(v), false, `limit ${JSON.stringify(v)}`);
     assert.equal(beforeOk(v), false, `before ${JSON.stringify(v)}`);
@@ -133,7 +133,7 @@ test("validation details never echo the input and are capped", () => {
   const marker = "ECHOMARKER_9f3a";
   const hostile = [
     { handle: `${marker}<script>`, message: `${marker}\n${"x".repeat(500)}` },
-    { handle: marker.repeat(20), message: `${marker}‮` },
+    { handle: marker.repeat(20), message: `${marker}\u202e` },
     { handle: 123, message: { a: marker } },
     { handle: [marker], message: [marker] },
   ];
@@ -201,7 +201,7 @@ test("response schemas: shapes from contract section 6", () => {
 
 test("performance: hostile long inputs parse in bounded time (no catastrophic backtracking)", () => {
   const t0 = performance.now();
-  for (const v of ["a".repeat(1_000_000), "‮".repeat(100_000), "a".repeat(999_999) + "\n", "\ud800".repeat(100_000), " ".repeat(1_000_000) + "x"]) {
+  for (const v of ["a".repeat(1_000_000), "\u202e".repeat(100_000), "a".repeat(999_999) + "\n", "\ud800".repeat(100_000), " ".repeat(1_000_000) + "x"]) {
     S.CreateGuestbookRequestSchema.safeParse({ handle: v, message: v });
     S.LoginRequestSchema.safeParse({ username: v, password: v });
     S.GuestbookQuerySchema.safeParse({ limit: v, before: v });
@@ -221,13 +221,13 @@ const cp = (n) => String.fromCodePoint(n);
 
 test("QA-001 retest: the original repro inputs are now rejected", () => {
   for (const [name, v] of Object.entries({
-    "lone U+200B": "​",
-    "U+2060 U+2062 U+2063 only": "⁠⁢⁣",
+    "lone U+200B": "\u200b",
+    "U+2060 U+2062 U+2063 only": "\u2060\u2062\u2063",
     "tag characters between letters": `a${cp(0xe0041)}${cp(0xe0042)}b`,
-    "soft hyphen": "a­b",
-    "interlinear annotation": "a￹b",
+    "soft hyphen": "a\u00adb",
+    "interlinear annotation": "a\ufff9b",
   })) assert.equal(msgOk(v), false, `should reject: ${name}`);
-  assert.equal(msgOk("a️b"), true, "variation selector between visible chars is allowed by the contract");
+  assert.equal(msgOk("a\ufe0fb"), true, "variation selector between visible chars is allowed by the contract");
 });
 
 test("QA-001 retest: every code point in each newly rejected range is rejected", () => {
@@ -255,13 +255,13 @@ test("QA-001 retest: range edges just outside the rejected ranges are not over-b
 
 test("QA-001 retest: messages with no visible character are rejected", () => {
   const invisibleOnly = {
-    "ZWSP": "​", "ZWNJ": "‌", "ZWJ": "‍", "ZWSP x50": "​".repeat(50), "ZWJ ZWNJ ZWSP": "‍‌​",
-    "lone FE0F": "️", "FE00-FE0F run": Array.from({ length: 16 }, (_, i) => cp(0xfe00 + i)).join(""),
-    "combining acute only": "́", "combining run": "́̂̃", "keycap combiner only": "⃣",
-    "FEFF inner-only": "​﻿​", "NBSP + ZWSP": " ​ ", "ideographic space + ZWSP": "　​",
-    "line sep excluded earlier": " ",
-    "U+180E Mongolian vowel separator": "᠎", "U+034F CGJ": "͏", "musical formatting": cp(0x1d173) + cp(0x1d17a),
-    "space then ZWNJ then space": " ‌ ",
+    "ZWSP": "\u200b", "ZWNJ": "\u200c", "ZWJ": "\u200d", "ZWSP x50": "\u200b".repeat(50), "ZWJ ZWNJ ZWSP": "\u200d\u200c\u200b",
+    "lone FE0F": "\ufe0f", "FE00-FE0F run": Array.from({ length: 16 }, (_, i) => cp(0xfe00 + i)).join(""),
+    "combining acute only": "\u0301", "combining run": "\u0301\u0302\u0303", "keycap combiner only": "\u20e3",
+    "FEFF inner-only": "\u200b\ufeff\u200b", "NBSP + ZWSP": "\u00a0\u200b\u00a0", "ideographic space + ZWSP": "\u3000\u200b",
+    "line sep excluded earlier": "\u2028",
+    "U+180E Mongolian vowel separator": "\u180e", "U+034F CGJ": "\u034f", "musical formatting": cp(0x1d173) + cp(0x1d17a),
+    "space then ZWNJ then space": " \u200c ",
   };
   for (const [name, v] of Object.entries(invisibleOnly)) assert.equal(msgOk(v), false, `should reject: ${name}`);
 });
@@ -271,29 +271,29 @@ test("QA-001 retest: legitimate text and emoji sequences still pass", () => {
     "plain": "hello grid",
     "single visible char": "x",
     "single emoji": cp(0x1f600),
-    "ZWJ family": "\u{1f468}‍\u{1f469}‍\u{1f467}‍\u{1f466}",
-    "couple with heart (has FE0F)": "\u{1f469}‍❤️‍\u{1f468}",
-    "rainbow flag": "\u{1f3f3}️‍\u{1f308}",
+    "ZWJ family": "\u{1f468}\u200d\u{1f469}\u200d\u{1f467}\u200d\u{1f466}",
+    "couple with heart (has FE0F)": "\u{1f469}\u200d\u2764\ufe0f\u200d\u{1f468}",
+    "rainbow flag": "\u{1f3f3}\ufe0f\u200d\u{1f308}",
     "flag US (regional indicators)": "\u{1f1fa}\u{1f1f8}",
-    "keycap 1": "1️⃣", "keycap #": "#️⃣",
+    "keycap 1": "1\ufe0f\u20e3", "keycap #": "#\ufe0f\u20e3",
     "skin tone": "\u{1f44d}\u{1f3fd}",
-    "text presentation heart with FE0F": "❤️", "smiling face FE0F": "☺️",
-    "FE0E text selector": "❤︎",
-    "man technologist": "\u{1f468}‍\u{1f4bb}",
-    "combining accent e+U+0301": "café",
-    "Devanagari with marks": "नमस्ते",
-    "Arabic with diacritics": "مَرْحَبًا",
-    "Thai": "สวัสดี",
-    "Korean": "안녕",
-    "CJK": "你好",
-    "ZWNJ in Persian word": "می‌خواهم",
-    "ZWSP between words": "a​b",
-    "leading ZWSP then visible": "​hi",
-    "text with NBSP inside": "a b",
+    "text presentation heart with FE0F": "\u2764\ufe0f", "smiling face FE0F": "\u263a\ufe0f",
+    "FE0E text selector": "\u2764\ufe0e",
+    "man technologist": "\u{1f468}\u200d\u{1f4bb}",
+    "combining accent e+U+0301": "cafe\u0301",
+    "Devanagari with marks": "\u0928\u092e\u0938\u094d\u0924\u0947",
+    "Arabic with diacritics": "\u0645\u064e\u0631\u0652\u062d\u064e\u0628\u064b\u0627",
+    "Thai": "\u0e2a\u0e27\u0e31\u0e2a\u0e14\u0e35",
+    "Korean": "\uc548\ub155",
+    "CJK": "\u4f60\u597d",
+    "ZWNJ in Persian word": "\u0645\u06cc\u200c\u062e\u0648\u0627\u0647\u0645",
+    "ZWSP between words": "a\u200bb",
+    "leading ZWSP then visible": "\u200bhi",
+    "text with NBSP inside": "a\u00a0b",
     "emoji only, padded": "  \u{1f600}  ",
   };
   for (const [name, v] of Object.entries(good)) assert.equal(msgOk(v), true, `should accept: ${name}`);
-  assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  \u{1f468}‍\u{1f469}‍\u{1f467}  " }).message, "\u{1f468}‍\u{1f469}‍\u{1f467}", "trim keeps the ZWJ sequence intact");
+  assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  \u{1f468}\u200d\u{1f469}\u200d\u{1f467}  " }).message, "\u{1f468}\u200d\u{1f469}\u200d\u{1f467}", "trim keeps the ZWJ sequence intact");
   assert.equal(msgOk("\u{1f600}".repeat(140)), true);
   assert.equal(msgOk("\u{1f600}".repeat(141)), false, "length rule unchanged: 141 emoji = 282 units");
 });
@@ -305,11 +305,11 @@ test("QA-001 retest: England, Scotland and Wales flag emoji use tag characters a
 
 test("QA-001 retest: error messages are fixed text and do not echo input; abort ordering", () => {
   const marker = "ECHOMARKER_77";
-  const r = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: `${marker}­` });
+  const r = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: `${marker}\u00ad` });
   assert.equal(r.success, false);
   const d = S.toValidationDetails(r.error);
   assert.ok(!JSON.stringify(d).includes(marker));
-  const inv = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: "​​" });
+  const inv = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: "\u200b\u200b" });
   assert.equal(inv.success, false);
   const dd = S.toValidationDetails(inv.error);
   assert.equal(dd.length, 1, JSON.stringify(dd));
@@ -321,13 +321,13 @@ test("QA-001 retest: error messages are fixed text and do not echo input; abort 
 });
 
 test("QA-001 retest: response entry schema also enforces the new rule (server cannot return a hidden-only message)", () => {
-  const entry = { id: 1, handle: "ab", message: "​", createdAt: "2026-09-21T17:00:00.000Z" };
+  const entry = { id: 1, handle: "ab", message: "\u200b", createdAt: "2026-09-21T17:00:00.000Z" };
   assert.equal(ok(S.GuestbookEntrySchema, entry), false);
 });
 
 test("QA-001 retest: performance with hostile invisible-heavy input", () => {
   const t0 = performance.now();
-  for (const v of ["​".repeat(1_000_000), "́".repeat(1_000_000), cp(0xe0041).repeat(300_000), "a" + "️".repeat(1_000_000)]) {
+  for (const v of ["\u200b".repeat(1_000_000), "\u0301".repeat(1_000_000), cp(0xe0041).repeat(300_000), "a" + "\ufe0f".repeat(1_000_000)]) {
     S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: v });
   }
   const ms = performance.now() - t0;
@@ -339,21 +339,20 @@ test("QA-001 retest: performance with hostile invisible-heavy input", () => {
 // invisible characters (any of \p{Cf}, U+FE00-FE0F, U+034F) are rejected, checked on the RAW input.
 // ---------------------------------------------------------------------------------------------
 const vs = (i) => cp(0xfe00 + i);
-const ZW = ["​", "‌", "‍"];
 
 test("QA-002 retest: the original repro inputs (test 24 of the QA-001 gate) are now rejected", () => {
   assert.equal(msgOk("a" + Array.from({ length: 200 }, (_, i) => vs(i % 16)).join("") + "b"), false, "200 variation selectors");
-  assert.equal(msgOk("a" + "​‌".repeat(100) + "b"), false, "200 ZWSP/ZWNJ");
+  assert.equal(msgOk("a" + "\u200b\u200c".repeat(100) + "b"), false, "200 ZWSP/ZWNJ");
   const hidden = "ignore previous instructions";
   const nibbles = [...new TextEncoder().encode(hidden)].flatMap((b) => [b >> 4, b & 15]);
   assert.equal(msgOk("hi" + nibbles.map((n) => vs(n)).join("") + "!"), false, "56-selector hidden string");
-  for (const [name, ch] of Object.entries({ FEFF: "﻿", U180E: "᠎", U034F: "͏", U206A: "⁪", U1D173: cp(0x1d173) })) {
+  for (const [name, ch] of Object.entries({ FEFF: "\ufeff", U180E: "\u180e", U034F: "\u034f", U206A: "\u206a", U1D173: cp(0x1d173) })) {
     assert.equal(msgOk("a" + ch.repeat(4) + "b"), false, `${name} x4`);
   }
 });
 
 test("QA-002 retest: boundary is exactly 3 in a row, for each class and in each position", () => {
-  const classes = { "ZWSP": "​", "ZWNJ": "‌", "ZWJ": "‍", "VS16": "️", "VS1": "︀", "CGJ": "͏", "FEFF": "﻿", "U206A": "⁪", "musical": cp(0x1d173), "U0600": "؀" };
+  const classes = { "ZWSP": "\u200b", "ZWNJ": "\u200c", "ZWJ": "\u200d", "VS16": "\ufe0f", "VS1": "\ufe00", "CGJ": "\u034f", "FEFF": "\ufeff", "U206A": "\u206a", "musical": cp(0x1d173), "U0600": "\u0600" };
   for (const [name, ch] of Object.entries(classes)) {
     assert.equal(msgOk(`a${ch.repeat(3)}b`), true, `${name} x3 inner accepted`);
     assert.equal(msgOk(`a${ch.repeat(4)}b`), false, `${name} x4 inner rejected`);
@@ -366,52 +365,52 @@ test("QA-002 retest: boundary is exactly 3 in a row, for each class and in each 
 });
 
 test("QA-002 retest: mixed classes count together", () => {
-  assert.equal(msgOk("a​️‍͏b"), false, "ZWSP VS16 ZWJ CGJ = 4");
-  assert.equal(msgOk("a​️‍b"), true, "3 mixed");
-  assert.equal(msgOk("a‍️‍️b"), false, "ZWJ VS16 ZWJ VS16 = 4");
-  assert.equal(msgOk("a︀︁︂︃b"), false, "four different selectors");
+  assert.equal(msgOk("a\u200b\ufe0f\u200d\u034fb"), false, "ZWSP VS16 ZWJ CGJ = 4");
+  assert.equal(msgOk("a\u200b\ufe0f\u200db"), true, "3 mixed");
+  assert.equal(msgOk("a\u200d\ufe0f\u200d\ufe0fb"), false, "ZWJ VS16 ZWJ VS16 = 4");
+  assert.equal(msgOk("a\ufe00\ufe01\ufe02\ufe03b"), false, "four different selectors");
 });
 
 test("QA-002 retest: check runs on the RAW input, before trim", () => {
-  assert.equal(msgOk("   ​​​​hi"), false, "4 ZW after padding");
-  assert.equal(msgOk("hi​​​​   "), false, "4 ZW before trailing padding");
-  assert.equal(msgOk("hi​​​   "), true, "3 ZW, then padding");
+  assert.equal(msgOk("   \u200b\u200b\u200b\u200bhi"), false, "4 ZW after padding");
+  assert.equal(msgOk("hi\u200b\u200b\u200b\u200b   "), false, "4 ZW before trailing padding");
+  assert.equal(msgOk("hi\u200b\u200b\u200b   "), true, "3 ZW, then padding");
 });
 
 test("QA-002 retest: a visible character or space breaks a run (documented behavior)", () => {
-  assert.equal(msgOk("a​​​ b​​​"), true, "space breaks the run");
-  assert.equal(msgOk("a​​​x​​​b"), true, "visible char breaks the run");
+  assert.equal(msgOk("a\u200b\u200b\u200b b\u200b\u200b\u200b"), true, "space breaks the run");
+  assert.equal(msgOk("a\u200b\u200b\u200bx\u200b\u200b\u200bb"), true, "visible char breaks the run");
 });
 
 test("QA-002 retest: emoji and script sequences that must still pass", () => {
   const good = {
-    "ZWJ family": "\u{1f468}‍\u{1f469}‍\u{1f467}‍\u{1f466}",
-    "family with skin tones": "\u{1f469}\u{1f3fd}‍\u{1f469}\u{1f3fd}‍\u{1f467}\u{1f3fd}‍\u{1f466}\u{1f3fd}",
-    "heart on fire (VS16 + ZWJ)": "❤️‍\u{1f525}",
-    "couple with heart": "\u{1f469}‍❤️‍\u{1f468}",
-    "kiss (two VS16 and ZWJs)": "\u{1f469}‍❤️‍\u{1f48b}‍\u{1f468}",
-    "eye in speech bubble": "\u{1f441}️‍\u{1f5e8}️",
-    "transgender flag": "\u{1f3f3}️‍⚧️",
-    "rainbow flag": "\u{1f3f3}️‍\u{1f308}",
-    "pirate flag": "\u{1f3f4}‍☠️",
+    "ZWJ family": "\u{1f468}\u200d\u{1f469}\u200d\u{1f467}\u200d\u{1f466}",
+    "family with skin tones": "\u{1f469}\u{1f3fd}\u200d\u{1f469}\u{1f3fd}\u200d\u{1f467}\u{1f3fd}\u200d\u{1f466}\u{1f3fd}",
+    "heart on fire (VS16 + ZWJ)": "\u2764\ufe0f\u200d\u{1f525}",
+    "couple with heart": "\u{1f469}\u200d\u2764\ufe0f\u200d\u{1f468}",
+    "kiss (two VS16 and ZWJs)": "\u{1f469}\u200d\u2764\ufe0f\u200d\u{1f48b}\u200d\u{1f468}",
+    "eye in speech bubble": "\u{1f441}\ufe0f\u200d\u{1f5e8}\ufe0f",
+    "transgender flag": "\u{1f3f3}\ufe0f\u200d\u26a7\ufe0f",
+    "rainbow flag": "\u{1f3f3}\ufe0f\u200d\u{1f308}",
+    "pirate flag": "\u{1f3f4}\u200d\u2620\ufe0f",
     "US flag": "\u{1f1fa}\u{1f1f8}", "JP flag": "\u{1f1ef}\u{1f1f5}",
-    "keycap 1": "1️⃣", "keycap #": "#️⃣", "keycap *": "*️⃣",
+    "keycap 1": "1\ufe0f\u20e3", "keycap #": "#\ufe0f\u20e3", "keycap *": "*\ufe0f\u20e3",
     "skin tone thumbs up": "\u{1f44d}\u{1f3fd}",
-    "man technologist skin tone": "\u{1f468}\u{1f3fd}‍\u{1f4bb}",
-    "woman with white cane": "\u{1f469}‍\u{1f9af}", "person in steamy room ZWJ": "\u{1f9d6}‍♀️",
-    "text-style heart": "❤︎", "snowman VS16": "☃️",
-    "several emoji in a row": "❤️❤️❤️❤️❤️",
-    "family x5": "\u{1f468}‍\u{1f469}‍\u{1f467}".repeat(5),
-    "Persian ZWNJ words": "می‌خواهم نمی‌دانم",
-    "Malayalam chillu with ZWJ": "ന്‍",
-    "Devanagari conjunct with ZWJ": "क्‍ष",
-    "Sinhala with ZWJ": "ශ්‍රී",
-    "combining accents and CGJ": "á͏b̈",
-    "Arabic with number sign": "؀ 123",
+    "man technologist skin tone": "\u{1f468}\u{1f3fd}\u200d\u{1f4bb}",
+    "woman with white cane": "\u{1f469}\u200d\u{1f9af}", "person in steamy room ZWJ": "\u{1f9d6}\u200d\u2640\ufe0f",
+    "text-style heart": "\u2764\ufe0e", "snowman VS16": "\u2603\ufe0f",
+    "several emoji in a row": "\u2764\ufe0f\u2764\ufe0f\u2764\ufe0f\u2764\ufe0f\u2764\ufe0f",
+    "family x5": "\u{1f468}\u200d\u{1f469}\u200d\u{1f467}".repeat(5),
+    "Persian ZWNJ words": "\u0645\u06cc\u200c\u062e\u0648\u0627\u0647\u0645 \u0646\u0645\u06cc\u200c\u062f\u0627\u0646\u0645",
+    "Malayalam chillu with ZWJ": "\u0d28\u0d4d\u200d",
+    "Devanagari conjunct with ZWJ": "\u0915\u094d\u200d\u0937",
+    "Sinhala with ZWJ": "\u0dc1\u0dca\u200d\u0dbb\u0dd3",
+    "combining accents and CGJ": "a\u0301\u034fb\u0308",
+    "Arabic with number sign": "\u0600 123",
     "plain": "hello grid",
   };
   for (const [name, v] of Object.entries(good)) assert.equal(msgOk(v), true, `should accept: ${name}`);
-  assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  ❤️‍\u{1f525}  " }).message, "❤️‍\u{1f525}");
+  assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  \u2764\ufe0f\u200d\u{1f525}  " }).message, "\u2764\ufe0f\u200d\u{1f525}");
 });
 
 test("QA-002 retest: England, Scotland and Wales flags stay rejected (documented)", () => {
@@ -421,18 +420,18 @@ test("QA-002 retest: England, Scotland and Wales flags stay rejected (documented
 
 test("QA-002 retest: fixed error text, one detail, no echo; response schema enforces it too", () => {
   const marker = "ECHOMARKER_QA2";
-  const r = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: marker + "​".repeat(9) });
+  const r = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: marker + "\u200b".repeat(9) });
   assert.equal(r.success, false);
   const d = S.toValidationDetails(r.error);
   assert.equal(d.length, 1, JSON.stringify(d));
   assert.equal(d[0].path, "message");
   assert.ok(!JSON.stringify(d).includes(marker));
-  assert.equal(ok(S.GuestbookEntrySchema, { id: 1, handle: "ab", message: "a" + "​".repeat(4) + "b", createdAt: "2026-09-21T17:00:00.000Z" }), false);
+  assert.equal(ok(S.GuestbookEntrySchema, { id: 1, handle: "ab", message: "a" + "\u200b".repeat(4) + "b", createdAt: "2026-09-21T17:00:00.000Z" }), false);
 });
 
 test("QA-002 retest: performance", () => {
   const t0 = performance.now();
-  for (const v of ["​".repeat(1_000_000), "a" + "️".repeat(1_000_000), ("a​​​").repeat(70_000), "​​​x".repeat(100_000)]) {
+  for (const v of ["\u200b".repeat(1_000_000), "a" + "\ufe0f".repeat(1_000_000), ("a\u200b\u200b\u200b").repeat(70_000), "\u200b\u200b\u200bx".repeat(100_000)]) {
     S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: v });
   }
   const ms = performance.now() - t0;
