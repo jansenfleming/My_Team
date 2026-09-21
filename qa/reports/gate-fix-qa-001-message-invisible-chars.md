@@ -47,7 +47,7 @@ not ok 15, 16, 18, 20, 21, 22
 So the new assertions detect the old behavior and pass only with the fix.
 
 What is covered (all PASS on `8d11767`):
-- Original repro inputs rejected: lone U+200B, U+2060/2062/2063, tag characters inside text, U+00AD, U+FFF9. `"a️b"` still accepted, as the backend engineer and the contract say.
+- Original repro inputs rejected: lone U+200B, U+2060/2062/2063, tag characters inside text, U+00AD, U+FFF9. `"a<U+FE0F>b"` still accepted, as the backend engineer and the contract say.
 - Every code point in U+E0000-E007F, U+E0100-E01EF, U+2060-2064, U+FFF9-FFFB and U+00AD, in leading, inner and trailing position, is rejected.
 - Range edges are not over-blocked: U+E0080, U+E00FF, U+E01F0, U+2065, U+FFF8, U+FFFC, U+2059, U+00AC, U+00AE accepted.
 - No-visible-character messages rejected: ZWSP/ZWNJ/ZWJ (alone and x50), lone U+FE0F, FE00-FE0F run, combining marks only, keycap combiner alone, NBSP+ZWSP, U+3000+ZWSP, U+180E, U+034F, musical formatting characters, spaces around ZWNJ.
