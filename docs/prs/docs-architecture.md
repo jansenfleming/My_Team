@@ -8,7 +8,7 @@ Docs only, no code:
 - `docs/architecture/roadmap.md`: MVP in/out, exit criteria, later phases.
 - `docs/architecture/api-contract.md`: API contract v1.0 (8 endpoints, error format, auth rules, extension process).
 - `docs/architecture/ownership-map.md`: final file ownership and working agreements (worktrees, PR flow, QA gates).
-- `docs/architecture/board.md`: Phase 1 task board (36 tasks incl. standing gate task).
+- `docs/architecture/board.md`: Phase 1 task board (30 tasks plus a standing QA gate duty).
 - `docs/architecture/kickoff/*.md`: starter briefs for the four teammates.
 
 ## How to review
