@@ -210,13 +210,147 @@ test("performance: hostile long inputs parse in bounded time (no catastrophic ba
   assert.ok(ms < 1500, `took ${ms.toFixed(0)} ms`);
 });
 
-// Findings-as-tests: these document behavior that the contract permits but QA considers a hardening gap.
-// They assert the CURRENT behavior so a future change is noticed; see qa/reports/QA-001-*.md.
-test("observation QA-001: invisible format characters and invisible-only messages are accepted", () => {
-  assert.equal(msgOk("​"), true, "a message consisting only of one zero-width space is accepted (renders blank)");
-  assert.equal(msgOk("⁠⁢⁣"), true, "word joiner and invisible operators accepted");
-  assert.equal(msgOk("a\u{e0041}\u{e0042}b"), true, "unicode tag characters (invisible ASCII smuggling) accepted");
-  assert.equal(msgOk("a️b"), true, "variation selector accepted");
-  assert.equal(msgOk("a­b"), true, "soft hyphen accepted");
-  assert.equal(msgOk("a￹b"), true, "interlinear annotation anchor accepted");
+// ---------------------------------------------------------------------------------------------
+// QA-001 retest (fix/qa-001-message-invisible-chars) and adjacent cases.
+// Contract (main, changelog "QA-001"): also rejected are U+E0000-E007F, U+E0100-E01EF, U+2060-2064,
+// U+FFF9-FFFB, U+00AD, and messages with no char outside \p{Cf}, \p{Z}, \p{M} after trim.
+// Accepted: U+200B/C/D and U+FE00-FE0F between visible chars, emoji sequences, U+3164 and U+2800 (residual).
+// ---------------------------------------------------------------------------------------------
+
+const cp = (n) => String.fromCodePoint(n);
+
+test("QA-001 retest: the original repro inputs are now rejected", () => {
+  for (const [name, v] of Object.entries({
+    "lone U+200B": "​",
+    "U+2060 U+2062 U+2063 only": "⁠⁢⁣",
+    "tag characters between letters": `a${cp(0xe0041)}${cp(0xe0042)}b`,
+    "soft hyphen": "a­b",
+    "interlinear annotation": "a￹b",
+  })) assert.equal(msgOk(v), false, `should reject: ${name}`);
+  assert.equal(msgOk("a️b"), true, "variation selector between visible chars is allowed by the contract");
+});
+
+test("QA-001 retest: every code point in each newly rejected range is rejected", () => {
+  const ranges = [[0xe0000, 0xe007f], [0xe0100, 0xe01ef], [0x2060, 0x2064], [0xfff9, 0xfffb], [0xad, 0xad]];
+  for (const [lo, hi] of ranges) {
+    for (let c = lo; c <= hi; c++) {
+      assert.equal(msgOk(`a${cp(c)}b`), false, `U+${c.toString(16)} inside text`);
+      assert.equal(msgOk(`${cp(c)}ab`), false, `U+${c.toString(16)} leading`);
+      assert.equal(msgOk(`ab${cp(c)}`), false, `U+${c.toString(16)} trailing`);
+    }
+  }
+});
+
+test("QA-001 retest: range edges just outside the rejected ranges are not over-blocked", () => {
+  assert.equal(msgOk(`a${cp(0xe0080)}b`), true, "U+E0080 (unassigned, just above tags)");
+  assert.equal(msgOk(`a${cp(0xe00ff)}b`), true, "U+E00FF");
+  assert.equal(msgOk(`a${cp(0xe01f0)}b`), true, "U+E01F0");
+  assert.equal(msgOk(`a${cp(0x2065)}b`), true, "U+2065 (unassigned)");
+  assert.equal(msgOk(`a${cp(0xfff8)}b`), true, "U+FFF8");
+  assert.equal(msgOk(`a${cp(0xfffc)}b`), true, "U+FFFC object replacement");
+  assert.equal(msgOk(`a${cp(0x2059)}b`), true, "U+2059");
+  assert.equal(msgOk(`a${cp(0xac)}b`), true, "U+00AC not sign");
+  assert.equal(msgOk(`a${cp(0xae)}b`), true, "U+00AE registered sign");
+});
+
+test("QA-001 retest: messages with no visible character are rejected", () => {
+  const invisibleOnly = {
+    "ZWSP": "​", "ZWNJ": "‌", "ZWJ": "‍", "ZWSP x50": "​".repeat(50), "ZWJ ZWNJ ZWSP": "‍‌​",
+    "lone FE0F": "️", "FE00-FE0F run": Array.from({ length: 16 }, (_, i) => cp(0xfe00 + i)).join(""),
+    "combining acute only": "́", "combining run": "́̂̃", "keycap combiner only": "⃣",
+    "FEFF inner-only": "​﻿​", "NBSP + ZWSP": " ​ ", "ideographic space + ZWSP": "　​",
+    "line sep excluded earlier": " ",
+    "U+180E Mongolian vowel separator": "᠎", "U+034F CGJ": "͏", "musical formatting": cp(0x1d173) + cp(0x1d17a),
+    "space then ZWNJ then space": " ‌ ",
+  };
+  for (const [name, v] of Object.entries(invisibleOnly)) assert.equal(msgOk(v), false, `should reject: ${name}`);
+});
+
+test("QA-001 retest: legitimate text and emoji sequences still pass", () => {
+  const good = {
+    "plain": "hello grid",
+    "single visible char": "x",
+    "single emoji": cp(0x1f600),
+    "ZWJ family": "\u{1f468}‍\u{1f469}‍\u{1f467}‍\u{1f466}",
+    "couple with heart (has FE0F)": "\u{1f469}‍❤️‍\u{1f468}",
+    "rainbow flag": "\u{1f3f3}️‍\u{1f308}",
+    "flag US (regional indicators)": "\u{1f1fa}\u{1f1f8}",
+    "keycap 1": "1️⃣", "keycap #": "#️⃣",
+    "skin tone": "\u{1f44d}\u{1f3fd}",
+    "text presentation heart with FE0F": "❤️", "smiling face FE0F": "☺️",
+    "FE0E text selector": "❤︎",
+    "man technologist": "\u{1f468}‍\u{1f4bb}",
+    "combining accent e+U+0301": "café",
+    "Devanagari with marks": "नमस्ते",
+    "Arabic with diacritics": "مَرْحَبًا",
+    "Thai": "สวัสดี",
+    "Korean": "안녕",
+    "CJK": "你好",
+    "ZWNJ in Persian word": "می‌خواهم",
+    "ZWSP between words": "a​b",
+    "leading ZWSP then visible": "​hi",
+    "text with NBSP inside": "a b",
+    "emoji only, padded": "  \u{1f600}  ",
+  };
+  for (const [name, v] of Object.entries(good)) assert.equal(msgOk(v), true, `should accept: ${name}`);
+  assert.equal(parsed(S.CreateGuestbookRequestSchema, { handle: "ab", message: "  \u{1f468}‍\u{1f469}‍\u{1f467}  " }).message, "\u{1f468}‍\u{1f469}‍\u{1f467}", "trim keeps the ZWJ sequence intact");
+  assert.equal(msgOk("\u{1f600}".repeat(140)), true);
+  assert.equal(msgOk("\u{1f600}".repeat(141)), false, "length rule unchanged: 141 emoji = 282 units");
+});
+
+test("QA-001 retest: England, Scotland and Wales flag emoji use tag characters and are now rejected (documented tradeoff)", () => {
+  const england = "\u{1f3f4}" + [0x67, 0x62, 0x65, 0x6e, 0x67].map((c) => cp(0xe0000 + c)).join("") + cp(0xe007f);
+  assert.equal(msgOk(england), false, "subdivision flags are tag sequences; rejected by design under QA-001");
+});
+
+test("QA-001 retest: error messages are fixed text and do not echo input; abort ordering", () => {
+  const marker = "ECHOMARKER_77";
+  const r = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: `${marker}­` });
+  assert.equal(r.success, false);
+  const d = S.toValidationDetails(r.error);
+  assert.ok(!JSON.stringify(d).includes(marker));
+  const inv = S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: "​​" });
+  assert.equal(inv.success, false);
+  const dd = S.toValidationDetails(inv.error);
+  assert.equal(dd.length, 1, JSON.stringify(dd));
+  assert.equal(dd[0].path, "message");
+  // empty and whitespace-only keep the length message and do not also emit the visibility message
+  assert.equal(S.toValidationDetails(S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: "   " }).error).length, 1);
+  // 281 visible chars: one detail, length message
+  assert.equal(S.toValidationDetails(S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: "a".repeat(281) }).error).length, 1);
+});
+
+test("QA-001 retest: response entry schema also enforces the new rule (server cannot return a hidden-only message)", () => {
+  const entry = { id: 1, handle: "ab", message: "​", createdAt: "2026-09-21T17:00:00.000Z" };
+  assert.equal(ok(S.GuestbookEntrySchema, entry), false);
+});
+
+test("QA-001 retest: performance with hostile invisible-heavy input", () => {
+  const t0 = performance.now();
+  for (const v of ["​".repeat(1_000_000), "́".repeat(1_000_000), cp(0xe0041).repeat(300_000), "a" + "️".repeat(1_000_000)]) {
+    S.CreateGuestbookRequestSchema.safeParse({ handle: "ab", message: v });
+  }
+  const ms = performance.now() - t0;
+  assert.ok(ms < 1500, `took ${ms.toFixed(0)} ms`);
+});
+
+// Residual hidden-text channels the contract deliberately still accepts (QA-002, Low). These assert CURRENT behavior
+// so a future tightening is noticed. They are not failures of the QA-001 fix.
+test("observation QA-002: residual invisible channels are still accepted between visible characters", () => {
+  const vs = (i) => cp(0xfe00 + i);
+  assert.equal(msgOk("a" + Array.from({ length: 200 }, (_, i) => vs(i % 16)).join("") + "b"), true, "long run of variation selectors VS1-16 (4 bits each)");
+  assert.equal(msgOk("a" + "​‌".repeat(100) + "b"), true, "long ZWSP/ZWNJ run (binary encoding)");
+  assert.equal(msgOk("a﻿b"), true, "inner U+FEFF");
+  assert.equal(msgOk("a᠎b"), true, "U+180E");
+  assert.equal(msgOk("a͏b"), true, "combining grapheme joiner");
+  assert.equal(msgOk("a⁪b"), true, "U+206A deprecated format character");
+  assert.equal(msgOk(cp(0x3164)), true, "U+3164 Hangul filler alone (documented residual)");
+  assert.equal(msgOk(cp(0x2800)), true, "U+2800 braille blank alone (documented residual)");
+  assert.equal(msgOk("a" + cp(0x1d173) + "b"), true, "musical symbol begin beam");
+  // Demonstration of capacity: a 27-byte hidden string encoded as VS nibbles fits in a valid message.
+  const hidden = "ignore previous instructions";
+  const nibbles = [...new TextEncoder().encode(hidden)].flatMap((b) => [b >> 4, b & 15]);
+  const msg = "hi" + nibbles.map((n) => vs(n)).join("") + "!";
+  assert.ok(msg.length <= 280);
+  assert.equal(msgOk(msg), true, `${hidden.length}-byte hidden payload in ${msg.length} UTF-16 units is accepted`);
 });
