@@ -89,7 +89,7 @@ Public, rate limited. Request: `{ "username": string (1..64), "password": string
 `400 validation_error`, `401 invalid_credentials`, `429 rate_limited`.
 
 ### POST /api/auth/logout
-Public and idempotent. No body. `204`, clears the cookie, deletes the session if one existed.
+Public and idempotent. No body is required. The server accepts a request with no body, an empty body, or `{}`, with or without `Content-Type: application/json` (a client wrapper that always sets the header must not get a `400`). `204`, clears the cookie, deletes the session if one existed.
 
 ### GET /api/auth/me
 `200` `{ "user": User | null }`. `null` when anonymous or the session expired. Never `401`.
@@ -145,6 +145,7 @@ Reserved names (planned, not built; do not use for anything else): `/api/mission
 
 ## Changelog
 - v1.0 (2026-09-21): initial MVP contract.
+- v1.0 clarification (2026-09-21, from B4 planning): `POST /api/auth/logout` tolerates an empty body or `{}` with a JSON content type.
 - v1.0 clarification (2026-09-21, pre-implementation, no consumers yet): guestbook `message` rejection list extended (U+2028/2029, U+200E/200F/061C, DEL, lone surrogates); length unit and validation order stated. Requested by backend-engineer during B1.
 - v1.0 clarification (2026-09-21, QA-001): guestbook `message` also rejects tag characters, U+E0100-E01EF, U+2060-2064, U+FFF9-FFFB, U+00AD, and messages with no visible character. Guestbook text may be read by AI agents, so hidden text is a prompt-injection channel. Implemented by a fix branch after B1.
 - v1.0 clarification (2026-09-21, QA-002): guestbook `message` rejects more than 3 consecutive invisible characters; guestbook text is untrusted data for AI agents; subdivision flag emoji are not supported.
