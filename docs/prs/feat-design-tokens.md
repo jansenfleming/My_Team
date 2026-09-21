@@ -9,7 +9,7 @@ Author: creative-director. Branch: `feat/design-tokens`. Base: `main` (includes 
 - `docs/design/assets/sweep-glyph.svg` (inline, `currentColor`, rotating group `#sweep`) and `favicon.svg` (fixed colors).
 
 ## Done-when check (from the board)
-"Every text/background pair used is in the contrast table." The script enumerates each pairing (26 rows across both modes); a pairing not in the table is disallowed by the guide. Text pairs are all at least 5.88:1 (lowest: vermilion on ink-raised); UI/graphics pairs are all at least 3.93:1 (lowest: rule-strong on ink-raised). System fonts only, no external assets.
+"Every text/background pair used is in the contrast table." The script enumerates each pairing (30 rows across both modes); a pairing not in the table is disallowed by the guide. Text pairs are all at least 5.88:1 (lowest: vermilion on ink-raised); UI/graphics pairs are all at least 3.93:1 (lowest: rule-strong on ink-raised). System fonts only, no external assets.
 
 ## How to test
 ```
