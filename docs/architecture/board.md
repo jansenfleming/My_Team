@@ -9,7 +9,9 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 
 Site name: **ZEROJANCE** (typed "ZeroJance" in prose; uppercase ZEROJANCE in the terminal). Owner's decision, relayed by the lead. The earlier working names PICKET-07, GRAYDOT and PARZIVAL are superseded.
 
-Process: from wave 2, PRs are real (lead pushes and merges). PR #1 (`docs/real-pr-flow`) is merged: b7227a9, done.
+Process: from wave 2, PRs are real (lead pushes and merges). Merged so far: #1 `docs/real-pr-flow`, #2 `docs/name-zerojance`, #3 `feat/qa-gate-fix-qa-001`, #4 `fix/qa-001-message-invisible-chars`, #5 `feat/design-rename`, #6 `docs/contract-qa-002`; `main` = 7463816.
+
+Open QA findings: QA-001 verified (fixed, PR #4). QA-002 (Low): contract amended (PR #6); implementation is the B-fix row; QA retests and gates.
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
@@ -20,22 +22,23 @@ Process: from wave 2, PRs are real (lead pushes and merges). PR #1 (`docs/real-p
 | A4 | architect | Review and merge frontend and design branches | F*, D* | todo |
 | A5 | architect | Review and merge QA branches, run integration check | Q*, B4, F4 | todo |
 | A6 | architect | Release-readiness report and Phase 2 board | all | todo |
-| B1 | backend-engineer | Shared contract package | none | done (merged 6915843); QA-001 fix pending |
-| B2 | backend-engineer | API core | B1 | todo |
+| B1 | backend-engineer | Shared contract package | none | done (local merge 6915843); QA-001 fix done (PR #4); QA-002 fix pending |
+| B2 | backend-engineer | API core | B1 | in-progress (`feat/api-core`) |
 | B3 | backend-engineer | SQLite and guestbook | B2 | todo |
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
+| B-fix | backend-engineer | QA-002 fix: cap invisible-character runs | contract merged (PR #6) | todo (after B2; `fix/qa-002-invisible-runs`) |
 | F1 | frontend-engineer | Web shell | none | done |
-| F2 | frontend-engineer | Terminal engine | F1 | todo |
-| F3 | frontend-engineer | API client and session | F1, B1 | todo |
+| F2 | frontend-engineer | Terminal engine | F1 | in-progress (`feat/terminal-engine`) |
+| F3 | frontend-engineer | API client and session | F1, B1 | todo (after F2) |
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
-| D1 | creative-director | Concept and voice | none | done; rename amendment `feat/design-rename` in progress |
-| D2 | creative-director | Tokens and style guide | D1, D1-rename | todo (hold released) |
+| D1 | creative-director | Concept and voice | none | done; renamed to ZeroJance (PR #5) |
+| D2 | creative-director | Tokens and style guide | D1 | in-progress (`feat/design-tokens`) |
 | D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo (waits on D2) |
-| D4 | creative-director | Terminal command spec | D1, D1-rename | todo (hold released; after D2) |
+| D4 | creative-director | Terminal command spec | D1 | todo (after D2) |
 | D5 | creative-director | Easter eggs and backlog | D4 | todo (waits on D4) |
 | D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
@@ -91,7 +94,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ## Backend Engineer (worktree `.worktrees/api`)
 
 ### B1 Shared contract package
-- Owner: backend-engineer. Depends: none. Branch: `feat/shared-contract`. Status: done (merged). Follow-up: `fix/qa-001-message-invisible-chars` implements the contract's 2026-09-21 QA-001 clarification (extra rejected characters and the visible-character rule) with boundary tests; QA retests and gates.
+- Owner: backend-engineer. Depends: none. Branch: `feat/shared-contract`. Status: done. QA-001 fix merged (PR #4). Follow-up `fix/qa-002-invisible-runs` (row B-fix): reject more than 3 consecutive invisible characters per the contract's QA-002 clarification, with boundary tests; QA retests and gates.
 - Deliverable: `packages/shared` (`@site/shared`): `src/index.ts` exporting types (`User`, `GuestbookEntry`, `ApiError`, `ErrorCode`), zod schemas for every request/query/response in `api-contract.md` sections 5-6 (including the handle and message rules: trim, length, charset, control and bidi rejection), and the constants. `exports` points at TS source; vitest tests.
 - Done when: `npm test -w @site/shared` and `npm run typecheck -w @site/shared` pass; boundary tests for handle 1/2/24/25 chars, message 0/1/280/281 chars, newline, tab, NUL, U+202E all pass; the Frontend can `import type` from `@site/shared`; PR file lists dependencies.
 
@@ -130,7 +133,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: `npm run dev -w @site/web` serves on 5173; `npm run build -w @site/web` succeeds and `dist/index.html` has no inline `<script>`; a smoke test passes; PR lists each dependency.
 
 ### F2 Terminal engine
-- Owner: frontend-engineer. Depends: F1. Branch: `feat/web-terminal-engine`. Status: todo.
+- Owner: frontend-engineer. Depends: F1. Branch: `feat/terminal-engine` (actual name in use). Status: todo.
 - Deliverable: `src/terminal/`: input parser (quotes, escapes, max input length), command registry (`name`, `aliases`, `usage`, `run(ctx,args)` returning typed output lines of plain strings), history (up/down, capped, never stores masked input), scrollback cap, masked-prompt mode, `<Terminal>` component and `useTerminal` hook. No API calls, no design dependencies.
 - Done when: unit tests for parser (quotes, empty, unicode, 10 kB input), history, dispatch, unknown command; a Testing Library test types `<img src=x onerror=alert(1)>` and finds it as inert text; tests pass.
 
@@ -158,7 +161,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 
 ## Creative Director (worktree `.worktrees/design`)
 
-**Site name: ZEROJANCE** (owner's decision, relayed by the lead, 2026-09-21; supersedes PICKET-07, GRAYDOT and PARZIVAL). D1 merged under the old working name PICKET-07. The rename amendment (`feat/design-rename`, docs-only, `docs/design/concept.md`) goes first, then D2, then D4, each as its own docs-only branch. Earlier rename drafts (GRAYDOT, PARZIVAL) must not be merged. The hold on D2 and D4 is released; D3, D5, D6 follow their dependencies.
+**Site name: ZEROJANCE** (owner's decision, 2026-09-21). D1 is merged and renamed (PR #5, prose form ZeroJance, terminal form ZEROJANCE). D2 then D4 each go as their own docs-only branch on the merged concept; D3 after D2, D5 after D4, D6 after F4 and F5.
 
 ### D1 Concept and voice
 - Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
