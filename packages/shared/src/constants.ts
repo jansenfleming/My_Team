@@ -38,6 +38,15 @@ export const MESSAGE_FORBIDDEN_PATTERN =
  * zero-width, space-like or combining characters is rejected. Not global/sticky, safe to reuse.
  */
 export const MESSAGE_VISIBLE_PATTERN = /[^\p{Cf}\p{Z}\p{M}]/u;
+/**
+ * QA-002: at most this many invisible characters in a row (any of \p{Cf}, variation selectors
+ * U+FE00-U+FE0F, combining grapheme joiner U+034F). Real emoji sequences need at most 2 in a row
+ * (a variation selector plus a ZWJ); longer runs are a hidden-text channel.
+ */
+export const MESSAGE_MAX_INVISIBLE_RUN = 3;
+/** Matches a run of MESSAGE_MAX_INVISIBLE_RUN + 1 invisible characters (so: a forbidden run). */
+export const MESSAGE_INVISIBLE_RUN_PATTERN =
+  /[\p{Cf}\uFE00-\uFE0F\u034F]{4}/u;
 
 // Section 1: request body limit (413 payload_too_large above this).
 export const BODY_LIMIT_BYTES = 4096;
