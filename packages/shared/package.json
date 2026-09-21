@@ -3,5 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Shared API types, zod schemas, and constants (see docs/architecture/board.md, task B1)."
+  "description": "Shared API types, zod schemas, and constants (see docs/architecture/board.md, task B1).",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./constants": "./src/constants.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.1"
+  }
 }
