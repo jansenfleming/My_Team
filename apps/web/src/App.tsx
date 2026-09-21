@@ -1,10 +1,12 @@
-// Placeholder shell (task F1). The terminal engine, boot sequence and visual identity
-// arrive in later tasks; nothing here is final design.
+import { PROMPT, SITE_NAME, terminalText, WELCOME_LINES } from "./content/site";
+import { registry } from "./commands";
+import { Terminal } from "./terminal";
+
 export function App() {
   return (
     <main className="shell">
-      <h1>Web shell</h1>
-      <p>Placeholder. The terminal UI is built in later tasks.</p>
+      <h1>{SITE_NAME}</h1>
+      <Terminal registry={registry} text={terminalText} prompt={PROMPT} initialLines={WELCOME_LINES} />
     </main>
   );
 }

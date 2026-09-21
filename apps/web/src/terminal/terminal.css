@@ -1,0 +1,70 @@
+/*
+ * Structural styles for <Terminal>. Neutral by design: colors and font come from optional custom
+ * properties (--terminal-*) with plain fallbacks, so the design tokens (task F5) can theme it
+ * without touching this file.
+ */
+.terminal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+  font-family: var(--terminal-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: var(--terminal-font-size, 1rem);
+  line-height: 1.4;
+  color: var(--terminal-fg, #d7dde5);
+}
+
+.terminal-log {
+  overflow-y: auto;
+  max-height: var(--terminal-log-max-height, 70vh);
+  overscroll-behavior: contain;
+}
+
+.terminal-line {
+  min-height: 1.4em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Isolate bidi so a pasted override character cannot reorder text outside its own line. */
+.terminal-text {
+  unicode-bidi: isolate;
+}
+
+.terminal-prompt {
+  margin-inline-end: 0.5ch;
+  color: var(--terminal-prompt, inherit);
+  white-space: pre;
+}
+
+.terminal-line--error {
+  color: var(--terminal-error, #ff8a8a);
+}
+
+.terminal-line--system {
+  color: var(--terminal-system, #9aa6b5);
+}
+
+.terminal-form {
+  display: flex;
+  align-items: baseline;
+}
+
+.terminal-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  caret-color: var(--terminal-caret, currentColor);
+}
+
+/* The input has no border, so keep a visible focus indicator on the whole row instead. */
+.terminal-form:focus-within {
+  outline: 1px solid var(--terminal-focus, currentColor);
+  outline-offset: 2px;
+}
