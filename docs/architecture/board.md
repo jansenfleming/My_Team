@@ -2,8 +2,8 @@
 
 Owner: Architect. This file is the source of truth for task state (the native task list is unavailable). Teammates report status by message; the Architect updates this file after each merge. Read the main checkout's copy, not your worktree's.
 
-Status values: `todo`, `in-progress`, `review` (PR file written, waiting on QA gate or Architect), `done` (merged to `main`).
-Every code task is done only when: owner tests pass with real output in the PR file, QA gate PASS in `qa/reports/gate-<slug>.md`, Architect merged `--no-ff`. Docs-only design tasks need Architect review only. QA tasks need Architect review and a green suite run. Process details: `ownership-map.md`.
+Status values: `todo`, `in-progress`, `review` (PR file written, waiting on QA gate or Architect), `approved` (QA gate PASS and Architect approved; waiting for the lead to merge the real PR), `done` (lead confirmed the merge to `main`).
+Every code task is done only when: owner tests pass with real output in the PR file, QA gate PASS in `qa/reports/gate-<slug>.md`, Architect approved and the lead merged the real PR (`gh pr merge --merge`) from wave 2 on; wave 1 was merged locally `--no-ff`. Docs-only design tasks need Architect review only. QA tasks need Architect review and a green suite run. Process details: `ownership-map.md`.
 
 Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`, `security-qa-engineer`. Worktree dirs: `.worktrees/{design,web,api,qa}`.
 
