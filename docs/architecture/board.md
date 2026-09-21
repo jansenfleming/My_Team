@@ -34,10 +34,10 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | D4 | creative-director | Terminal command spec | D1 | todo |
 | D5 | creative-director | Easter eggs and backlog | D4 | todo |
 | D6 | creative-director | Design review of the build | F4, F5 | todo |
-| Q1 | security-qa-engineer | Test plan and threat model | none | todo |
+| Q1 | security-qa-engineer | Test plan and threat model | none | done |
 | Q2 | security-qa-engineer | QA harness | B2 | todo |
 | Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
-| Q4 | security-qa-engineer | Secret scan and dependency audit tooling | none | todo |
+| Q4 | security-qa-engineer | Secret scan and dependency audit tooling | none | done |
 | Q5 | security-qa-engineer | Web security and a11y review | F4, F5 | todo |
 | Q6 | security-qa-engineer | MVP security review | B6, F6, Q3, Q5 | todo |
 | G | security-qa-engineer | Standing: gate + retest for every code branch | each branch | ongoing |
@@ -189,7 +189,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ## Security / QA Engineer (worktree `.worktrees/qa`)
 
 ### Q1 Test plan and threat model
-- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-test-plan`. Status: todo.
+- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-test-plan`. Status: done (merged).
 - Deliverable: `qa/test-plan.md` (scope, per-endpoint test matrix from the contract, severity scale, exit criteria), `qa/threat-model.md` (assets, entry points, top threats with planned test: session fixation, brute force, XSS via guestbook or terminal, CSRF, Trojan Source/bidi, SQLi, verbose errors, secrets in repo, supply chain), `qa/reports/README.md` (finding and gate templates).
 - Done when: every contract endpoint has at least one negative test planned; every threat maps to a test or checklist item; Architect review.
 
@@ -204,7 +204,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: suite runs; every finding has a report; tests for verified-fixed findings stay in the suite as regressions.
 
 ### Q4 Secret scan and dependency audit tooling
-- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-hygiene-tools`. Status: todo.
+- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-hygiene-tools`. Status: done (merged).
 - Deliverable: `qa/tools/scan-secrets.mjs` (Node, zero dependencies: scans the working tree and `git log -p` history for key/token/private-key patterns and committed `.env` files, redacts values in output, ignores `.env.example` placeholders, exits 1 on a hit), its own test with fixtures (Node's built-in `node --test`, no dependencies), and `qa/reports/dependency-baseline.md` from `npm audit`. The script path is fixed because CI (B5) calls it.
 - Done when: the fixture test (`node --test qa/tools`) proves it flags a fake token and ignores placeholders; a real run against this repo is recorded (redacted); Architect review.
 
