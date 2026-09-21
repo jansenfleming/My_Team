@@ -16,24 +16,24 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 | A4 | architect | Review and merge frontend and design branches | F*, D* | todo |
 | A5 | architect | Review and merge QA branches, run integration check | Q*, B4, F4 | todo |
 | A6 | architect | Release-readiness report and Phase 2 board | all | todo |
-| B1 | backend-engineer | Shared contract package | none | review (architect approved; awaiting QA gate) |
+| B1 | backend-engineer | Shared contract package | none | done (merged 6915843); QA-001 fix pending |
 | B2 | backend-engineer | API core | B1 | todo |
 | B3 | backend-engineer | SQLite and guestbook | B2 | todo |
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
-| F1 | frontend-engineer | Web shell | none | review (architect approved; awaiting QA gate) |
+| F1 | frontend-engineer | Web shell | none | done |
 | F2 | frontend-engineer | Terminal engine | F1 | todo |
 | F3 | frontend-engineer | API client and session | F1, B1 | todo |
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
 | D1 | creative-director | Concept and voice | none | done |
-| D2 | creative-director | Tokens and style guide | D1 | todo |
-| D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo |
-| D4 | creative-director | Terminal command spec | D1 | todo |
-| D5 | creative-director | Easter eggs and backlog | D4 | todo |
-| D6 | creative-director | Design review of the build | F4, F5 | todo |
+| D2 | creative-director | Tokens and style guide | D1 | ON HOLD (site rename pending, lead) |
+| D3 | creative-director | Boot, layout, motion spec | D1, D2 | ON HOLD (site rename pending, lead) |
+| D4 | creative-director | Terminal command spec | D1 | ON HOLD (site rename pending, lead) |
+| D5 | creative-director | Easter eggs and backlog | D4 | ON HOLD (site rename pending, lead) |
+| D6 | creative-director | Design review of the build | F4, F5 | ON HOLD (site rename pending, lead) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
 | Q2 | security-qa-engineer | QA harness | B2 | todo |
 | Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
@@ -87,7 +87,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ## Backend Engineer (worktree `.worktrees/api`)
 
 ### B1 Shared contract package
-- Owner: backend-engineer. Depends: none. Branch: `feat/shared-contract`. Status: todo.
+- Owner: backend-engineer. Depends: none. Branch: `feat/shared-contract`. Status: done (merged). Follow-up: `fix/qa-001-message-invisible-chars` implements the contract's 2026-09-21 QA-001 clarification (extra rejected characters and the visible-character rule) with boundary tests; QA retests and gates.
 - Deliverable: `packages/shared` (`@site/shared`): `src/index.ts` exporting types (`User`, `GuestbookEntry`, `ApiError`, `ErrorCode`), zod schemas for every request/query/response in `api-contract.md` sections 5-6 (including the handle and message rules: trim, length, charset, control and bidi rejection), and the constants. `exports` points at TS source; vitest tests.
 - Done when: `npm test -w @site/shared` and `npm run typecheck -w @site/shared` pass; boundary tests for handle 1/2/24/25 chars, message 0/1/280/281 chars, newline, tab, NUL, U+202E all pass; the Frontend can `import type` from `@site/shared`; PR file lists dependencies.
 
@@ -131,9 +131,9 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: unit tests for parser (quotes, empty, unicode, 10 kB input), history, dispatch, unknown command; a Testing Library test types `<img src=x onerror=alert(1)>` and finds it as inert text; tests pass.
 
 ### F3 API client and session
-- Owner: frontend-engineer. Depends: F1, B1 merged. Branch: `feat/web-api-client`. Status: todo.
+- Owner: frontend-engineer. Depends: F1, B1 merged (both now done). Branch: `feat/web-api-client`. Status: todo. Note from QA gate F1: with the API down, the Vite proxy returns a bare `500 text/plain` with an empty body, so the client must map non-JSON and empty error bodies to a generic network-style error.
 - Deliverable: `src/api/client.ts`: typed functions for every MVP endpoint (`import type` from `@site/shared`), `credentials: "same-origin"`, 8 s timeout, `ApiError` class carrying `code`/`requestId`/`retryAfter`, no body logging; `useSession` context (`user | null | loading`).
-- Done when: tests with mocked `fetch` cover each endpoint success plus 400, 401, 403, 404, 429 (Retry-After), 500, network failure, and timeout; tests pass.
+- Done when: tests with mocked `fetch` cover each endpoint success plus 400, 401, 403, 404, 429 (Retry-After), 500, network failure, and timeout, and a non-JSON or empty error body (proxy 500 when the API is down); tests pass.
 
 ### F4 Commands
 - Owner: frontend-engineer. Depends: F2, F3, D4 merged. Branch: `feat/web-commands`. Status: todo.
@@ -153,6 +153,8 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 ---
 
 ## Creative Director (worktree `.worktrees/design`)
+
+**ON HOLD (lead, 2026-09-21):** the owner is renaming the site (PICKET-07 is being replaced). Do not start D2-D6 until the lead gives the new name. D1 is merged under the old name and will need a rename pass by the Creative Director.
 
 ### D1 Concept and voice
 - Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
