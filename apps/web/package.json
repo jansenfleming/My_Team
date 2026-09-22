@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@site/shared": "*",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
