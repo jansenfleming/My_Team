@@ -41,11 +41,11 @@ Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, 
 | D2 | creative-director | Tokens and style guide | D1 | done (`feat/design-tokens`, PR #8) |
 | D3 | creative-director | Boot, layout, motion spec | D1, D2 | approved (`feat/design-screens` at 7831c18; docs-only, architect approved; awaiting lead merge) |
 | D4 | creative-director | Terminal command spec | D1 | done (`feat/design-commands`, PR #11) |
-| D5 | creative-director | Easter eggs and backlog | D4 | assigned; creative-director starting next |
+| D5 | creative-director | Easter eggs and backlog | D4 | approved (`feat/design-eggs` at 82b9c62; docs-only, architect approved; awaiting lead merge) |
 | D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
 | D7 | creative-director | Static-build (uplink off) copy amendment | D4 | todo (small, after D5) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
-| Q2 | security-qa-engineer | QA harness | B2 | todo |
+| Q2 | security-qa-engineer | QA harness | B2 | approved (`feat/qa-harness` at 006ee79; green suite run by architect; awaiting lead merge) |
 | Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
 | Q4 | security-qa-engineer | Secret scan and dependency audit tooling | none | done |
 | Q5 | security-qa-engineer | Web security and a11y review | F4, F5 | todo |
@@ -201,7 +201,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: no command needs an API call outside the contract; every string is exact; Architect review.
 
 ### D5 Easter eggs and backlog
-- Owner: creative-director. Depends: D4. Branch: `feat/design-easter-eggs`. Status: assigned, starting now (D4 merged).
+- Owner: creative-director. Depends: D4. Branch: `feat/design-eggs` (actual name in use; board said `feat/design-easter-eggs`). Status: approved at commit `82b9c62`; architect review `docs/architecture/reviews/feat-design-eggs.md`; awaiting lead merge.
 - Deliverable: `docs/design/easter-eggs.md` (two MVP easter eggs with exact trigger, exact output, discoverability hint; client-side only, harmless, no external assets), `docs/design/backlog.md` (Phase 2+ ideas ranked, each with its API need so the Architect can plan).
 - Done when: MVP eggs are buildable in under a day of frontend work each; Architect review.
 
@@ -225,7 +225,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: every contract endpoint has at least one negative test planned; every threat maps to a test or checklist item; Architect review.
 
 ### Q2 QA harness
-- Owner: security-qa-engineer. Depends: B2 merged. Branch: `feat/qa-harness`. Status: todo.
+- Owner: security-qa-engineer. Depends: B2 merged. Branch: `feat/qa-harness`. Status: approved at commit `006ee79`; architect review + green suite run `docs/architecture/reviews/feat-qa-harness.md`; awaiting lead merge.
 - Deliverable: `qa/package.json` (`@site/qa`, vitest), `qa/vitest.config.ts`, a global setup that spawns the API from source (`tsx`) on a free `127.0.0.1` port with a temp DB and known test env, an HTTP helper with a cookie jar, and a hard guard that refuses any base URL that is not localhost.
 - Done when: `npm test -w @site/qa` runs a green health smoke test; a test proves the guard rejects a non-local URL; the spawned process is always torn down.
 
