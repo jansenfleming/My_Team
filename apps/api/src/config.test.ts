@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ConfigError, DEFAULT_WEB_ORIGIN, loadConfig } from "./config";
+import { ConfigError, DEFAULT_DATABASE_PATH, DEFAULT_WEB_ORIGIN, loadConfig } from "./config";
 
 const fails = (env: Record<string, string>): string => {
   try {
@@ -20,8 +20,10 @@ describe("loadConfig", () => {
       webOrigins: DEFAULT_WEB_ORIGIN.split(","),
       trustProxy: false,
       logLevel: "info",
+      databasePath: DEFAULT_DATABASE_PATH,
     });
     expect(DEFAULT_WEB_ORIGIN).toBe("http://localhost:5173,http://127.0.0.1:5173");
+    expect(DEFAULT_DATABASE_PATH).toBe("data/site.db");
   });
 
   it("is silent by default when NODE_ENV=test", () => {
@@ -37,6 +39,7 @@ describe("loadConfig", () => {
       WEB_ORIGIN: "https://a.example, http://localhost:3000 ,,",
       TRUST_PROXY: "true",
       LOG_LEVEL: "warn",
+      DATABASE_PATH: " data/custom.db ",
     });
     expect(c).toEqual({
       env: "production",
@@ -45,8 +48,15 @@ describe("loadConfig", () => {
       webOrigins: ["https://a.example", "http://localhost:3000"],
       trustProxy: true,
       logLevel: "warn",
+      databasePath: "data/custom.db",
     });
-    expect(loadConfig({ PORT: "", HOST: "  ", WEB_ORIGIN: "" }).port).toBe(3001);
+    expect(loadConfig({ PORT: "", HOST: "  ", WEB_ORIGIN: "", DATABASE_PATH: "" }).port).toBe(3001);
+    expect(loadConfig({ DATABASE_PATH: "" }).databasePath).toBe(DEFAULT_DATABASE_PATH);
+    expect(loadConfig({ DATABASE_PATH: ":memory:" }).databasePath).toBe(":memory:");
+  });
+
+  it("rejects a NUL byte in DATABASE_PATH", () => {
+    expect(fails({ DATABASE_PATH: "data/site.db\u0000.evil" })).toContain("DATABASE_PATH");
   });
 
   it.each(["0", "65536", "-1", "abc", "3001.5", "1e3", "0x50", "99999999", " "])("rejects PORT=%j", (PORT) => {
