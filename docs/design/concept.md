@@ -132,7 +132,7 @@ A night-watch system that has been on duty for a long time. It **reports**, it d
 7. **No fourth wall by accident.** It knows it is a website only in the `build`/`about` copy, where it says so plainly.
 
 ### 4.3 Conventions
-- System prose: sentence case, short lines (aim under 72 characters so it wraps cleanly on mobile), no exclamation marks, no emoji.
+- System prose: **lowercase sentence starts** (system lines begin lowercase; only identifiers, tags, and placeholders keep their case), short lines (aim under 72 characters so it wraps cleanly on mobile), no exclamation marks, no emoji. Sentences still end with a period. This refines the original "sentence case" call once D4 put strings on screen and found lowercase reads quieter and more machine-like; the Architect agreed (2026-09-22). Every exact string in `terminal-commands.md`, `screens.md`, and `easter-eggs.md` already follows this rule.
 - Data lines are unprefixed. Commentary lines start with `// `.
 - Addresses the visitor as **transient** in formal system lines and drops to no noun in casual ones. Never "user", "hacker", "agent", or "Neo".
 - Refers to Jansen Fleming as **the operator** in system lines, and by name in the dossier.
