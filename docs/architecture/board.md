@@ -11,7 +11,7 @@ Site name: **ZEROJANCE** (typed "ZeroJance" in prose; uppercase ZEROJANCE in the
 
 Process: from wave 2, PRs are real (lead pushes and merges). Merged so far: #1 `docs/real-pr-flow`, #2 `docs/name-zerojance`, #3 `feat/qa-gate-fix-qa-001`, #4 `fix/qa-001-message-invisible-chars`, #5 `feat/design-rename`, #6 `docs/contract-qa-002`, #7 `docs/board-wave2-update`, #8 `feat/design-tokens`, #9 `chore/pin-vite7`, #10 `docs/contract-logout`, #11 `feat/design-commands`, #12 `feat/qa-gate-api-core`, #13 `chore/lockfile-b2`, #14 `docs/adr-0002-hosting`, #15 `feat/qa-gates-wave2`, #16 `fix/qa-002-invisible-runs`, #17 `feat/terminal-engine`; `main` = df5e6ca. This board was stale (showed B2/F2/D2 and the QA-002 fix as in-progress after they had already merged); corrected 2026-09-22, branch `docs/board-fix-wave2-3`.
 
-Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, `fix/qa-002-invisible-runs`, gate PASS). QA-003 (Low, open, non-blocking, from the B2 gate): HTTP-parse-level errors return Fastify's default body, not the contract shape; the client already tolerates it (verified in the F3 gate); fix or documented exception lands with B6.
+Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, `fix/qa-002-invisible-runs`, gate PASS). QA-003 (Low, open, non-blocking, from the B2 gate): HTTP-parse-level errors return Fastify's default body, not the contract shape; the client already tolerates it (verified in the F3 gate); fix or documented exception lands with B6. QA-004 (Low, informational, non-blocking, from the B3 gate): `/api/health`'s DB check (`SELECT 1`) doesn't detect write-lock contention or file loss; candidate for a runbook note or a small check change at B6.
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
@@ -24,7 +24,7 @@ Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, 
 | A6 | architect | Release-readiness report and Phase 2 board | all | todo |
 | B1 | backend-engineer | Shared contract package | none | done; QA-001 fix done (PR #4); QA-002 fix done (PR #16) |
 | B2 | backend-engineer | API core | B1 | done (`feat/api-core`, PR #12; lockfile regen PR #13); QA-003 (Low) open, non-blocking, tracked under B6 |
-| B3 | backend-engineer | SQLite and guestbook | B2 | todo (assigned; backend-engineer to start next) |
+| B3 | backend-engineer | SQLite and guestbook | B2 | approved (`feat/api-guestbook` at c012bec; QA gate PASS incl. QA-004 Low/non-blocking; architect approved; awaiting lead merge) |
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
@@ -111,7 +111,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: inject tests cover health shape, 404/413/415/origin_rejected error bodies, `X-Request-Id`, helmet headers, no `X-Powered-By`, no CORS headers, 429 with `Retry-After`; `npm run dev -w @site/api` then `curl http://127.0.0.1:3001/api/health` returns the contract body (paste output); `npm test -w @site/api` passes.
 
 ### B3 SQLite and guestbook
-- Owner: backend-engineer. Depends: B2. Branch: `feat/api-guestbook`. Status: todo.
+- Owner: backend-engineer. Depends: B2. Branch: `feat/api-guestbook`. Status: approved at commit `c012bec`; QA gate PASS (`qa/reports/gate-feat-api-guestbook.md`), architect review + independent rerun `docs/architecture/reviews/feat-api-guestbook.md`; awaiting lead merge. New Low/informational finding QA-004 (health check blind to write-lock/file loss), non-blocking, candidate for B6.
 - Deliverable: `better-sqlite3@^12` DB module, migration runner and `apps/api/migrations/001_init.sql` (`guestbook_entries`, `sessions`), `GET/POST /api/guestbook` exactly per contract with parameterized statements, the 3-per-10-min POST limit, and a real DB check in `/api/health` (503 `unavailable` when down). DB path from env, `data/` gitignored.
 - Done when: tests cover keyset pagination (`before`, `nextBefore`), validation errors with `details`, SQLi and HTML payloads stored verbatim and returned unchanged, 429 on the 4th post, DB-closed gives 503; all pass; PR shows a `curl` create+list round trip.
 
