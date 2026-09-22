@@ -5,12 +5,17 @@ import Fastify, { type FastifyInstance } from "fastify";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import { BODY_LIMIT_BYTES, RATE_LIMITS } from "@site/shared";
+import type { Db } from "./db/connection";
+import { isDbHealthy } from "./db/connection";
 import type { Config } from "./config";
 import { ApiHttpError, mapError, sendError } from "./errors";
+import { guestbookRoutes } from "./routes/guestbook";
 import { healthRoutes, type HealthCheck } from "./routes/health";
 
 export type AppDeps = {
-  /** Dependency checks for /api/health (B3 adds the database). A `false` or a throw gives 503. */
+  /** The open database. Required to register the guestbook routes and the DB health check. */
+  db?: Db;
+  /** Extra checks for /api/health, run in addition to the DB check when `db` is given. */
   healthChecks?: readonly HealthCheck[];
 };
 
@@ -96,7 +101,10 @@ export async function buildApp(config: Config, deps: AppDeps = {}): Promise<Fast
   });
   app.setNotFoundHandler((request, reply) => sendError(reply, request, "not_found"));
 
-  await app.register(healthRoutes, { checks: deps.healthChecks ?? [] });
+  const checks = deps.db ? [() => isDbHealthy(deps.db!), ...(deps.healthChecks ?? [])] : (deps.healthChecks ?? []);
+  await app.register(healthRoutes, { checks });
+
+  if (deps.db) await app.register(guestbookRoutes, { db: deps.db });
 
   return app;
 }

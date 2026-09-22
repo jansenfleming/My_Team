@@ -13,7 +13,11 @@ export type Config = {
   /** Trust X-Forwarded-For for the client IP. Off unless behind a trusted proxy. */
   trustProxy: boolean;
   logLevel: "fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent";
+  /** SQLite file path, or ":memory:". Relative paths resolve against the process cwd. */
+  databasePath: string;
 };
+
+export const DEFAULT_DATABASE_PATH = "data/site.db";
 
 export class ConfigError extends Error {
   constructor(readonly problems: string[]) {
@@ -78,6 +82,12 @@ const EnvSchema = z.object({
       error: "LOG_LEVEL must be one of fatal, error, warn, info, debug, trace, silent",
     })
     .optional(),
+  DATABASE_PATH: z
+    .string()
+    .min(1, { error: "DATABASE_PATH must not be empty" })
+    .max(4096, { error: "DATABASE_PATH is too long" })
+    .refine((p) => !p.includes("\0"), { error: "DATABASE_PATH must not contain a NUL byte" })
+    .default(DEFAULT_DATABASE_PATH),
 });
 
 /** Parse and validate the environment. Empty strings count as unset. Throws `ConfigError`. */
@@ -107,5 +117,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     webOrigins: v.WEB_ORIGIN,
     trustProxy: v.TRUST_PROXY,
     logLevel: v.LOG_LEVEL ?? (v.NODE_ENV === "test" ? "silent" : "info"),
+    databasePath: v.DATABASE_PATH,
   };
 }
