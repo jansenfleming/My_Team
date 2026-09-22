@@ -1,258 +1,167 @@
 # Phase 1 Task Board (MVP)
 
-Owner: Architect. This file is the source of truth for task state (the native task list is unavailable). Teammates report status by message; the Architect updates this file after each merge. Read the main checkout's copy, not your worktree's.
+Owner: Architect. This file is the source of truth for task state (the native task list
+is unavailable). Teammates report status by message; the Architect updates this file
+after each merge. Read the main checkout's copy, not your worktree's.
 
-Status values: `todo`, `in-progress`, `review` (PR file written, waiting on QA gate or Architect), `approved` (QA gate PASS and Architect approved; waiting for the lead to merge the real PR), `done` (lead confirmed the merge to `main`).
-Every code task is done only when: owner tests pass with real output in the PR file, QA gate PASS in `qa/reports/gate-<slug>.md`, Architect approved and the lead merged the real PR (`gh pr merge --merge`) from wave 2 on; wave 1 was merged locally `--no-ff`. Docs-only design tasks need Architect review only. QA tasks need Architect review and a green suite run. Process details: `ownership-map.md`.
+Rewritten 2026-09-22 for the three-role ZeroJance roster and the streetwear-catalog
+scope. Supersedes the prior board (terminal/guestbook project); see
+`docs/architecture/adr/0003-streetwear-pivot.md`.
 
-Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`, `security-qa-engineer`. Worktree dirs: `.worktrees/{design,web,api,qa}`.
+Status values: `todo`, `in-progress`, `review` (PR file written, waiting on Architect),
+`approved` (Architect approved, waiting for the lead to merge the real PR), `done` (lead
+confirmed the merge to `main`). Every task is done only when: owner's own tests/checks
+pass with real output in the PR file, Architect reviewed (including basic hygiene) and
+approved, and the lead merged the real PR (`gh pr merge --merge`). Process details:
+`ownership-map.md`.
 
-Site name: **ZEROJANCE** (typed "ZeroJance" in prose; uppercase ZEROJANCE in the terminal). Owner's decision, relayed by the lead. The earlier working names PICKET-07, GRAYDOT and PARZIVAL are superseded.
+Names: `architect`, `creative-director`, `engineer`. Worktree dirs: `.worktrees/{design,web}`.
 
-Process: from wave 2, PRs are real (lead pushes and merges). Merged so far: #1 `docs/real-pr-flow`, #2 `docs/name-zerojance`, #3 `feat/qa-gate-fix-qa-001`, #4 `fix/qa-001-message-invisible-chars`, #5 `feat/design-rename`, #6 `docs/contract-qa-002`, #7 `docs/board-wave2-update`, #8 `feat/design-tokens`, #9 `chore/pin-vite7`, #10 `docs/contract-logout`, #11 `feat/design-commands`, #12 `feat/qa-gate-api-core`, #13 `chore/lockfile-b2`, #14 `docs/adr-0002-hosting`, #15 `feat/qa-gates-wave2`, #16 `fix/qa-002-invisible-runs`, #17 `feat/terminal-engine`; `main` = df5e6ca. This board was stale (showed B2/F2/D2 and the QA-002 fix as in-progress after they had already merged); corrected 2026-09-22, branch `docs/board-fix-wave2-3`.
-
-Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, `fix/qa-002-invisible-runs`, gate PASS). QA-003 (Low, open, non-blocking, from the B2 gate): HTTP-parse-level errors return Fastify's default body, not the contract shape; the client already tolerates it (verified in the F3 gate); fix or documented exception lands with B6. QA-004 (Low, informational, non-blocking, from the B3 gate): `/api/health`'s DB check (`SELECT 1`) doesn't detect write-lock contention or file loss; candidate for a runbook note or a small check change at B6.
+Site/brand name: **ZeroJance**. No product-copy voice or palette carries over from the
+old cybersecurity-terminal project (ADR 0003).
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
 |---|---|---|---|---|
-| A1 | architect | Phase 0 plan and scaffold | none | done |
-| A2 | architect | Contract change control and CD request triage | ongoing | in-progress |
-| A3 | architect | Review and merge backend branches (B1-B6) | B* | in-progress (B1, B2 done; B3-B6 todo) |
-| A4 | architect | Review and merge frontend and design branches | F*, D* | in-progress (F1, F2, D1, D2 done; F3, D3 approved, awaiting lead merge; rest todo) |
-| A5 | architect | Review and merge QA branches, run integration check | Q*, B4, F4 | todo |
-| A6 | architect | Release-readiness report and Phase 2 board | all | todo |
-| B1 | backend-engineer | Shared contract package | none | done; QA-001 fix done (PR #4); QA-002 fix done (PR #16) |
-| B2 | backend-engineer | API core | B1 | done (`feat/api-core`, PR #12; lockfile regen PR #13); QA-003 (Low) open, non-blocking, tracked under B6 |
-| B3 | backend-engineer | SQLite and guestbook | B2 | approved (`feat/api-guestbook` at c012bec; QA gate PASS incl. QA-004 Low/non-blocking; architect approved; awaiting lead merge) |
-| B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
-| B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
-| B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
-| B7 | backend-engineer | Pages deploy workflow (manual only) | B5, F7, lead-supplied action SHAs | todo |
-| B-fix | backend-engineer | QA-002 fix: cap invisible-character runs | contract merged (PR #6) | todo (after B2; `fix/qa-002-invisible-runs`) |
-| F1 | frontend-engineer | Web shell | none | done |
-| F2 | frontend-engineer | Terminal engine | F1 | done (`feat/terminal-engine`, PR #17) |
-| F3 | frontend-engineer | API client and session | F1, B1 | approved (`feat/api-client` at c020aa9; QA gate PASS, architect approved; awaiting lead merge) |
-| F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
-| F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
-| F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
-| F7 | frontend-engineer | Static build for GitHub Pages | F3, F4 | todo |
-| D1 | creative-director | Concept and voice | none | done; renamed to ZeroJance (PR #5) |
-| D2 | creative-director | Tokens and style guide | D1 | done (`feat/design-tokens`, PR #8) |
-| D3 | creative-director | Boot, layout, motion spec | D1, D2 | approved (`feat/design-screens` at 7831c18; docs-only, architect approved; awaiting lead merge) |
-| D4 | creative-director | Terminal command spec | D1 | done (`feat/design-commands`, PR #11) |
-| D5 | creative-director | Easter eggs and backlog | D4 | approved (`feat/design-eggs` at 82b9c62; docs-only, architect approved; awaiting lead merge) |
-| D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
-| D7 | creative-director | Static-build (uplink off) copy amendment | D4 | todo (small, after D5) |
-| Q1 | security-qa-engineer | Test plan and threat model | none | done |
-| Q2 | security-qa-engineer | QA harness | B2 | approved (`feat/qa-harness` at 006ee79; green suite run by architect; awaiting lead merge) |
-| Q3 | security-qa-engineer | API test and attack suite | Q2, B3, B4 | todo |
-| Q4 | security-qa-engineer | Secret scan and dependency audit tooling | none | done |
-| Q5 | security-qa-engineer | Web security and a11y review | F4, F5 | todo |
-| Q6 | security-qa-engineer | MVP security review | B6, F6, Q3, Q5 | todo |
-| Q7 | security-qa-engineer | Pages threat model and static checks | F7, B7 | todo |
-| G | security-qa-engineer | Standing: gate + retest for every code branch | each branch | ongoing |
-
-Hosting (ADR 0002): GitHub Pages, frontend only, static build with uplink off; the API is not deployed. Rows B7, F7, D7, Q7 were added for it.
+| A1 | architect | Repo cleanup, stack decision, plan (this task) | none | done |
+| A2 | architect | Ongoing review, merge, and basic hygiene | every branch | ongoing |
+| A3 | architect | MVP readiness report and Phase 2 board | all below | todo |
+| D1 | creative-director | Brand identity and voice | none | todo |
+| D2 | creative-director | Design tokens and style guide | D1 | todo |
+| D3 | creative-director | Product concepts and copy (6-12 items) | D1 | todo |
+| D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
+| D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | todo |
+| E1 | engineer | Web shell and routing | none | todo |
+| E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | todo |
+| E3 | engineer | Product detail page + cart core | E2 | todo |
+| E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
+| E5 | engineer | Lookbook and about pages | E1, D4, D2 | todo |
+| E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
+| E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
 
 ## Suggested waves (parallel starts)
-1. Start now: B1, D1, F1, Q1, Q4. **Done.**
-2. After wave 1 merges: B2, F2, F3, D2, D4, Q2. **B2, F2, D2, D4 done and merged; F3 and D3 (moved up, see below) approved and awaiting lead merge; Q2 status: check with security-qa-engineer (harness depends only on B2, which is merged).**
-3. B3, D3, F5, D5. **Next up: B3 (backend-engineer, assigned), D5 (creative-director, assigned). F4 (frontend-engineer, assigned) can start once F3 merges since F2+F3+D4 are all ready. F5 still waits on D3 merging.**
-4. B4, F4, Q3, B5. 5. Q5, D6, F6, B6. 6. Q6, A5, A6.
-Blocked work should do its non-blocked part first (read specs, draft tests) and message the Architect if idle.
+1. **Start now:** D1 (brand identity), E1 (web shell — build against placeholder
+   copy/data, restyle once D2 lands).
+2. After D1 merges: D2, D3, D4 can all start (independent of each other). E2 can start
+   once E1 merges, using placeholder product data if D3 isn't merged yet — swap in real
+   data when it lands.
+3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
+4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
+5. After E2-E6 merge: E7, then A3.
 
----
-
-## Architect
-
-### A1 Phase 0 plan and scaffold
-- Owner: architect. Branches: `docs/architecture`, `chore/scaffold`. Status: done (both merged `--no-ff`).
-- Deliverable: ADR 0001, roadmap, api-contract, ownership-map, this board, kickoff briefs, root workspace scaffold, `docs/prs/chore-scaffold.md`.
-- Done when: `npm install` succeeds at the root; both branches merged `--no-ff`.
-
-### A2 Contract change control and CD request triage
-- Owner: architect. Ongoing. Branch: `docs/contract-<n>` per amendment.
-- Deliverable: amendments to `api-contract.md` (additive, with changelog line) plus a board task for each accepted request; a written "no, later" (roadmap) for the rest.
-- Done when: every request from the Creative Director or engineers gets an answer within one exchange and lands in a file.
-
-### A3 Review and merge backend branches
-- Owner: architect. Depends: B1-B6 each reaching `review`. Branch: none (merges only).
-- Deliverable: `docs/architecture/reviews/<slug>.md` per branch (contract match, ownership check, tests seen) and `--no-ff` merges in order B1, B2, B3, B4, B5, B6.
-- Done when: all merged with QA gate PASS present; board updated.
-
-### A4 Review and merge frontend and design branches
-- Owner: architect. Depends: F1-F6, D1-D6 each reaching `review`.
-- Deliverable: reviews and merges. Check web against the contract and CSP-clean rules; check design docs against the MVP scope (roadmap) and placeholder rule (no invented facts about the owner).
-- Done when: all merged; board updated.
-
-### A5 Review and merge QA branches; integration check
-- Owner: architect. Depends: Q1-Q6, plus B4 and F4 merged.
-- Deliverable: merges of QA branches; `docs/architecture/reviews/integration-check.md`: from a fresh worktree of `main` run `npm install`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, start `npm run dev`, curl `/api/health` and one guestbook round trip; paste the real output.
-- Done when: the integration check is green or failures are turned into tasks.
-
-### A6 Release-readiness report and Phase 2 board
-- Owner: architect. Depends: all Phase 1 tasks done.
-- Deliverable: `docs/architecture/release-readiness.md` (MVP exit criteria checked one by one, open risks, what the owner must do to publish: approve the first Pages publish (ADR 0002), lead sets Pages source to GitHub Actions and runs `deploy-pages.yml` once; real password hash and hosted API only if a Phase 2 API host is chosen; real content replacing placeholders); `docs/architecture/board-phase2.md`.
-- Done when: the report cites evidence for each exit criterion; recommendations only, no deploy.
-
----
-
-## Backend Engineer (worktree `.worktrees/api`)
-
-### B1 Shared contract package
-- Owner: backend-engineer. Depends: none. Branch: `feat/shared-contract`. Status: done. QA-001 fix merged (PR #4). Follow-up `fix/qa-002-invisible-runs` (row B-fix): reject more than 3 consecutive invisible characters per the contract's QA-002 clarification, with boundary tests; QA retests and gates.
-- Deliverable: `packages/shared` (`@site/shared`): `src/index.ts` exporting types (`User`, `GuestbookEntry`, `ApiError`, `ErrorCode`), zod schemas for every request/query/response in `api-contract.md` sections 5-6 (including the handle and message rules: trim, length, charset, control and bidi rejection), and the constants. `exports` points at TS source; vitest tests.
-- Done when: `npm test -w @site/shared` and `npm run typecheck -w @site/shared` pass; boundary tests for handle 1/2/24/25 chars, message 0/1/280/281 chars, newline, tab, NUL, U+202E all pass; the Frontend can `import type` from `@site/shared`; PR file lists dependencies.
-
-### B2 API core
-- Owner: backend-engineer. Depends: B1. Branch: `feat/api-core`. Status: done (PR #12; lockfile regen `chore/lockfile-b2` PR #13). QA-003 (Low, non-blocking) open, tracked under B6.
-- Deliverable: `apps/api`: `buildApp(config)` factory, `src/server.ts` (binds `127.0.0.1:3001`), env config validated with zod, `apps/api/.env.example` (placeholders only), request id, `@fastify/helmet`, global rate limit, contract error handler (all codes in section 2, no stack traces, unknown route -> `not_found`), 413/415 handling, Origin/`Sec-Fetch-Site` check on mutating requests, `GET /api/health`. Scripts: `dev` (`tsx watch`), `start`, `test`, `typecheck`.
-- Done when: inject tests cover health shape, 404/413/415/origin_rejected error bodies, `X-Request-Id`, helmet headers, no `X-Powered-By`, no CORS headers, 429 with `Retry-After`; `npm run dev -w @site/api` then `curl http://127.0.0.1:3001/api/health` returns the contract body (paste output); `npm test -w @site/api` passes.
-
-### B3 SQLite and guestbook
-- Owner: backend-engineer. Depends: B2. Branch: `feat/api-guestbook`. Status: approved at commit `c012bec`; QA gate PASS (`qa/reports/gate-feat-api-guestbook.md`), architect review + independent rerun `docs/architecture/reviews/feat-api-guestbook.md`; awaiting lead merge. New Low/informational finding QA-004 (health check blind to write-lock/file loss), non-blocking, candidate for B6.
-- Deliverable: `better-sqlite3@^12` DB module, migration runner and `apps/api/migrations/001_init.sql` (`guestbook_entries`, `sessions`), `GET/POST /api/guestbook` exactly per contract with parameterized statements, the 3-per-10-min POST limit, and a real DB check in `/api/health` (503 `unavailable` when down). DB path from env, `data/` gitignored.
-- Done when: tests cover keyset pagination (`before`, `nextBefore`), validation errors with `details`, SQLi and HTML payloads stored verbatim and returned unchanged, 429 on the 4th post, DB-closed gives 503; all pass; PR shows a `curl` create+list round trip.
-
-### B4 Auth and admin endpoints
-- Owner: backend-engineer. Depends: B3. Branch: `feat/api-auth`. Status: todo.
-- Deliverable: scrypt hash util and `npm run hash-password -w @site/api -- <password>`; session store (sha256 of id, 8 h expiry, expired-row cleanup); `POST /api/auth/login|logout`, `GET /api/auth/me`; `requireOperator` hook; `DELETE /api/admin/guestbook/:id`; `GET /api/admin/diagnostics`; login limit 5/min; dev random-password-at-startup; production refuses to start without `OPERATOR_PASSWORD_HASH`. Cookie attributes exactly per contract section 3.
-- Done when: tests cover the full access matrix (each admin route anonymous -> 401), identical `invalid_credentials` for unknown user vs wrong password, cookie flags, new session id per login, logout invalidates the old cookie, expired session -> anonymous, 6th login attempt -> 429, production start without hash exits non-zero; a failed login emits a structured log line (requestId and client IP only, never the username, password or cookie), because the concept's voice says failed logins are logged; no password or cookie value in logs (assert on captured log output).
-
-### B5 CI/CD workflows
-- Owner: backend-engineer. Depends: B2, and Q4 merged (uses `qa/tools/scan-secrets.mjs`). Branch: `feat/ci-workflows`. Status: todo.
-- Deliverable: `.github/workflows/ci.yml` (triggers: `push` to `main` and `pull_request` targeting `main`; Node from `.nvmrc`; `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`), `.github/workflows/security.yml` (`npm audit --audit-level=high`, `node qa/tools/scan-secrets.mjs`, weekly schedule), `.github/dependabot.yml` (npm, weekly), `.github/pull_request_template.md` mirroring the `docs/prs` format (PR files are written so they can be pasted into real GitHub PRs later). A `deploy.yml` stub that is `workflow_dispatch` only and echoes "not configured".
-- Done when: every workflow parses as valid YAML (validate with a YAML parser installed outside the repo; say how); every `run:` command is executed locally in the same order with real output pasted in the PR file; the PR file states plainly that the workflows have not run on GitHub.
-
-### B6 Runbook, README, hardening
-- Owner: backend-engineer. Depends: B4, B5. Branch: `feat/api-runbook`. Status: todo.
-- Deliverable: `apps/api/README.md` (env vars, endpoints with curl examples against localhost, how to create the operator hash), `infra/RUNBOOK.md` (owner-executed steps to go live: remote, push, Actions, hosting options, env/secret checklist, SQLite backup, rollback; marked NOT EXECUTED), graceful shutdown (SIGTERM closes DB), pino log redaction of cookie/authorization/password, plus fixes for any Critical/High QA finding open against the backend.
-- Also: QA-003 (Low, from the B2 gate): HTTP-parse-level errors (garbage request line, bad Content-Length, 431 oversized headers) must return the contract error body with a request id, via `clientErrorHandler` or a documented exception; and a runbook note that helmet's HSTS with `includeSubDomains` must only be served over real HTTPS on a domain the owner controls. The runbook's Pages section is owner/lead steps per ADR 0002, marked NOT EXECUTED. Done when: tests prove redaction and clean shutdown; runbook contains no real secrets or invented owner facts; QA gate PASS.
-
-### B7 Pages deploy workflow
-- Owner: backend-engineer. Depends: B5, F7 merged, and the lead supplying the full commit SHAs. Branch: `feat/deploy-pages-workflow`. Status: todo.
-- Deliverable: `.github/workflows/deploy-pages.yml` exactly per ADR 0002 requirement 6: `workflow_dispatch` only; job-level minimal permissions; `environment: github-pages`; `actions/checkout`, `actions/setup-node`, `actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages` each pinned to a 40-character SHA with the tag in a comment; `npm ci` then `npm run build:static -w @site/web`; upload `apps/web/dist`. Agents cannot query GitHub: list the five actions you need in your PR file and ask the Architect, who asks the lead for the SHAs; do not guess or invent a SHA.
-- Done when: the YAML parses; every `uses:` is a 40-hex SHA; no `push`/`pull_request`/`schedule` trigger; the build commands run locally in order with real output pasted; the PR file says the workflow has not run on GitHub; QA gate PASS (including the G-CI review). Nothing may publish automatically.
-
----
-
-## Frontend Engineer (worktree `.worktrees/web`)
-
-### F1 Web shell
-- Owner: frontend-engineer. Depends: none. Branch: `feat/web-shell`. Status: todo.
-- Deliverable: `apps/web`: `package.json` (vite 7, react 19, plugin-react 5, vitest 5, jsdom 28, testing-library), `vite.config.ts` (proxy `/api` -> `http://127.0.0.1:3001`, vitest jsdom config), `index.html`, `src/main.tsx`, `src/App.tsx` placeholder, `tsconfig.json` extending the base, scripts `dev`, `build`, `test`, `typecheck`, `preview`.
-- Done when: `npm run dev -w @site/web` serves on 5173; `npm run build -w @site/web` succeeds and `dist/index.html` has no inline `<script>`; a smoke test passes; PR lists each dependency.
-
-### F2 Terminal engine
-- Owner: frontend-engineer. Depends: F1. Branch: `feat/terminal-engine` (actual name in use). Status: done (PR #17).
-- Deliverable: `src/terminal/`: input parser (quotes, escapes, max input length), command registry (`name`, `aliases`, `usage`, `run(ctx,args)` returning typed output lines of plain strings), history (up/down, capped, never stores masked input), scrollback cap, masked-prompt mode, `<Terminal>` component and `useTerminal` hook. No API calls, no design dependencies.
-- Done when: unit tests for parser (quotes, empty, unicode, 10 kB input), history, dispatch, unknown command; a Testing Library test types `<img src=x onerror=alert(1)>` and finds it as inert text; tests pass.
-
-### F3 API client and session
-- Owner: frontend-engineer. Depends: F1, B1 merged (both now done). Branch: `feat/api-client` (actual name in use; board said `feat/web-api-client`). Status: approved at commit `c020aa9`; QA gate PASS (`qa/reports/gate-feat-api-client.md`); architect review `docs/architecture/reviews/feat-api-client.md`; awaiting lead merge. Note from QA gate F1: with the API down, the Vite proxy returns a bare `500 text/plain` with an empty body, so the client must map non-JSON and empty error bodies to a generic network-style error.
-- Deliverable: `src/api/client.ts`: typed functions for every MVP endpoint (`import type` from `@site/shared`), `credentials: "same-origin"`, 8 s timeout, `ApiError` class carrying `code`/`requestId`/`retryAfter`, no body logging; `useSession` context (`user | null | loading`).
-- Done when: tests with mocked `fetch` cover each endpoint success plus 400, 401, 403, 404, 429 (Retry-After), 500, network failure, and timeout, and a non-JSON or empty error body (proxy 500 when the API is down); tests pass.
-
-### F4 Commands
-- Owner: frontend-engineer. Depends: F2, F3, D4 merged. Branch: `feat/web-commands`. Status: todo; F2 and D4 merged, F3 approved and awaiting lead merge — frontend-engineer can start once the lead confirms F3 is on `main`.
-- Deliverable: every command in `docs/design/terminal-commands.md` with the exact strings, static copy in `src/content/` (placeholders where the spec has them), server-backed commands via the client, masked login prompt, operator-only commands gated by session, friendly rate-limit and offline messages.
-- Done when: a test per command (success and at least one error) using a mocked client; help output matches the spec; after B3 and B4 are merged, run the real API and paste a transcript of `status`, `guestbook`, `guestbook sign`, `login`, `whoami`, `guestbook rm`, `logout` in the PR file.
-
-### F5 Boot, layout, effects
-- Owner: frontend-engineer. Depends: F1, D2, D3 merged. Branch: `feat/web-boot-layout`. Status: todo.
-- Deliverable: `src/styles/tokens.css` (copy of `docs/design/tokens.css`, header says so), boot sequence per D3 (skippable with any key or tap), page layout and landmarks, CSS/canvas effects from D3, mobile layout, `prefers-reduced-motion` path per spec.
-- Done when: tests show boot skip works, reduced-motion renders the final state immediately without animation, landmarks exist; bundle is under 250 kB gzipped JS (report `npm run build` output); no external network requests (fonts/assets are local).
-
-### F6 Easter eggs, a11y, polish
-- Owner: frontend-engineer. Depends: F4, F5, D5 merged. Branch: `feat/web-polish`. Status: todo.
-- Deliverable: the easter eggs in `easter-eggs.md`; a11y pass (output region `aria-live`, focus never lost, keyboard-only use, contrast per D2 table, tap-to-focus and visible prompt with the mobile keyboard); fixes for every Critical/High QA finding open against the web app (each fix on its own `fix/<id>` branch and PR file).
-- Done when: tests for each easter egg and the a11y roles; QA gate PASS; Creative Director has no open blocking feedback.
-
-### F7 Static build for GitHub Pages
-- Owner: frontend-engineer. Depends: F3, F4 merged. Branch: `feat/web-static-build`. Status: todo.
-- Deliverable: per ADR 0002: Vite `base` from `VITE_BASE` (build default `/My_Team/`, dev `/`); no root-absolute asset paths; single view (hash routes only if ever needed); the build-time `VITE_UPLINK=off` mode: the API client makes no `fetch` call at all and returns the same offline failure the D4 lines already handle, so every API-backed command prints its D4 offline lines and `status` reports the uplink as offline; script `build:static` (`VITE_UPLINK=off`, base `/My_Team/`); a CSP `<meta http-equiv="Content-Security-Policy">` injected into `dist/index.html` at build only (no inline scripts, no third-party hosts; suggested policy in ADR 0002); `<meta name="referrer" content="no-referrer">`. Confirm the policy against the built output and note anything that needed loosening.
-- Done when: tests over the built `dist/`: CSP meta present, no `src="/` or `href="/` root-absolute references, no inline script, assets resolve under `/My_Team/` (serve `dist` under that prefix locally and request `/My_Team/`, the JS and the CSS: 200); the app renders in jsdom with uplink off and a `fetch` spy is never called, and each API-backed command prints its D4 offline lines; `npm run build:static -w @site/web` output and gzip size pasted; QA gate PASS.
+Blocked work should do its non-blocked part first (Creative Director can draft copy
+against the roadmap without waiting on tokens; Engineer can build structure against
+placeholder content) and message the Architect if idle.
 
 ---
 
 ## Creative Director (worktree `.worktrees/design`)
 
-**Site name: ZEROJANCE** (owner's decision, 2026-09-21). D1 is merged and renamed (PR #5, prose form ZeroJance, terminal form ZEROJANCE). D2 then D4 each go as their own docs-only branch on the merged concept; D3 after D2, D5 after D4, D6 after F4 and F5.
-
-### D1 Concept and voice
-- Owner: creative-director. Depends: none. Branch: `feat/design-concept`. Status: done (merged).
-- Deliverable: `docs/design/concept.md`: the system's name and premise, voice guide with do/don't sample lines, the 60-second visitor journey, three specific things that keep it from looking like a generic cyberpunk template, and an explicit list of ideas from the brief left out of the MVP with reasons. Personal facts only as `[PLACEHOLDER: ...]`.
+### D1 Brand identity and voice
+- Owner: creative-director. Depends: none. Branch: `feat/design-brand`.
+- Deliverable: a short `docs/design/concept.md` — the ZeroJance premise (streetwear
+  brand making tech/programming/networking in-jokes wearable), voice guide with
+  do/don't sample lines for product copy, three specific things that keep the site from
+  looking like a generic streetwear template, and an explicit list of easter-egg ideas
+  from the brief considered, with which 2-3 are picked for D5 and why the rest are
+  deferred. Any fact about the owner or the brand's founding is `[PLACEHOLDER: ...]`.
 - Done when: fits the MVP scope in `roadmap.md`; Architect review.
 
-### D2 Tokens and style guide
-- Owner: creative-director. Depends: D1. Branch: `feat/design-tokens`. Status: done (PR #8).
-- Deliverable: `docs/design/tokens.css` (custom properties: exact hex colors, spacing scale, type scale, motion durations and easings, z-index), `docs/design/style-guide.md` (usage rules, contrast table with computed ratios: body text >= 4.5:1, large text and UI >= 3:1). System font stack only; no external font or asset loads. Optional SVG glyph/logo in `docs/design/assets/`.
+### D2 Design tokens and style guide
+- Owner: creative-director. Depends: D1. Branch: `feat/design-tokens`.
+- Deliverable: `docs/design/tokens.css` (CSS custom properties: exact hex colors,
+  spacing scale, type scale, motion durations/easings), `docs/design/style-guide.md`
+  (usage rules, a contrast table with computed ratios — body text >= 4.5:1, large
+  text/UI >= 3:1). System font stack or a self-hosted font only (no third-party font
+  requests). Streetwear + tech aesthetic (bold type, grid/circuit motif, monospace
+  accents) — explicitly not the old cyberpunk-terminal palette.
 - Done when: every text/background pair used is in the contrast table; Architect review.
 
-### D3 Boot, layout, motion spec
-- Owner: creative-director. Depends: D1, D2. Branch: `feat/design-screens`. Status: approved at commit `7831c18`; docs-only, architect review `docs/architecture/reviews/feat-design-screens.md`; awaiting lead merge.
-- Deliverable: `docs/design/screens.md`: the boot sequence (exact lines, timings, skip rule), main layout with ASCII wireframes for desktop and mobile, empty/loading/API-offline states, an effects catalog (each effect: trigger, duration, easing, reduced-motion fallback, CPU cost note), keyboard and focus rules.
-- Done when: an engineer could build it with no questions; every effect has a fallback; Architect review.
+### D3 Product concepts and copy
+- Owner: creative-director. Depends: D1. Branch: `feat/design-products`.
+- Deliverable: `docs/design/products.md` — 6 to 12 products total, shirts/sweatshirts/
+  hats only (no accessories), each with: name, category, price (mock, in USD), a short
+  description with a tech/programming/networking in-joke, 1-3 tags, and any special copy
+  (e.g. a care label styled like a config file, if picked as part of D5/tag flavor).
+  Note which products (if any) are only reachable via an easter egg (e.g. a hidden 13th
+  product) so the Engineer knows not to list it in the main grid.
+- Done when: every product fits shirts/sweatshirts/hats; count is 6-12; Architect review.
 
-### D4 Terminal command spec
-- Owner: creative-director. Depends: D1 (contract already published). Branch: `feat/design-commands`. Status: done (PR #11).
-- Deliverable: `docs/design/terminal-commands.md`: prompt string, at most 14 MVP commands, and for each: syntax, help line, exact success output, exact error outputs, auth requirement, API call (map to contract section 7), placeholders. Login flow, rate-limit and offline messages. Any endpoint or field you need beyond the contract goes in a "Requests to Architect" section (or message the Architect early).
-- Done when: no command needs an API call outside the contract; every string is exact; Architect review.
+### D4 Lookbook and about-page copy/spec
+- Owner: creative-director. Depends: D1. Branch: `feat/design-pages`.
+- Deliverable: `docs/design/lookbook.md` (a small editorial/lookbook layout spec:
+  sections, image/copy pairing, tone) and `docs/design/about.md` (brand story copy with
+  `[PLACEHOLDER: ...]` for anything about the owner or founding not yet supplied).
+- Done when: an engineer could build both with no follow-up questions; Architect review.
 
-### D5 Easter eggs and backlog
-- Owner: creative-director. Depends: D4. Branch: `feat/design-eggs` (actual name in use; board said `feat/design-easter-eggs`). Status: approved at commit `82b9c62`; architect review `docs/architecture/reviews/feat-design-eggs.md`; awaiting lead merge.
-- Deliverable: `docs/design/easter-eggs.md` (two MVP easter eggs with exact trigger, exact output, discoverability hint; client-side only, harmless, no external assets), `docs/design/backlog.md` (Phase 2+ ideas ranked, each with its API need so the Architect can plan).
-- Done when: MVP eggs are buildable in under a day of frontend work each; Architect review.
-
-### D6 Design review of the build
-- Owner: creative-director. Depends: F4, F5 merged. Branch: `feat/design-review`. Status: todo.
-- Deliverable: `docs/design/reviews/mvp-review.md`: run the site locally (`npm run dev`), check every spec item pass/fail, list the top five fixes in priority order, message the Frontend Engineer with the path.
-- Done when: every spec item is marked; a verdict on "does it feel like its own thing"; Architect review.
-
-### D7 Static-build (uplink off) copy amendment
-- Owner: creative-director. Depends: D4 merged (small; after D5). Branch: `feat/design-static-lines`. Status: todo.
-- Deliverable: a short amendment to `docs/design/terminal-commands.md` and the boot spec (`screens.md` when D3 exists): the honest lines for a build that has no backend by design (ADR 0002), which differs from a failed connection. For example the boot check, `status`, `guestbook`, `login`, `diagnostics` and the `whoami` clearance line when the uplink is off by design. Keep rule 1 (real readings only): the site really has no backend, so say so plainly and point to the local full-stack mode without claiming a repo URL that does not exist (`[PLACEHOLDER: repository URL]` until the owner supplies it).
-- Done when: exact strings for each affected command; Architect review.
+### D5 Easter-egg specs
+- Owner: creative-director. Depends: D1, D3. Branch: `feat/design-eggs`.
+- Deliverable: `docs/design/easter-eggs.md` — for each of the 2-3 picked eggs: exact
+  trigger, exact output/content, discoverability hint, and which page(s) it touches.
+  Client-side only, harmless, no external calls or assets.
+- Done when: each egg is buildable in well under a day of engineer work; Architect review.
 
 ---
 
-## Security / QA Engineer (worktree `.worktrees/qa`)
+## Engineer (worktree `.worktrees/web`)
 
-### Q1 Test plan and threat model
-- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-test-plan`. Status: done (merged).
-- Deliverable: `qa/test-plan.md` (scope, per-endpoint test matrix from the contract, severity scale, exit criteria), `qa/threat-model.md` (assets, entry points, top threats with planned test: session fixation, brute force, XSS via guestbook or terminal, CSRF, Trojan Source/bidi, SQLi, verbose errors, secrets in repo, supply chain), `qa/reports/README.md` (finding and gate templates).
-- Done when: every contract endpoint has at least one negative test planned; every threat maps to a test or checklist item; Architect review.
+### E1 Web shell and routing
+- Owner: engineer. Depends: none. Branch: `feat/web-shell`.
+- Deliverable: `apps/web` app shell: client-side routing for home/catalog/product-
+  detail/lookbook/about/404 (a minimal hand-rolled switch or a small router — engineer's
+  call), mobile-first responsive layout skeleton, placeholder copy/nav until D1-D4 land.
+- Done when: `npm run dev -w @site/web` serves all routes; `npm run build -w @site/web`
+  succeeds; a smoke test per route; PR lists each new dependency.
 
-### Q2 QA harness
-- Owner: security-qa-engineer. Depends: B2 merged. Branch: `feat/qa-harness`. Status: approved at commit `006ee79`; architect review + green suite run `docs/architecture/reviews/feat-qa-harness.md`; awaiting lead merge.
-- Deliverable: `qa/package.json` (`@site/qa`, vitest), `qa/vitest.config.ts`, a global setup that spawns the API from source (`tsx`) on a free `127.0.0.1` port with a temp DB and known test env, an HTTP helper with a cookie jar, and a hard guard that refuses any base URL that is not localhost.
-- Done when: `npm test -w @site/qa` runs a green health smoke test; a test proves the guard rejects a non-local URL; the spawned process is always torn down.
+### E2 Catalog grid
+- Owner: engineer. Depends: E1; D3 for real data (start with placeholder data if D3
+  isn't merged yet); D2 for real styling (placeholder styling otherwise).
+- Deliverable: a typed product-data module (e.g. `apps/web/src/data/products.ts`) built
+  from D3, and a responsive product grid on the home/catalog route (image or styled
+  placeholder, name, price, category).
+- Done when: all 6-12 products render; grid is responsive (mobile through desktop);
+  tests cover empty/edge cases (e.g. missing image falls back cleanly); PR notes swap-in
+  of real data/styling if it landed after this branch started.
 
-### Q3 API test and attack suite
-- Owner: security-qa-engineer. Depends: Q2, B3, B4 merged. Branch: `feat/qa-api-suite`. Status: todo.
-- Deliverable: `qa/api/*.test.ts`: contract conformance (validate bodies with the `@site/shared` schemas), access matrix, session lifecycle, CSRF/Origin, injection payloads (SQLi, HTML, control and bidi characters) in every input, oversize and malformed JSON, rate limits, header checks, error hygiene (no stack, path, or SQL text). Each failure is filed in `qa/reports/` and sent to the Backend Engineer.
-- Done when: suite runs; every finding has a report; tests for verified-fixed findings stay in the suite as regressions.
+### E3 Product detail page + cart core
+- Owner: engineer. Depends: E2. Branch: `feat/web-product-cart`.
+- Deliverable: a per-product detail page (route per product), a mock size/variant
+  picker, an "Add to Cart" action, and cart state (React context or similar) that
+  persists across the session (e.g. `localStorage`).
+- Done when: adding an item updates a visible cart count; tests cover add/duplicate/
+  remove-by-navigating-away-and-back (persistence); PR states plainly this is a mock
+  cart with no server.
 
-### Q4 Secret scan and dependency audit tooling
-- Owner: security-qa-engineer. Depends: none. Branch: `feat/qa-hygiene-tools`. Status: done (merged).
-- Deliverable: `qa/tools/scan-secrets.mjs` (Node, zero dependencies: scans the working tree and `git log -p` history for key/token/private-key patterns and committed `.env` files, redacts values in output, ignores `.env.example` placeholders, exits 1 on a hit), its own test with fixtures (Node's built-in `node --test`, no dependencies), and `qa/reports/dependency-baseline.md` from `npm audit`. The script path is fixed because CI (B5) calls it.
-- Done when: the fixture test (`node --test qa/tools`) proves it flags a fake token and ignores placeholders; a real run against this repo is recorded (redacted); Architect review.
+### E4 Cart drawer and mock checkout screen
+- Owner: engineer. Depends: E3. Branch: `feat/web-checkout`.
+- Deliverable: a cart drawer or page (quantity edit, remove, subtotal) and a "checkout"
+  screen that looks real but is explicitly mocked in code (a comment at the point a real
+  payment integration would go) and in copy (no claim of a processed payment or a sent
+  order).
+- Done when: quantity edit/remove work and recompute the subtotal; checkout screen
+  renders and does not attempt any network call; tests cover the cart math; PR is
+  explicit about what's mocked.
 
-### Q5 Web security and a11y review
-- Owner: security-qa-engineer. Depends: F4, F5 merged. Branch: `feat/qa-web-review`. Status: todo.
-- Deliverable: `qa/web/*.test.tsx` (hostile guestbook payloads render inert; terminal input edge cases: very long input, control characters, escape-sequence lookalikes, paste; the password never appears in DOM, history, or storage), `qa/tools/check-dist.mjs` (built `dist/` has no inline script, no `eval`, no external URLs), and `qa/reports/web-review.md` (keyboard-only pass, focus order, reduced-motion, 360 px width, contrast spot checks against the D2 table).
-- Done when: results recorded with real output; each finding reported to the Frontend Engineer.
+### E5 Lookbook and about pages
+- Owner: engineer. Depends: E1, D4 (placeholder copy otherwise), D2 for styling.
+- Deliverable: the lookbook/editorial page and the about/brand page per D4's spec.
+- Done when: both pages render per spec; `[PLACEHOLDER: ...]` markers from D4 are
+  preserved verbatim (not filled in by the engineer); Architect review.
 
-### Q6 MVP security review
-- Owner: security-qa-engineer. Depends: B6, F6, Q3, Q5. Branch: `feat/qa-mvp-review`. Status: todo.
-- Deliverable: `qa/reports/security-review-mvp.md`: all findings with status and retest evidence, `npm audit` and secret-scan output (history included), authz matrix result, residual risks, and a list of every merged branch with its gate file.
-- Done when: no open Critical/High findings, or an explicit list for the Architect to decide on.
+### E6 Easter eggs implementation
+- Owner: engineer. Depends: D5, and whichever pages each egg touches (per D5) already
+  merged. Branch: `feat/web-easter-eggs`.
+- Deliverable: the 2-3 eggs from D5, exactly as specified (trigger, output,
+  discoverability).
+- Done when: a test per egg proves the trigger produces the specified output; no
+  external calls; Creative Director has no open blocking feedback.
 
-### Q7 Pages threat model and static checks
-- Owner: security-qa-engineer. Depends: F7 and B7 reaching review. Branch: `feat/qa-pages-threat-model`. Status: todo.
-- Deliverable: amend `qa/threat-model.md` with the GitHub Pages threats from ADR 0002 (no `X-Frame-Options` or CSP `frame-ancestors` so clickjacking cannot be prevented; header-only protections unavailable and only meta CSP and referrer meta available; `Referrer-Policy`/`nosniff` absent; deploy caching; public repo and build contents; the deploy workflow as supply-chain surface: pinned SHAs, permissions, dispatch-only trigger; project-page base path and root-absolute links; the future hosted-API option requires its own review); extend `qa/tools/check-dist.mjs` (Q5) to assert CSP meta, no root-absolute paths and no inline script on the static build; G-CI review of `deploy-pages.yml` (all `uses:` are 40-hex SHAs, no unexpected triggers, permissions minimal, no `pull_request_target`, no secrets echoed).
-- Done when: results with real output; each finding reported to the owning engineer.
-
-### G Standing gates (per code branch)
-- Owner: security-qa-engineer. Ongoing. Output: `qa/reports/gate-<slug>.md` with `Verdict: PASS|FAIL`, what was run (real commands and output), and links to any finding reports. Retest each fix with the original reproduction plus adjacent cases; record verified / not fixed / regression. Never approve your own work (you write no application code, so there is nothing of yours to approve in code branches).
+### E7 Responsiveness, a11y pass, test cleanup
+- Owner: engineer. Depends: E2-E6 merged. Branch: `feat/web-polish`.
+- Deliverable: a responsive pass (mobile through desktop) across every page, an
+  accessibility pass (landmarks, alt text, keyboard reachability, contrast per D2,
+  `prefers-reduced-motion` respected for any motion), and a check that the full test
+  suite and `npm run build` output stay clean.
+- Done when: `npm test`, `npm run lint`, `npm run typecheck`, `npm run build` all pass
+  with real output pasted in the PR; Architect review (including its own hygiene pass:
+  `npm run scan-secrets`, `npm audit`, broken-link check).

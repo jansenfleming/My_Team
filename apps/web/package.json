@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Vite + React terminal UI (see docs/architecture/board.md, tasks F1-F6).",
+  "description": "Vite + React catalog/lookbook site for ZeroJance (see docs/architecture/board.md).",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,7 +13,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@site/shared": "*",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

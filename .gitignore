@@ -16,10 +16,5 @@ coverage/
 .DS_Store
 *.log
 
-# local database files and TS incremental build info
-*.db
-*.db-journal
-*.db-wal
-*.db-shm
-apps/api/data/
+# TS incremental build info
 *.tsbuildinfo

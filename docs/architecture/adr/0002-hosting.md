@@ -1,6 +1,12 @@
 # ADR 0002: Hosting (GitHub Pages, frontend only)
 
-Status: accepted (owner decision relayed by the lead, 2026-09-21). Change only through a new ADR.
+Status: **superseded by ADR 0003 (2026-09-22)** for the ZeroJance streetwear pivot — the
+site this ADR describes (a terminal UI with an API-backed guestbook) no longer exists.
+The core hosting choice (GitHub Pages, static build, no deploy without owner approval)
+is likely to be re-adopted for the new project, but that is ADR 0003's decision to make,
+not this one's. Kept as a historical record.
+
+Status (original): accepted (owner decision relayed by the lead, 2026-09-21). Change only through a new ADR.
 
 ## Context
 The owner wants the site public as a resume piece. The stack (ADR 0001) is a static React app plus a Fastify + SQLite API with cookie sessions. Only GitHub is available and approved; the repo is `jansenfleming/My_Team`.

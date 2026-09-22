@@ -1,7 +1,0 @@
-{
-  "extends": "../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node"]
-  },
-  "include": ["harness", "gates", "tools", "vitest.config.ts"]
-}
