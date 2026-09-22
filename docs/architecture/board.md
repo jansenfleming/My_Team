@@ -9,39 +9,39 @@ Names: `architect`, `creative-director`, `frontend-engineer`, `backend-engineer`
 
 Site name: **ZEROJANCE** (typed "ZeroJance" in prose; uppercase ZEROJANCE in the terminal). Owner's decision, relayed by the lead. The earlier working names PICKET-07, GRAYDOT and PARZIVAL are superseded.
 
-Process: from wave 2, PRs are real (lead pushes and merges). Merged so far: #1 `docs/real-pr-flow`, #2 `docs/name-zerojance`, #3 `feat/qa-gate-fix-qa-001`, #4 `fix/qa-001-message-invisible-chars`, #5 `feat/design-rename`, #6 `docs/contract-qa-002`; `main` = 7463816.
+Process: from wave 2, PRs are real (lead pushes and merges). Merged so far: #1 `docs/real-pr-flow`, #2 `docs/name-zerojance`, #3 `feat/qa-gate-fix-qa-001`, #4 `fix/qa-001-message-invisible-chars`, #5 `feat/design-rename`, #6 `docs/contract-qa-002`, #7 `docs/board-wave2-update`, #8 `feat/design-tokens`, #9 `chore/pin-vite7`, #10 `docs/contract-logout`, #11 `feat/design-commands`, #12 `feat/qa-gate-api-core`, #13 `chore/lockfile-b2`, #14 `docs/adr-0002-hosting`, #15 `feat/qa-gates-wave2`, #16 `fix/qa-002-invisible-runs`, #17 `feat/terminal-engine`; `main` = df5e6ca. This board was stale (showed B2/F2/D2 and the QA-002 fix as in-progress after they had already merged); corrected 2026-09-22, branch `docs/board-fix-wave2-3`.
 
-Open QA findings: QA-001 verified (fixed, PR #4). QA-002 (Low): contract amended (PR #6); implementation is the B-fix row; QA retests and gates.
+Open QA findings: QA-001 verified fixed (PR #4). QA-002 verified fixed (PR #16, `fix/qa-002-invisible-runs`, gate PASS). QA-003 (Low, open, non-blocking, from the B2 gate): HTTP-parse-level errors return Fastify's default body, not the contract shape; the client already tolerates it (verified in the F3 gate); fix or documented exception lands with B6.
 
 ## Index
 | ID | Owner | Title | Depends on | Status |
 |---|---|---|---|---|
 | A1 | architect | Phase 0 plan and scaffold | none | done |
 | A2 | architect | Contract change control and CD request triage | ongoing | in-progress |
-| A3 | architect | Review and merge backend branches (B1-B6) | B* | todo |
-| A4 | architect | Review and merge frontend and design branches | F*, D* | todo |
+| A3 | architect | Review and merge backend branches (B1-B6) | B* | in-progress (B1, B2 done; B3-B6 todo) |
+| A4 | architect | Review and merge frontend and design branches | F*, D* | in-progress (F1, F2, D1, D2 done; F3, D3 approved, awaiting lead merge; rest todo) |
 | A5 | architect | Review and merge QA branches, run integration check | Q*, B4, F4 | todo |
 | A6 | architect | Release-readiness report and Phase 2 board | all | todo |
-| B1 | backend-engineer | Shared contract package | none | done (local merge 6915843); QA-001 fix done (PR #4); QA-002 fix pending |
-| B2 | backend-engineer | API core | B1 | in-progress (`feat/api-core`) |
-| B3 | backend-engineer | SQLite and guestbook | B2 | todo |
+| B1 | backend-engineer | Shared contract package | none | done; QA-001 fix done (PR #4); QA-002 fix done (PR #16) |
+| B2 | backend-engineer | API core | B1 | done (`feat/api-core`, PR #12; lockfile regen PR #13); QA-003 (Low) open, non-blocking, tracked under B6 |
+| B3 | backend-engineer | SQLite and guestbook | B2 | todo (assigned; backend-engineer to start next) |
 | B4 | backend-engineer | Auth and admin endpoints | B3 | todo |
 | B5 | backend-engineer | CI/CD workflows | B2, Q4 | todo |
 | B6 | backend-engineer | Runbook, README, hardening | B4, B5 | todo |
 | B7 | backend-engineer | Pages deploy workflow (manual only) | B5, F7, lead-supplied action SHAs | todo |
 | B-fix | backend-engineer | QA-002 fix: cap invisible-character runs | contract merged (PR #6) | todo (after B2; `fix/qa-002-invisible-runs`) |
 | F1 | frontend-engineer | Web shell | none | done |
-| F2 | frontend-engineer | Terminal engine | F1 | in-progress (`feat/terminal-engine`) |
-| F3 | frontend-engineer | API client and session | F1, B1 | todo (after F2) |
+| F2 | frontend-engineer | Terminal engine | F1 | done (`feat/terminal-engine`, PR #17) |
+| F3 | frontend-engineer | API client and session | F1, B1 | approved (`feat/api-client` at c020aa9; QA gate PASS, architect approved; awaiting lead merge) |
 | F4 | frontend-engineer | Commands | F2, F3, D4 | todo |
 | F5 | frontend-engineer | Boot, layout, effects | F1, D2, D3 | todo |
 | F6 | frontend-engineer | Easter eggs, a11y, polish | F4, F5, D5 | todo |
 | F7 | frontend-engineer | Static build for GitHub Pages | F3, F4 | todo |
 | D1 | creative-director | Concept and voice | none | done; renamed to ZeroJance (PR #5) |
-| D2 | creative-director | Tokens and style guide | D1 | in-progress (`feat/design-tokens`) |
-| D3 | creative-director | Boot, layout, motion spec | D1, D2 | todo (waits on D2) |
-| D4 | creative-director | Terminal command spec | D1 | todo (after D2) |
-| D5 | creative-director | Easter eggs and backlog | D4 | todo (waits on D4) |
+| D2 | creative-director | Tokens and style guide | D1 | done (`feat/design-tokens`, PR #8) |
+| D3 | creative-director | Boot, layout, motion spec | D1, D2 | approved (`feat/design-screens` at 7831c18; docs-only, architect approved; awaiting lead merge) |
+| D4 | creative-director | Terminal command spec | D1 | done (`feat/design-commands`, PR #11) |
+| D5 | creative-director | Easter eggs and backlog | D4 | assigned; creative-director starting next |
 | D6 | creative-director | Design review of the build | F4, F5 | todo (waits on F4, F5) |
 | D7 | creative-director | Static-build (uplink off) copy amendment | D4 | todo (small, after D5) |
 | Q1 | security-qa-engineer | Test plan and threat model | none | done |
@@ -56,9 +56,10 @@ Open QA findings: QA-001 verified (fixed, PR #4). QA-002 (Low): contract amended
 Hosting (ADR 0002): GitHub Pages, frontend only, static build with uplink off; the API is not deployed. Rows B7, F7, D7, Q7 were added for it.
 
 ## Suggested waves (parallel starts)
-1. Start now: B1, D1, F1, Q1, Q4.
-2. After wave 1 merges: B2, F2, F3, D2, D4, Q2.
-3. B3, D3, F5, D5. 4. B4, F4, Q3, B5. 5. Q5, D6, F6, B6. 6. Q6, A5, A6.
+1. Start now: B1, D1, F1, Q1, Q4. **Done.**
+2. After wave 1 merges: B2, F2, F3, D2, D4, Q2. **B2, F2, D2, D4 done and merged; F3 and D3 (moved up, see below) approved and awaiting lead merge; Q2 status: check with security-qa-engineer (harness depends only on B2, which is merged).**
+3. B3, D3, F5, D5. **Next up: B3 (backend-engineer, assigned), D5 (creative-director, assigned). F4 (frontend-engineer, assigned) can start once F3 merges since F2+F3+D4 are all ready. F5 still waits on D3 merging.**
+4. B4, F4, Q3, B5. 5. Q5, D6, F6, B6. 6. Q6, A5, A6.
 Blocked work should do its non-blocked part first (read specs, draft tests) and message the Architect if idle.
 
 ---
@@ -105,7 +106,7 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: `npm test -w @site/shared` and `npm run typecheck -w @site/shared` pass; boundary tests for handle 1/2/24/25 chars, message 0/1/280/281 chars, newline, tab, NUL, U+202E all pass; the Frontend can `import type` from `@site/shared`; PR file lists dependencies.
 
 ### B2 API core
-- Owner: backend-engineer. Depends: B1. Branch: `feat/api-core`. Status: todo.
+- Owner: backend-engineer. Depends: B1. Branch: `feat/api-core`. Status: done (PR #12; lockfile regen `chore/lockfile-b2` PR #13). QA-003 (Low, non-blocking) open, tracked under B6.
 - Deliverable: `apps/api`: `buildApp(config)` factory, `src/server.ts` (binds `127.0.0.1:3001`), env config validated with zod, `apps/api/.env.example` (placeholders only), request id, `@fastify/helmet`, global rate limit, contract error handler (all codes in section 2, no stack traces, unknown route -> `not_found`), 413/415 handling, Origin/`Sec-Fetch-Site` check on mutating requests, `GET /api/health`. Scripts: `dev` (`tsx watch`), `start`, `test`, `typecheck`.
 - Done when: inject tests cover health shape, 404/413/415/origin_rejected error bodies, `X-Request-Id`, helmet headers, no `X-Powered-By`, no CORS headers, 429 with `Retry-After`; `npm run dev -w @site/api` then `curl http://127.0.0.1:3001/api/health` returns the contract body (paste output); `npm test -w @site/api` passes.
 
@@ -144,17 +145,17 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: `npm run dev -w @site/web` serves on 5173; `npm run build -w @site/web` succeeds and `dist/index.html` has no inline `<script>`; a smoke test passes; PR lists each dependency.
 
 ### F2 Terminal engine
-- Owner: frontend-engineer. Depends: F1. Branch: `feat/terminal-engine` (actual name in use). Status: todo.
+- Owner: frontend-engineer. Depends: F1. Branch: `feat/terminal-engine` (actual name in use). Status: done (PR #17).
 - Deliverable: `src/terminal/`: input parser (quotes, escapes, max input length), command registry (`name`, `aliases`, `usage`, `run(ctx,args)` returning typed output lines of plain strings), history (up/down, capped, never stores masked input), scrollback cap, masked-prompt mode, `<Terminal>` component and `useTerminal` hook. No API calls, no design dependencies.
 - Done when: unit tests for parser (quotes, empty, unicode, 10 kB input), history, dispatch, unknown command; a Testing Library test types `<img src=x onerror=alert(1)>` and finds it as inert text; tests pass.
 
 ### F3 API client and session
-- Owner: frontend-engineer. Depends: F1, B1 merged (both now done). Branch: `feat/web-api-client`. Status: todo. Note from QA gate F1: with the API down, the Vite proxy returns a bare `500 text/plain` with an empty body, so the client must map non-JSON and empty error bodies to a generic network-style error.
+- Owner: frontend-engineer. Depends: F1, B1 merged (both now done). Branch: `feat/api-client` (actual name in use; board said `feat/web-api-client`). Status: approved at commit `c020aa9`; QA gate PASS (`qa/reports/gate-feat-api-client.md`); architect review `docs/architecture/reviews/feat-api-client.md`; awaiting lead merge. Note from QA gate F1: with the API down, the Vite proxy returns a bare `500 text/plain` with an empty body, so the client must map non-JSON and empty error bodies to a generic network-style error.
 - Deliverable: `src/api/client.ts`: typed functions for every MVP endpoint (`import type` from `@site/shared`), `credentials: "same-origin"`, 8 s timeout, `ApiError` class carrying `code`/`requestId`/`retryAfter`, no body logging; `useSession` context (`user | null | loading`).
 - Done when: tests with mocked `fetch` cover each endpoint success plus 400, 401, 403, 404, 429 (Retry-After), 500, network failure, and timeout, and a non-JSON or empty error body (proxy 500 when the API is down); tests pass.
 
 ### F4 Commands
-- Owner: frontend-engineer. Depends: F2, F3, D4 merged. Branch: `feat/web-commands`. Status: todo.
+- Owner: frontend-engineer. Depends: F2, F3, D4 merged. Branch: `feat/web-commands`. Status: todo; F2 and D4 merged, F3 approved and awaiting lead merge — frontend-engineer can start once the lead confirms F3 is on `main`.
 - Deliverable: every command in `docs/design/terminal-commands.md` with the exact strings, static copy in `src/content/` (placeholders where the spec has them), server-backed commands via the client, masked login prompt, operator-only commands gated by session, friendly rate-limit and offline messages.
 - Done when: a test per command (success and at least one error) using a mocked client; help output matches the spec; after B3 and B4 are merged, run the real API and paste a transcript of `status`, `guestbook`, `guestbook sign`, `login`, `whoami`, `guestbook rm`, `logout` in the PR file.
 
@@ -185,22 +186,22 @@ Blocked work should do its non-blocked part first (read specs, draft tests) and 
 - Done when: fits the MVP scope in `roadmap.md`; Architect review.
 
 ### D2 Tokens and style guide
-- Owner: creative-director. Depends: D1. Branch: `feat/design-tokens`. Status: todo.
+- Owner: creative-director. Depends: D1. Branch: `feat/design-tokens`. Status: done (PR #8).
 - Deliverable: `docs/design/tokens.css` (custom properties: exact hex colors, spacing scale, type scale, motion durations and easings, z-index), `docs/design/style-guide.md` (usage rules, contrast table with computed ratios: body text >= 4.5:1, large text and UI >= 3:1). System font stack only; no external font or asset loads. Optional SVG glyph/logo in `docs/design/assets/`.
 - Done when: every text/background pair used is in the contrast table; Architect review.
 
 ### D3 Boot, layout, motion spec
-- Owner: creative-director. Depends: D1, D2. Branch: `feat/design-screens`. Status: todo.
+- Owner: creative-director. Depends: D1, D2. Branch: `feat/design-screens`. Status: approved at commit `7831c18`; docs-only, architect review `docs/architecture/reviews/feat-design-screens.md`; awaiting lead merge.
 - Deliverable: `docs/design/screens.md`: the boot sequence (exact lines, timings, skip rule), main layout with ASCII wireframes for desktop and mobile, empty/loading/API-offline states, an effects catalog (each effect: trigger, duration, easing, reduced-motion fallback, CPU cost note), keyboard and focus rules.
 - Done when: an engineer could build it with no questions; every effect has a fallback; Architect review.
 
 ### D4 Terminal command spec
-- Owner: creative-director. Depends: D1 (contract already published). Branch: `feat/design-commands`. Status: todo.
+- Owner: creative-director. Depends: D1 (contract already published). Branch: `feat/design-commands`. Status: done (PR #11).
 - Deliverable: `docs/design/terminal-commands.md`: prompt string, at most 14 MVP commands, and for each: syntax, help line, exact success output, exact error outputs, auth requirement, API call (map to contract section 7), placeholders. Login flow, rate-limit and offline messages. Any endpoint or field you need beyond the contract goes in a "Requests to Architect" section (or message the Architect early).
 - Done when: no command needs an API call outside the contract; every string is exact; Architect review.
 
 ### D5 Easter eggs and backlog
-- Owner: creative-director. Depends: D4. Branch: `feat/design-easter-eggs`. Status: todo.
+- Owner: creative-director. Depends: D4. Branch: `feat/design-easter-eggs`. Status: assigned, starting now (D4 merged).
 - Deliverable: `docs/design/easter-eggs.md` (two MVP easter eggs with exact trigger, exact output, discoverability hint; client-side only, harmless, no external assets), `docs/design/backlog.md` (Phase 2+ ideas ranked, each with its API need so the Architect can plan).
 - Done when: MVP eggs are buildable in under a day of frontend work each; Architect review.
 
