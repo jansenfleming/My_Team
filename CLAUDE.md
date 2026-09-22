@@ -1,5 +1,9 @@
 # My_Team
 
+## Current project
+
+Read `docs/project-brief.md` first, before doing anything else. It's the source of truth for whatever is currently being built, including team roster, scope, and constraints — it supersedes any earlier project's content once updated (check its own text for whether it notes a supersession).
+
 ## Agent teams
 
 Before creating, spawning, or designing an agent team (or naming teammates), read `docs/agent-teams-reference.md` and follow it. It covers when to use a team versus subagents, sizing, file ownership, spawn-prompt structure, prompt templates, and known limitations.
