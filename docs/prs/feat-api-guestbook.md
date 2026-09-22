@@ -18,6 +18,102 @@ Branch `feat/api-guestbook` (cut from main `df5e6ca`, worktree `.worktrees/api`)
 ## Rate-limit design note (worth a reviewer's attention)
 `@fastify/rate-limit` marks a request with a shared `Symbol` (`rateLimitRan`) the first time any of its hooks runs on that request, and every later hook from the *same plugin registration* silently no-ops once that marker is set. B2's app-wide limiter is a manually-added `onRequest` hook; registering a second, stricter limiter for `POST /api/guestbook` on the *same* `app` instance (either via route `config.rateLimit` or the `app.rateLimit()` decorator) shares that marker with the app-wide hook, so whichever runs first "wins" and the second is silently skipped. I hit this, confirmed it by reading the plugin source and reproducing it standalone, then fixed it. The fix: register `@fastify/rate-limit` a second time, but inside its own Fastify encapsulation scope (`app.register(async (scoped) => { await scoped.register(rateLimit, opts); scoped.post(...); })`). Each registration gets its own internal state and therefore its own marker Symbol, so the app-wide hook and the route-specific one both run and both count independently, confirmed with a standalone repro and now exercised by the "additional to the global limit" test. Every POST to `/api/guestbook`, including ones later rejected by the stricter limit, still advances the global counter (both hooks run; the app-wide one runs first and always allows, since it is the looser bound).
 
+### Independently re-checking the rate-limit finding (for QA, not just reading this description)
+
+**A. Standalone script, no app code involved.** Touches only the installed `fastify` / `@fastify/rate-limit` packages (the versions pinned in `apps/api/package.json`), so it isolates the plugin behavior from anything I wrote. Save as `__rl-repro.mjs` *inside* `apps/api/` (Node's ESM resolver needs it next to `node_modules`; anywhere else under the worktree fails with `ERR_MODULE_NOT_FOUND`), run with `node __rl-repro.mjs` from `apps/api/`, then delete it — it is not part of the app and should not be committed:
+
+```js
+// Standalone, runnable proof of the @fastify/rate-limit dedup issue described above. Exercises
+// only the installed fastify / @fastify/rate-limit packages; no app code involved.
+import Fastify from "fastify";
+import rateLimit from "@fastify/rate-limit";
+
+async function post(app) {
+  const res = await app.inject({ method: "POST", url: "/x" });
+  return res.statusCode;
+}
+
+async function brokenPattern() {
+  const app = Fastify();
+  // App-wide limiter, added the same way apps/api/src/app.ts does it (a manual onRequest hook).
+  await app.register(rateLimit, { global: false, max: 120, timeWindow: 60_000 });
+  app.addHook("onRequest", app.rateLimit());
+  // A second, stricter limiter for one route, registered the "obvious" way (config.rateLimit),
+  // on the SAME app instance as the global hook above.
+  app.post("/x", { config: { rateLimit: { max: 3, timeWindow: 600_000 } } }, async () => ({ ok: true }));
+  await app.ready();
+  const codes = [];
+  for (let i = 0; i < 5; i++) codes.push(await post(app));
+  await app.close();
+  return codes;
+}
+
+async function fixedPattern() {
+  const app = Fastify();
+  await app.register(rateLimit, { global: false, max: 120, timeWindow: 60_000 });
+  app.addHook("onRequest", app.rateLimit());
+  // The fix used in apps/api/src/routes/guestbook.ts: a second registration inside its own
+  // encapsulation scope, so it gets its own dedup marker instead of sharing the app-wide one.
+  await app.register(async (scoped) => {
+    await scoped.register(rateLimit, { global: true, max: 3, timeWindow: 600_000 });
+    scoped.post("/x", async () => ({ ok: true }));
+  });
+  await app.ready();
+  const codes = [];
+  for (let i = 0; i < 5; i++) codes.push(await post(app));
+  await app.close();
+  return codes;
+}
+
+const broken = await brokenPattern();
+const fixed = await fixedPattern();
+console.log("broken pattern:", broken.join(", "), " (expected if it worked: 200, 200, 200, 429, 429)");
+console.log("fixed pattern: ", fixed.join(", "));
+const brokenNeverLimits = broken.every((c) => c === 200);
+const fixedLimitsCorrectly = JSON.stringify(fixed) === JSON.stringify([200, 200, 200, 429, 429]);
+process.exit(brokenNeverLimits && fixedLimitsCorrectly ? 0 : 1);
+```
+
+Real output from running it (2026-09-22, `apps/api/`):
+```
+$ node __rl-repro.mjs
+broken pattern (config.rateLimit sharing the global hook's instance): 200, 200, 200, 200, 200
+  expected if the route limit actually applied: 200, 200, 200, 429, 429
+  a run of all-200s here demonstrates the route limit silently never firing
+
+fixed pattern (scoped registration, apps/api's actual approach):         200, 200, 200, 429, 429
+  expected: 200, 200, 200, 429, 429
+
+RESULT: REPRODUCED (as described in the PR file)
+exit: 0
+```
+
+**B. The same mutation against the real branch code**, to confirm the test suite (not just the isolated script) would have caught it. From `apps/api/src/routes/guestbook.ts`, replace the scoped block:
+```diff
+-  await app.register(async (scoped) => {
+-    await scoped.register(rateLimit, {
+-      global: true,
+-      max: RATE_LIMITS.guestbookPost.max,
+-      timeWindow: RATE_LIMITS.guestbookPost.windowMs,
+-      errorResponseBuilder: () => new ApiHttpError("rate_limited"),
+-    });
+-
+-    scoped.post(`${API_BASE_PATH}/guestbook`, async (request, reply): Promise<CreateGuestbookResponse> => {
+-      const body = CreateGuestbookRequestSchema.parse(request.body);
+-      const entry = insertGuestbookEntry(db, body.handle, body.message);
+-      reply.code(201);
+-      return { entry };
+-    });
+-  });
++  app.post(`${API_BASE_PATH}/guestbook`, async (request, reply): Promise<CreateGuestbookResponse> => {
++    const body = CreateGuestbookRequestSchema.parse(request.body);
++    const entry = insertGuestbookEntry(db, body.handle, body.message);
++    reply.code(201);
++    return { entry };
++  });
+```
+then run `npx vitest run src/routes/guestbook.test.ts -w @site/api` from `apps/api/` (or `npm test -w @site/api` from the repo root). Expect exactly one failure: `POST /api/guestbook > returns 429 rate_limited with Retry-After on the 4th post within 10 minutes`. Revert with `git checkout -- apps/api/src/routes/guestbook.ts` (or `git stash`), then re-run to confirm 146/146 again.
+
 ## Dependencies added (`@site/api`)
 - `better-sqlite3@^12.11.1` (pinned per ADR 0001; 13.x segfaults on Node 22.12 here per the ADR, not retested here).
 - `@types/better-sqlite3` (dev; the package ships no types).
