@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <title>ZeroJance</title>
-  <!-- Fixed colors (a favicon cannot read CSS variables): ink #0B0D10, slate #8E97A3, amber #F5A524. -->
-  <rect width="32" height="32" rx="4" fill="#0B0D10"/>
-  <circle cx="16" cy="16" r="11" fill="none" stroke="#8E97A3" stroke-width="2"/>
-  <circle cx="16" cy="16" r="4" fill="#F5A524"/>
-</svg>

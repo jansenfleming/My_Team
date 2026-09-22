@@ -1,15 +1,12 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
-// Dev and preview servers bind to loopback only (ADR 0001). The browser sees a single
-// origin: /api is proxied to the API, so there is no CORS and SameSite=Strict cookies work.
-const API_TARGET = "http://127.0.0.1:3001";
-const proxy = { "/api": { target: API_TARGET, changeOrigin: false } };
-
+// Static catalog mockup: no backend, so no /api proxy (ADR 0003 supersedes the API-proxy
+// convention in ADR 0001). Dev and preview servers still bind to loopback only.
 export default defineConfig({
   plugins: [react()],
-  server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy },
-  preview: { host: "127.0.0.1", port: 4173, strictPort: true, proxy },
+  server: { host: "127.0.0.1", port: 5173, strictPort: true },
+  preview: { host: "127.0.0.1", port: 4173, strictPort: true },
   build: { target: "es2022", sourcemap: false },
   test: {
     environment: "jsdom",

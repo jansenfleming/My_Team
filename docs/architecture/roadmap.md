@@ -1,49 +1,95 @@
 # Roadmap
 
-Owner: Architect. Principle from the owner: start simple, then keep improving. Each phase must leave `main` working.
+Owner: Architect. Principle from the owner: start simple, then keep improving. Each
+phase must leave `main` working.
 
-## MVP (Phase 1): "the terminal that talks to a real backend"
+Rewritten 2026-09-22 for ZeroJance (streetwear catalog mockup), superseding the
+cybersecurity-terminal roadmap. See `docs/architecture/adr/0003-streetwear-pivot.md` for
+the stack decision and what was kept/dropped from the old project.
 
-One screen. A visitor boots into a command-center terminal, types commands, reads placeholder dossier content, signs a public guestbook, and an operator can log in and moderate. It is small on purpose but touches every layer.
+## MVP (Phase 1): "a believable catalog"
+
+A visitor lands on a product grid, opens a product detail page, browses a lookbook
+page, reads an about/brand page, adds items to a cart that behaves like a real one, and
+— if they poke around — finds a couple of secret layers. No login, no real payment, no
+server.
 
 ### In
-1. **Boot + terminal UI** (web): boot sequence, then a keyboard-first terminal with history, `help`, tab-complete-free basics, mobile-usable input. Styled per the Creative Director's tokens and specs; degrades under `prefers-reduced-motion`.
-2. **Client-side commands** (no API): content and UI commands as specified by the Creative Director (e.g. help, about, agents, clear, and 1-2 easter eggs). All personal facts are `[PLACEHOLDER: ...]`.
-3. **Server-backed commands**: `status` (health), `guestbook` (list), `guestbook sign` (create), `login`, `logout`, `whoami`, and operator-only `guestbook rm <id>` and `diagnostics`.
-4. **API**: `health`, `auth/login|logout|me`, `guestbook` list/create, `admin/guestbook/:id` delete, `admin/diagnostics`. Contract: `api-contract.md`.
-5. **Auth**: single operator account, scrypt password, server-side session cookie, Origin check, login rate limit.
-6. **Data**: SQLite with migrations (guestbook entries, sessions).
-7. **Security baseline**: input validation, parameterized SQL, security headers, rate limits, generic errors, no secrets in repo, dependency audit, secret scan.
-8. **Automated tests**: API (inject), web (Testing Library), shared schemas, and an independent QA black-box suite plus security tests.
-9. **CI/CD files**: `.github/workflows/ci.yml` (install, lint, typecheck, test, build), `security.yml` (audit + secret scan), `dependabot.yml`, `deploy-pages.yml` (manual only), a deploy runbook in `infra/`. They are checked locally by running the same npm scripts. Nothing publishes automatically: the Pages deploy workflow is `workflow_dispatch` only (ADR 0002).
-10. **Agent collaboration evidence**: board, PR description files, QA reports and gates, ADRs, and the git history itself.
+1. **Web shell and routing** (Engineer): app shell, client-side routing for home/
+   catalog/product-detail/lookbook/about/404, mobile-first responsive layout skeleton.
+   Placeholder copy until the Creative Director's specs land.
+2. **Brand identity and voice** (Creative Director): the ZeroJance visual identity —
+   name/premise recap, voice guide, design tokens (colors, type, spacing, motion), a
+   short style guide. Streetwear + tech/programming aesthetic; explicitly not a repeat
+   of the old cyberpunk terminal palette.
+3. **Product data and catalog grid** (Engineer + Creative Director): 6-12 products
+   across shirts/sweatshirts/hats only, each with name, price, 1-2 images (or styled
+   placeholders), a short tech-culture-flavored description/tags. Creative Director
+   supplies the concepts and copy; Engineer builds the typed data module and the grid.
+4. **Product detail pages** (Engineer): per-product page, size/variant picker (mock),
+   "Add to Cart" that visibly works.
+5. **Lookbook/editorial page** (Creative Director spec + Engineer build): a small
+   editorial/lookbook layout distinct from the grid.
+6. **About/brand page** (Creative Director copy + Engineer build): brand story with
+   `[PLACEHOLDER: ...]` for anything about the owner or the brand's founding that isn't
+   supplied.
+7. **Mock cart** (Engineer): cart drawer or page, quantity edit, remove, a subtotal, and
+   a "checkout" screen that clearly does not process a real payment. Honest in code
+   (comment at the point a real implementation would integrate a payment provider) and
+   in copy (no "order confirmed" language).
+8. **Secret/easter-egg layers, curated** (Creative Director spec + Engineer build): pick
+   2-3 from the owner's list (e.g. a hidden 13th product, a dev-console/view-source
+   message, a `git log`-styled changelog page, a joke 404, a discount code that's a
+   programming pun, config-file-styled product tags/care labels) — not all of them.
+   Creative Director records which were picked and why the rest were left out.
+9. **Basic hygiene** (Architect, ongoing): `tools/scan-secrets.mjs` clean, `npm audit`
+   reviewed, no broken internal links, a quick accessibility pass (landmarks, alt text,
+   contrast, keyboard reachability, `prefers-reduced-motion` respected) on each merged
+   page.
+10. **Tests** (Engineer): component/unit tests for the catalog grid, product detail,
+    cart logic, and each easter egg's trigger condition.
 
 ### Explicitly out of MVP
-Missions / CTF / flag submission, network or map visualizations, real-time (WebSocket/SSE), live agent-activity feed, multi-user accounts or registration, password reset or email, analytics, CMS or admin UI beyond terminal commands, hidden routes/pages beyond the terminal's own easter eggs, Playwright/browser E2E, Docker, deploying the API (only the static build goes to GitHub Pages, ADR 0002), custom domain/TLS, an ORM, i18n, SSR, service worker/PWA, audio.
-
-Anything the Creative Director proposes that needs a new endpoint or field goes through the change process in `api-contract.md` and lands in a later phase unless it is cheap and additive.
+Real payments/checkout, real accounts or auth, a real backend or database, a newsletter
+signup that actually sends anything, search, filtering/sorting beyond maybe a simple
+category tab, wishlist/favorites, reviews, internationalization, a CMS, analytics,
+Playwright/browser E2E (can be a Phase 2 addition), accessories (per the brief: shirts/
+sweatshirts/hats only for v1), more than the curated easter-egg set.
 
 ### MVP exit criteria
-- Fresh clone: `npm install`, then `npm run dev` gives a working site and API; `npm test` passes; `npm run lint` and `npm run typecheck` pass.
-- Every Phase 1 board task is Done per the brief's definition of done (owner tests, QA gate PASS, Architect merge).
-- `npm run build:static -w @site/web` produces a static build (uplink off, base `/My_Team/`, CSP meta) that passes QA's dist checks.
-- `qa/reports/security-review-mvp.md` has no open Critical/High findings.
-- The Architect's `release-readiness.md` exists and recommends (does not perform) next steps for the owner.
+- Fresh clone: `npm install`, then `npm run dev` gives a working site; `npm test`
+  passes; `npm run lint` and `npm run typecheck` pass; `npm run build` produces a static
+  `apps/web/dist`.
+- Every Phase 1 board task is Done per the brief's definition of done (owner tests pass
+  with real output, Architect reviews and merges).
+- `npm run scan-secrets` is clean; `npm audit --audit-level=high` has no open
+  high/critical findings the Architect hasn't triaged.
+- The curated easter eggs all work and are documented in `docs/design/easter-eggs.md`.
+- No fabricated facts about the owner or the brand's founding story remain — every such
+  spot is `[PLACEHOLDER: ...]` until the owner supplies real content.
 
 ## Phase 2: "make it feel alive" (starts after MVP merge; board written then)
-- Missions: a small server-verified challenge set (`/api/missions`), progress stored per visitor session. Flags stored as hashes.
-- Agent-activity feed: `GET /api/agents/activity`, generated from git log at build time (no runtime git access).
-- Creative Director's approved terminal/command additions, each with a contract change.
-- Playwright E2E smoke test (needs `npx playwright install`; owner approval for the browser download).
-- Hidden pages via hash routes; a richer easter-egg set; sound off by default.
-- Frontend: visualization (canvas) for the network/diagnostics view.
-- Option: **hosted API** alongside the Pages front end. Needs cross-origin auth (`SameSite=None; Secure` cookies, CORS with credentials, new Origin allow-list), TLS, a host account, a threat-model review, a contract v2, and an ADR before any code.
-- QA: fuzzing of the terminal parser, expanded authz matrix, dependency-review automation.
+- More product variety or a richer filter/category experience, if the owner wants more
+  than 6-12 products.
+- Additional easter eggs from the Creative Director's backlog (deferred ones get a
+  reasons-left-out note in Phase 1; Phase 2 can revisit).
+- A real hosting decision and its own ADR (GitHub Pages is the likely fit, matching ADR
+  0002's reasoning for the old project — static, free, no backend to expose — but this
+  needs a fresh ADR once the build is close to shippable, not assumed now).
+- If the owner wants a real newsletter signup or any other feature that touches a real
+  external service or collects real user input: a small, scoped backend/integration
+  decision (its own ADR) **and** a QA role brought in for that specific piece, per the
+  brief.
+- Polish pass: performance (image weight, bundle size), deeper accessibility review,
+  cross-device QA by the Architect.
 
 ## Phase 3: "ship it" (only with the owner's approval)
-- **Decided (ADR 0002):** publish the static web build on GitHub Pages at `https://jansenfleming.github.io/My_Team/`; the API is not deployed. The build uses `VITE_UPLINK=off` so the terminal reports the uplink as offline; a `workflow_dispatch`-only workflow deploys it, run by the lead after the owner approves the first publish.
-- Deploy runbook executed by the owner and lead: set Pages source to GitHub Actions, run the workflow, verify the live URL. Agents prepare, the owner approves, the lead clicks.
-- Later: bundle the API (esbuild/tsup), backups for the SQLite file, log redaction review, uptime check (only if the API is hosted, see Phase 2 option below).
+- Deploy runbook (owner- and lead-executed): set hosting source, run the deploy
+  workflow once, verify the live URL. Agents prepare, the owner approves, the lead
+  clicks — same discipline as the old project's ADR 0002.
+- Real content replacing any remaining `[PLACEHOLDER: ...]` values.
 
 ## Phase 4: continuous improvement
-Owner-directed backlog. Candidates: SSE-based live agent feed, Postgres if needed, richer operator tooling, additional authorized security demos against the local instance only.
+Owner-directed backlog. Candidates: real product photography, a real newsletter
+integration (with its own review), more easter eggs, seasonal drops as a content
+pattern.

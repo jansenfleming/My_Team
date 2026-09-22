@@ -1,32 +1,71 @@
-# Kickoff: creative-director
+# Kickoff: Creative Director
 
-You are `creative-director`. Give the site its own identity and write specs the Frontend Engineer can build without guessing. You write docs and assets only, no application code. Read in this order (under the main checkout `/Users/jansenfleming/Documents/My_Team`):
-1. `docs/project-brief.md` (owner's vision and hard rules) and `.claude/agents/creative-director.md` (your role).
-2. `docs/architecture/roadmap.md` (**the MVP scope you design inside**), `api-contract.md` (what the terminal can call, especially section 7 and section 8), `ownership-map.md` (workflow), `board.md` (your tasks D1-D6).
+Read `docs/project-brief.md` first (source of truth), then this file, then
+`docs/architecture/board.md` (your tasks are D1-D5) and `docs/architecture/ownership-
+map.md`. Also skim `docs/architecture/adr/0003-streetwear-pivot.md` for why the repo
+looks the way it does (a prior cybersecurity-terminal project was cleared out; nothing
+of its content — palette, voice, easter eggs — carries forward).
 
-## You own
-`docs/design/**` (including `tokens.css`, `assets/`, `reviews/`) and your `docs/prs/<slug>.md` files. Do not edit anything else.
+## What you're building
+**ZeroJance**: a streetwear brand that makes tech-culture apparel — shirts,
+sweatshirts, and hats, styled like programming and networking in-jokes made wearable.
+The site is a mockup browsable catalog/lookbook, not an interactive terminal or app.
+The brand feel is the whole product here — this role matters more on this project than
+it would on a typical build.
 
-## Setup (once)
-```
-cd /Users/jansenfleming/Documents/My_Team
-git worktree add .worktrees/design -b feat/design-concept main
-cd .worktrees/design
-```
-No `npm install` needed. Never switch branches in the main checkout. Each later task: `git switch -c feat/<next> main` after the previous branch is merged.
+## Scope (v1 / MVP)
+- 6-12 products total, shirts/sweatshirts/hats only. No accessories.
+- A product grid, product detail pages, a lookbook/editorial page, an about/brand page.
+- Aesthetic: streetwear with tech/programming/networking references — drop culture,
+  bold type, maybe a grid or circuit motif mixed with monospace accents. Not a repeat of
+  the old site's cyberpunk terminal palette (do not reuse `--zj-*` names, hex values, or
+  voice from anything in git history under the old `docs/design/`).
+- Multiple secret/easter-egg layers, but curated: pick 2-3 from the owner's list, not
+  all of them, and write down what you left out and why. Ideas to pick from and adapt:
+  a hidden/13th product (Konami code, scroll-to-bottom, a buried link, etc.), a dev-
+  console/view-source message, a changelog page styled like `git log`, a joke 404 page,
+  a discount code that's a programming pun, product copy/tags styled like a config file.
 
-## Tasks, in order
-- **D1 `feat/design-concept`**: start now. Name and world of the system, voice, 60-second visitor journey, what you leave out and why.
-- **D4 `feat/design-commands`** (needs D1 only): terminal command spec with exact strings. Frontend and backend planning wait on this, so do it right after D1.
-- **D2 `feat/design-tokens`** (after D1): `tokens.css` and style guide with computed contrast ratios.
-- **D3 `feat/design-screens`** (after D1, D2): boot sequence, layout wireframes, effects catalog with reduced-motion fallbacks.
-- **D5 `feat/design-easter-eggs`** (after D4): two MVP easter eggs and a ranked Phase 2 backlog.
-- **D6 `feat/design-review`** (after frontend F4, F5 merged): review the running build (`npm run dev` from the main checkout) against your specs; top five fixes to the Frontend Engineer.
+## Files you own
+`docs/design/**` — this directory is currently empty (the old content was concept-
+specific and removed). You create it from scratch: `concept.md`, `tokens.css`,
+`style-guide.md`, `products.md`, `lookbook.md`, `about.md`, `easter-eggs.md`, plus any
+asset files you need. You do not edit application code (`apps/web/**` is the
+Engineer's); write specs the Engineer can build without guessing, then message the
+Engineer with the path.
 
-## Constraints you design within
-- MVP is one screen: a boot sequence into a terminal. Server-backed commands are limited to the contract (status, guestbook list/sign, login/logout/whoami, operator: guestbook rm, diagnostics). At most 14 MVP commands. Static content (about, agents roster, help, easter eggs) is client-side and free for you to design.
-- Need a new endpoint or field? Message `architect` with the command, why the server is needed, and an example request/response. Additive changes are cheap; do not spec anything that assumes an endpoint that is not in the contract.
-- Placeholders only for anything personal: `[PLACEHOLDER: ...]`. The only confirmed fact is that the owner's name is Jansen Fleming. No invented employers, credentials, or achievements.
-- Buildable and safe: system font stack only (no external fonts or images fetched at runtime), keyboard-first, mobile-usable, `prefers-reduced-motion` fallback for every effect, contrast at least 4.5:1 for body text, exact hex/ms/easing values and exact strings. All visitor-typed text is data (no HTML rendering in output).
-- Avoid the generic cyberpunk template. Choose a few ideas from the brief and make them cohere; say what you deliberately skip.
-- Workflow: PR file `docs/prs/<slug>.md`, message `architect` (design branches need Architect review only), then message `frontend-engineer` with the merged path. Never push or touch the `origin` remote. Commit messages end with the attribution line from your harness instructions.
+## Your first tasks (see `docs/architecture/board.md` for full detail)
+1. **D1 — Brand identity and voice** (`feat/design-brand`, depends on nothing, start
+   now): the premise, a voice guide with do/don't sample lines, three things that keep
+   this from looking like a generic streetwear template, and your picks (+ reasons for
+   what you're leaving out) for the easter-egg layers.
+2. **D2 — Design tokens and style guide** (after D1): exact colors, type scale, spacing,
+   motion, with a computed contrast table (body text >= 4.5:1, large text/UI >= 3:1).
+3. **D3 — Product concepts and copy** (after D1): 6-12 products with names, prices,
+   descriptions (with the in-jokes), tags. Note if any product is easter-egg-only (e.g.
+   a hidden 13th) so the Engineer keeps it out of the main grid.
+4. **D4 — Lookbook and about-page specs** (after D1).
+5. **D5 — Easter-egg specs** (after D1, D3): exact trigger, exact output, discoverability
+   hint, for each picked egg.
+
+## Constraints (hard rules)
+- **Mock only.** No real commerce is implied by any copy you write — "Add to Cart" and
+  checkout language should feel real but never claim a payment was processed or an order
+  was sent anywhere.
+- **No fabricated facts about the owner (Jansen Fleming) or the brand's founding story.**
+  Use `[PLACEHOLDER: ...]` for anything not explicitly supplied. Never invent a founding
+  year, a location, a backstory, credentials, or quotes attributed to the owner.
+- **No external services, no real assets fetched from third parties.** Fonts/images are
+  self-hosted or system fonts; if you want real photography you don't have, describe a
+  styled placeholder instead and say so.
+- Branch per task off `main`, PR file in `docs/prs/<branch-slug>.md` (what changed, how
+  to review), message the Architect when ready. You never push or touch `gh`; the lead
+  does that after the Architect approves.
+- If a spec you want needs something the Engineer would have to build specially (e.g. a
+  particular interaction), say so explicitly in the spec rather than assuming it's easy.
+
+## Who to ask
+Scope or priority questions go to the Architect. Implementation-feasibility questions go
+to the Engineer (message them, don't guess). Anything needing the owner's real input
+(facts about him, real photography, a real product decision) — flag it as
+`[PLACEHOLDER: ...]` and mention it in your PR file; do not block on it.

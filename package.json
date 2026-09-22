@@ -1,29 +1,27 @@
 {
-  "name": "my-team-site",
+  "name": "zerojance-site",
   "version": "0.0.0",
   "private": true,
-  "description": "Cyberpunk / cybersecurity personal website built by a five-agent team (npm workspaces monorepo).",
+  "description": "ZeroJance streetwear catalog/lookbook mockup (npm workspaces monorepo).",
   "type": "module",
   "workspaces": [
-    "apps/*",
-    "packages/*",
-    "qa"
+    "apps/*"
   ],
   "engines": {
     "node": ">=22.12.0 <23"
   },
   "scripts": {
-    "dev": "concurrently --names api,web --prefix-colors cyan,magenta \"npm run dev -w @site/api\" \"npm run dev -w @site/web\"",
+    "dev": "npm run dev -w @site/web",
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && node --test tools/*.test.mjs",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
+    "scan-secrets": "node tools/scan-secrets.mjs",
     "audit:ci": "npm audit --audit-level=high"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "@types/node": "^22.20.0",
-    "concurrently": "^10.0.0",
     "eslint": "^9.39.0",
     "globals": "^17.0.0",
     "typescript": "~5.9.3",

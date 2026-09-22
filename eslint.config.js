@@ -12,13 +12,12 @@ export default tseslint.config(
       "**/build/**",
       "**/coverage/**",
       ".worktrees/**",
-      "apps/api/data/**",
     ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    // Node code: config files, scripts, API, QA harness and tools.
+    // Node code: root config files and scripts (tools/).
     files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: { ecmaVersion: 2023, globals: globals.node },
   },

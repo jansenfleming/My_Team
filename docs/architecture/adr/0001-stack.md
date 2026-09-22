@@ -1,6 +1,13 @@
 # ADR 0001: Stack
 
-Status: accepted (Architect, 2026-09-21). Change only through a new ADR.
+Status: **superseded in part by ADR 0003 (2026-09-22)** — this project pivoted from a
+cybersecurity-terminal site to the ZeroJance streetwear catalog mockup. The API,
+database, and auth decisions below no longer apply (there is no backend in the new
+project). The web tooling decisions (TypeScript, npm workspaces, Vite + React, Vitest,
+ESLint) carry forward unchanged. Kept as a historical record of the original full-stack
+build; do not implement against the API/DB/auth rows below.
+
+Status (original): accepted (Architect, 2026-09-21). Change only through a new ADR.
 
 ## Context
 Node 22.12 + npm only. No Docker, pnpm, or `gh`. Everything must run locally after `npm install`. Local git only. MVP must be small and working, and demonstrate full-stack, API, auth, tests, CI/CD files, security, and agent collaboration. Sonnet 5 agents write the code, so favor mainstream tools they know well.
