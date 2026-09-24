@@ -33,7 +33,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | done |
 | E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
-| E3 | engineer | Product detail page + cart core | E2 | todo |
+| E3 | engineer | Product detail page + cart core | E2 | approved |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | todo |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
@@ -62,6 +62,12 @@ old cybersecurity-terminal project (ADR 0003).
    **D4 status:** approved, waiting for the lead to merge — see
    `docs/architecture/reviews/feat-design-pages.md`. E5 can start once this merges (E1
    and D2 are already merged).
+   **E3 status:** `approved` — Architect review 2026-09-24 (`feat/web-product-cart`, PR
+   file `docs/prs/feat-web-product-cart.md`), no required changes; includes verification
+   of the `hiddenProduct.id` -> `"200-ok"` fix (commit `fcc14e3`) requested directly by
+   the lead. Full findings: `docs/architecture/reviews/feat-web-product-cart.md`. Waiting
+   on the lead to push/merge the real PR; E4 can start and E6's `ProductPage`-lookup
+   dependency is satisfied once that merge lands.
 5. After E2-E6 merge: E7, then A3.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
