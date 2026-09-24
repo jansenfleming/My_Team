@@ -19,7 +19,8 @@ Chose a minimal hand-rolled router over a library (e.g. `react-router-dom`):
   `window.location.pathname` and kept in sync via a `popstate` listener.
 - `Link` is a real `<a href>` that calls `history.pushState`/`replaceState` and
   intercepts only plain left-clicks — modified clicks (ctrl/cmd/shift/middle-click) fall
-  through to normal browser behavior so "open in new tab" still works.
+  through to normal browser behavior so "open in new tab" still works. Covered by
+  `src/router/Router.test.tsx` (added after Architect review — see "Re-review" below).
 - Why hand-rolled: for ~6 static route shapes on a frontend-only mockup, this adds zero
   dependencies, keeps the bundle small, and is easy to reason about end to end. If
   routing needs grow later (nested layouts, real query-string handling, scroll
@@ -105,10 +106,15 @@ $ npm test
 > @site/web@0.0.0 test
 > vitest run
  RUN  v5.0.1 .../apps/web
- Test Files  4 passed (4)
-      Tests  25 passed (25)
-   Start at  18:45:20
-   Duration  878ms
+ Test Files  5 passed (5)
+      Tests  30 passed (30)
+   Start at  18:53:41
+   Duration  1.10s
+(5 "Not implemented: navigation to another Document" lines from jsdom are expected here
+— they come from the modified-click tests in Router.test.tsx, where the handler
+correctly does *not* call preventDefault, so jsdom tries to follow the <a href> natively
+and logs its usual "not implemented" notice. Not a failure; it's confirmation the click
+wasn't intercepted.)
 # tools/*.test.mjs (scan-secrets self-test, unrelated to this branch, run by root `npm test`)
 # tests 9
 # pass 9
@@ -144,12 +150,25 @@ SPA-fallback behavior this client-side router needs; confirms the same 6 shapes 
 through an actual HTTP request, not just in jsdom.)
 ```
 
-Test breakdown (25 in `@site/web`): `src/router/matchRoute.test.ts` (10 — pure route
-matching, trailing slash, encoded slug, missing-slug fallback), `src/App.test.tsx` (10 —
+Test breakdown (30 in `@site/web`): `src/router/matchRoute.test.ts` (10 — pure route
+matching, trailing slash, encoded slug, missing-slug fallback), `src/router/
+Router.test.tsx` (5, new — plain left-click navigates and calls preventDefault;
+ctrl-click, meta-click, shift-click, alt-click, and a middle-click (`button: 1`) all
+leave pathname/URL unchanged and do *not* call preventDefault), `src/App.test.tsx` (10 —
 one smoke test per route shape plus `document.title`, click-navigation, browser
 back/forward, `aria-current`, no injected `<script>`/`<iframe>`), `src/config.test.ts`
 (2, pre-existing, untouched), `src/index-html.test.ts` (3, pre-existing, untouched — the
 no-inline-script CSP test named in the board's done criteria still passes).
+
+## Re-review (after Architect's first pass)
+Architect approved everything except one gap: `Link`'s modified-click fall-through
+(ctrl/cmd/shift/alt-click, non-primary button) was implemented correctly but had no
+test. Added `src/router/Router.test.tsx` (5 tests, described above) that renders a
+`Link` directly against a `RouterProvider` and asserts, per modifier, that the route
+didn't change and the click's default wasn't prevented — i.e. the browser's native
+new-tab behavior would fire. Re-ran `npm test`/`npm run lint`/`npm run typecheck`/
+`npm run build` for real (output above and in the sections below); all still pass.
+No other changes.
 
 ## Known follow-ups (not this branch)
 - Client-side `pushState` routing needs a static-host fallback (e.g. GitHub Pages'
@@ -160,4 +179,5 @@ no-inline-script CSP test named in the board's done criteria still passes).
   once that spec exists.
 
 ## Status
-Ready for Architect review. Board status for E1: `todo` -> please move to `review`.
+Ready for Architect re-review of the one added commit (`Router.test.tsx`). Everything
+else in E1 was already approved. Board status for E1: `review`.
