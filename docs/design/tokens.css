@@ -1,0 +1,202 @@
+/* ==========================================================================
+   ZeroJance design tokens (D2)
+   Source of truth: docs/design/tokens.css (Creative Director).
+   The Engineer copies this file verbatim to apps/web/src/styles/tokens.css.
+   Do not edit the copy: ask the Creative Director. Do not add raw hex values
+   in components: use var(--zjc-*).
+
+   Usage rules and the full computed contrast table: docs/design/style-guide.md.
+
+   Rules baked in:
+   - System font stack only. No external font requests (no Google Fonts or
+     any other third-party CDN link) and no third-party assets of any kind.
+   - Light theme is the default and the only full-site theme for v1
+     (color-scheme: light) — a deliberate reversal of the prior project's
+     dark-only terminal theme. Product photography and a paper/label aesthetic
+     read better on a light ground than a dark one; see style-guide.md §1.
+     A small set of "panel" tokens below provide an inverse (dark-on-light
+     becomes light-on-dark) surface for specific components only — a
+     structural care-label / spec-block callout, not a site-wide theme.
+   - Color is semantic: each accent (signal / ok / alert) has exactly one
+     meaning across the site. Don't reach for --zjc-alert because red "looks
+     good" on something that isn't an error or sold-out state.
+   - This palette, its variable names, and its motion language are new for
+     D2 and do not reuse any hex value, token name, or effect from the prior
+     cyberpunk-terminal project's tokens.css (git history only, already
+     removed from the live tree; see ADR 0003). No --zj-* names appear here
+     on purpose — this file uses the --zjc-* prefix instead.
+   - Motion tokens are values; the CSS that uses them decides whether to
+     animate, and must wrap any non-essential animation in
+     @media (prefers-reduced-motion: no-preference). The block at the bottom
+     of this file is the belt to that pair of braces: it collapses durations
+     to 0ms so a rule that forgets the media query still degrades safely.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Palette (raw inks; components use the semantic aliases below) ---- */
+  --zjc-paper:        #F2F3F5; /* page background — cool light gray, not warm terminal-amber-adjacent beige */
+  --zjc-surface:       #FFFFFF; /* raised surface: cards, product tiles, the cart drawer */
+  --zjc-ink:           #16181C; /* primary text; also the dark-panel background (see panel tokens) */
+  --zjc-ink-soft:      #5B6270; /* secondary text: meta, timestamps, captions */
+  --zjc-line:          #D7DAE0; /* decorative dividers only — never carries meaning, no contrast requirement */
+  --zjc-line-strong:   #7A7F90; /* borders that identify a control: inputs, chip outlines, default card edge */
+  --zjc-signal:        #2A46C9; /* primary accent: links, focus ring, primary CTA fill, active nav state */
+  --zjc-ok:            #3E6B4F; /* one meaning only: in-stock / confirmed / "exit code 0" register */
+  --zjc-alert:         #B3271E; /* one meaning only: error, sold out, destructive action, 404 */
+
+  /* ---- Semantic aliases: components use these, not the raw palette ------ */
+  --zjc-bg:              var(--zjc-paper);
+  --zjc-bg-surface:      var(--zjc-surface);
+  --zjc-fg:              var(--zjc-ink);         /* body copy, headings */
+  --zjc-fg-muted:        var(--zjc-ink-soft);    /* secondary copy, meta, tag labels */
+  --zjc-fg-on-signal:    var(--zjc-paper);        /* text/icon on a --zjc-signal fill */
+  --zjc-fg-on-ok:        var(--zjc-paper);        /* text on a --zjc-ok fill (e.g. an "in stock" pill) */
+  --zjc-fg-on-alert:     var(--zjc-paper);        /* text on a --zjc-alert fill (e.g. a "sold out" pill) */
+  --zjc-link:            var(--zjc-signal);       /* always underlined in body copy */
+  --zjc-focus-ring:      var(--zjc-signal);
+  --zjc-selection-bg:    var(--zjc-signal);
+  --zjc-selection-fg:    var(--zjc-paper);
+  --zjc-border:          var(--zjc-line);
+  --zjc-border-control:  var(--zjc-line-strong);
+
+  /* ---- Dark panel tokens (component-scoped inverse surface) --------------
+     Use for structural "object becomes the artifact" copy blocks: a config-
+     file-styled care label, a CLI-styled size chart, a diff-styled hangtag
+     (see concept.md §3.2). This is one panel component's palette, not a
+     dark theme toggle — do not apply color-scheme: dark or swap the page
+     background site-wide. */
+  --zjc-panel-bg:        var(--zjc-ink);
+  --zjc-panel-fg:        var(--zjc-paper);
+  --zjc-panel-fg-muted:  #A9ADB6;
+  --zjc-panel-link:      #7C93F0;
+  --zjc-panel-ok:        #8FD6A6;
+  --zjc-panel-alert:     #FF8A80;
+
+  /* ---- Typography (system stacks only — no external font requests) ---- */
+  --zjc-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial,
+                   sans-serif; /* bold display headlines, UI, running copy */
+  --zjc-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+                   "Liberation Mono", "DejaVu Sans Mono", "Courier New",
+                   monospace; /* structural accents: care labels, size charts,
+                   tags, prices, the 404/dev-console easter-egg copy — never
+                   full paragraphs of body copy */
+
+  --zjc-text-xs:   0.75rem;   /* 12px: legal/mock-checkout fine print, timestamps */
+  --zjc-text-sm:   0.875rem;  /* 14px: tags, meta, nav */
+  --zjc-text-base: 1rem;      /* 16px: body copy — also the floor that avoids iOS input zoom */
+  --zjc-text-md:   1.125rem;  /* 18px: lead paragraph, product description opener */
+  --zjc-text-lg:   1.5rem;    /* 24px: card title, section label */
+  --zjc-text-xl:   2rem;      /* 32px: page heading (product name on detail page) */
+  --zjc-text-2xl:  2.75rem;   /* 44px: section headline */
+  --zjc-text-3xl:  4rem;      /* 64px: homepage hero / drop headline */
+
+  --zjc-weight-regular: 400;
+  --zjc-weight-medium:  500;
+  --zjc-weight-bold:    700;  /* headings, button labels, tag emphasis */
+  --zjc-weight-black:   900;  /* hero/display type only. Fallback: a system
+                    font without a true 900 cut (e.g. some Windows Segoe UI
+                    builds) renders a synthetic/near-700 weight instead —
+                    acceptable degradation, never a broken or missing glyph,
+                    so no further fallback logic is needed. */
+
+  --zjc-leading-tight:  1.05; /* display/hero headlines */
+  --zjc-leading-snug:   1.25; /* headings */
+  --zjc-leading-normal: 1.5;  /* body copy */
+  --zjc-leading-mono:   1.6;  /* monospace blocks need more line-height; glyphs read denser */
+
+  --zjc-tracking-tight: -0.02em; /* large display type only (2xl/3xl) */
+  --zjc-tracking-normal: 0;
+  --zjc-tracking-wide:  0.04em;  /* uppercase tags, eyebrows, nav labels */
+
+  --zjc-measure: 66ch; /* max line length for a running paragraph */
+
+  /* ---- Spacing (4px base, rem so it follows user font-size zoom) -------- */
+  --zjc-space-0:  0;
+  --zjc-space-1:  0.25rem; /*  4px */
+  --zjc-space-2:  0.5rem;  /*  8px */
+  --zjc-space-3:  0.75rem; /* 12px */
+  --zjc-space-4:  1rem;    /* 16px: mobile page gutter */
+  --zjc-space-5:  1.5rem;  /* 24px */
+  --zjc-space-6:  2rem;    /* 32px: desktop page gutter */
+  --zjc-space-7:  3rem;    /* 48px */
+  --zjc-space-8:  4rem;    /* 64px */
+  --zjc-space-9:  6rem;    /* 96px: hero vertical rhythm */
+  --zjc-space-10: 8rem;    /* 128px: desktop section break */
+
+  --zjc-gutter: var(--zjc-space-4);
+
+  /* ---- Shape / borders / targets ----------------------------------------- */
+  --zjc-radius-sm:   0.125rem; /*  2px: tags, chips */
+  --zjc-radius-md:   0.375rem; /*  6px: buttons, inputs, product cards */
+  --zjc-radius-lg:   0.75rem;  /* 12px: cart drawer, modal/dialog */
+  --zjc-radius-pill: 999px;    /* status pills ("in stock", "sold out"), badge */
+
+  --zjc-border-width:       1px;
+  --zjc-border-width-thick: 2px; /* card outline, primary button border-in-fill style */
+  --zjc-focus-width:  3px;
+  --zjc-focus-offset: 2px;
+  --zjc-tap-min: 2.75rem; /* 44px minimum touch target, all interactive elements */
+
+  /* ---- Grid/circuit motif (CSS-only, no image asset, no network request) -
+     A subtle graph-paper grid for section backgrounds — the brief's "grid
+     motif" pick, implemented as two linear-gradients, not an SVG or bitmap
+     asset. Decorative only: never place body text directly on top without
+     the --zjc-bg-surface card underneath it (see style-guide.md §4). */
+  --zjc-grid-size: 2rem; /* 32px cell, matches the --zjc-space-6 rhythm */
+  --zjc-grid-line: rgba(22, 24, 28, 0.06); /* --zjc-ink at 6% — decorative, no contrast requirement */
+  --zjc-grid-line-panel: rgba(242, 243, 245, 0.08); /* --zjc-paper at 8%, for the grid on a dark panel */
+
+  /* ---- Motion --------------------------------------------------------------
+     Durations. Reduced-motion collapses all of these to 0ms below. */
+  --zjc-dur-instant:  0ms;
+  --zjc-dur-fast:     120ms; /* hover/press feedback, tag toggle */
+  --zjc-dur-base:     200ms; /* default transitions: card hover lift, focus ring */
+  --zjc-dur-moderate: 320ms; /* cart drawer open/close, accordion, dropdown */
+  --zjc-dur-slow:     480ms; /* page-level reveal (e.g. hero entrance on load) */
+
+  /* Easings. Pairing rule: things entering use ease-out, things leaving use
+     ease-in, state swaps (drawer, toggle) use ease-in-out. No step()/blink
+     easing in this system — that was the old terminal-cursor language;
+     this brand doesn't have a blinking cursor anywhere. */
+  --zjc-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --zjc-ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --zjc-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --zjc-ease-linear: linear;
+
+  /* ---- Z-index (one scale; nothing else picks numbers) ------------------- */
+  --zjc-z-base:      0;
+  --zjc-z-sticky-nav: 10;
+  --zjc-z-dropdown:  20;
+  --zjc-z-drawer:    40;  /* cart drawer */
+  --zjc-z-modal:     50;  /* checkout-mock dialog, any confirmation modal */
+  --zjc-z-toast:     60;  /* "added to bag" toast */
+  --zjc-z-skiplink:  70;  /* skip-to-content link, always on top when focused */
+}
+
+/* ---- Reduced motion: collapse durations to their end state ----------------
+   Effect CSS must additionally wrap non-essential animation in
+   @media (prefers-reduced-motion: no-preference); this is the belt to that
+   pair of braces, and the fallback if a component forgets the media query.
+   Nothing on this site depends on motion to convey information — every
+   animated state (drawer open, hover lift, toast) has a static equivalent
+   end state that is fully usable with zero transition. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --zjc-dur-fast:     0ms;
+    --zjc-dur-base:     0ms;
+    --zjc-dur-moderate: 0ms;
+    --zjc-dur-slow:     0ms;
+  }
+}
+
+/* ---- Higher contrast: strengthen the two tokens that run closest to their
+   minimum ratio (see style-guide.md §2 for the computed baseline numbers). */
+@media (prefers-contrast: more) {
+  :root {
+    --zjc-ink-soft:    #454B57; /* was 5.52:1 on --zjc-paper, now higher */
+    --zjc-line-strong: #656B7D; /* was 3.59:1 on --zjc-paper, now higher */
+  }
+}
