@@ -26,7 +26,7 @@ old cybersecurity-terminal project (ADR 0003).
 | A1 | architect | Repo cleanup, stack decision, plan (this task) | none | done |
 | A2 | architect | Ongoing review, merge, and basic hygiene | every branch | ongoing |
 | A3 | architect | MVP readiness report and Phase 2 board | all below | todo |
-| D1 | creative-director | Brand identity and voice | none | todo |
+| D1 | creative-director | Brand identity and voice | none | approved |
 | D2 | creative-director | Design tokens and style guide | D1 | todo |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | todo |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
@@ -40,11 +40,14 @@ old cybersecurity-terminal project (ADR 0003).
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
 
 ## Suggested waves (parallel starts)
-1. **Start now:** D1 (brand identity), E1 (web shell — build against placeholder
-   copy/data, restyle once D2 lands).
-2. After D1 merges: D2, D3, D4 can all start (independent of each other). E2 can start
-   once E1 merges, using placeholder product data if D3 isn't merged yet — swap in real
-   data when it lands.
+1. ~~**Start now:** D1 (brand identity)~~ — D1 **approved** (`docs/architecture/reviews/
+   feat-design-brand.md`), pending the lead's merge of `feat/design-brand` into `main`.
+   Per the working agreement, D2/D3/D4 must not build on an unmerged branch, so they
+   wait for that merge, not just the approval. E1 (web shell — build against placeholder
+   copy/data, restyle once D2 lands) proceeds in parallel regardless.
+2. **Once the lead confirms `feat/design-brand` merged:** D2, D3, D4 can all start
+   (independent of each other). E2 can start once E1 merges, using placeholder product
+   data if D3 isn't merged yet — swap in real data when it lands.
 3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
 5. After E2-E6 merge: E7, then A3.
