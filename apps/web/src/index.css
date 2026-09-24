@@ -1,8 +1,15 @@
-/* Neutral placeholder styles. Replaced once the Creative Director's design tokens land
-   (docs/design/tokens.css, once written) and the Engineer builds the real shell. */
+/* Mobile-first app shell styles (board task E1). Neutral placeholder palette — replaced
+   once the Creative Director's design tokens land (docs/design/tokens.css, not written
+   yet) and restyled per D2's style guide. */
 :root {
   color-scheme: dark;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html,
@@ -18,5 +25,176 @@ body {
 }
 
 .shell {
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Visually hidden until focused, so keyboard users can jump past the nav. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: -999px;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background: #d7dde5;
+  color: #0b0d10;
+}
+
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.site-header {
+  border-bottom: 1px solid #23282f;
+  padding: 1rem;
+}
+
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-toggle {
+  background: transparent;
+  border: 1px solid #23282f;
+  color: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.nav-toggle:focus-visible,
+.site-nav a:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid #d7dde5;
+  outline-offset: 2px;
+}
+
+.site-nav {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.2s ease;
+}
+
+.site-nav[data-open="true"] {
+  max-height: 12rem;
+  margin-top: 0.75rem;
+}
+
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.site-nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.35rem 0;
+}
+
+.site-nav a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+.site-main {
+  flex: 1;
+  padding: 1.5rem 1rem;
+}
+
+.site-footer {
+  border-top: 1px solid #23282f;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #8a93a0;
+}
+
+.placeholder-copy {
+  color: #8a93a0;
+}
+
+.catalog-grid-skeleton {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-grid-skeleton__card {
+  aspect-ratio: 3 / 4;
+  background: #14171c;
+  border: 1px solid #23282f;
+}
+
+/* Desktop breakpoint: the nav toggle disappears and the nav sits inline next to the
+   brand instead of collapsing underneath it. */
+@media (min-width: 640px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .site-nav {
+    max-height: none;
+    overflow: visible;
+    margin-top: 0;
+  }
+
+  .site-nav ul {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  .catalog-grid-skeleton {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .catalog-grid-skeleton {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav {
+    transition: none;
+  }
 }
