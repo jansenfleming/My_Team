@@ -30,7 +30,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D2 | creative-director | Design tokens and style guide | D1 | done |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
-| D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | todo |
+| D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | approved |
 | E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | todo |
 | E3 | engineer | Product detail page + cart core | E2 | todo |
@@ -51,6 +51,9 @@ old cybersecurity-terminal project (ADR 0003).
    **D2 status:** done, merged to `main` (PR #38, review PR #39) — see
    `docs/architecture/reviews/feat-design-tokens.md`. E2/E5 can use real tokens now.
 3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
+   **D5 status:** approved, waiting for the lead to merge — see
+   `docs/architecture/reviews/feat-design-eggs.md`. E6 (and the `ProductPage`-lookup
+   part of E3) can start once this merges and each egg's target page(s) are also merged.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
 5. After E2-E6 merge: E7, then A3.
 
