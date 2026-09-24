@@ -28,7 +28,7 @@ old cybersecurity-terminal project (ADR 0003).
 | A3 | architect | MVP readiness report and Phase 2 board | all below | todo |
 | D1 | creative-director | Brand identity and voice | none | done |
 | D2 | creative-director | Design tokens and style guide | D1 | todo |
-| D3 | creative-director | Product concepts and copy (6-12 items) | D1 | review* |
+| D3 | creative-director | Product concepts and copy (6-12 items) | D1 | approved* |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | todo |
 | E1 | engineer | Web shell and routing | none | approved |
@@ -58,12 +58,13 @@ Blocked work should do its non-blocked part first (Creative Director can draft c
 against the roadmap without waiting on tokens; Engineer can build structure against
 placeholder content) and message the Architect if idle.
 
-\* D3 (`feat/design-products`): PR file at `docs/prs/feat-design-products.md`, Architect
-  reviewed 2026-09-24 — **changes requested, not approved**. One technical-accuracy fix
-  needed (a `git blame` output format mislabeled as "porcelain" when it's actually
-  `git blame`'s default output — the displayed content is correct, only the label is
-  wrong). Full findings: `docs/architecture/reviews/feat-design-products.md`. D5 stays
-  blocked on D3 until this re-reviews clean.
+\* D3 (`feat/design-products`): PR file at `docs/prs/feat-design-products.md`. First-pass
+  Architect review 2026-09-24 requested one fix (a `git blame` output format mislabeled
+  as "porcelain" instead of "default"). Creative Director fixed it on commit `6b5972c`;
+  Architect re-reviewed the same day and **approved**. Full findings:
+  `docs/architecture/reviews/feat-design-products.md`. Waiting on the lead to push,
+  open, and merge the PR — status moves to `done` once the lead confirms the merge. D5
+  can start once that merge lands.
 
 ---
 

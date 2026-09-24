@@ -1,10 +1,16 @@
 # Review: `feat/design-products` (D3 — product concepts and copy)
 
-Reviewer: Architect. Branch base: `main` @ `acd3482`. Branch head: `51bcb8f` (1 commit,
-not pushed). Files touched: `docs/design/products.md` (new), `docs/prs/feat-design-products.md`
-(new). Reviewed 2026-09-24.
+Reviewer: Architect. Branch base: `main` @ `acd3482`. Branch head (final, approved):
+`6b5972c` (2 commits, not pushed: `51bcb8f` then the fix commit `6b5972c`). Files
+touched: `docs/design/products.md`, `docs/prs/feat-design-products.md` (both new).
+First-pass review 2026-09-24; re-review 2026-09-24 after fix commit.
 
-## Verdict: changes requested (not approved yet)
+## Final verdict (after re-review of `6b5972c`): APPROVED
+
+See "Re-review" section at the end for the second pass. The rest of this file is the
+first-pass review, left intact for the record.
+
+## First-pass verdict on `51bcb8f`: changes requested (not approved)
 
 One real technical-accuracy error, per D1's own hard rule ("every technical claim ...
 must be actually correct, not just plausible-sounding" — and D1 names `git blame`'s
@@ -128,3 +134,42 @@ re-review — no other content changes needed.
   full real-world fidelity. Not required.
 - PR description's "verbatim" claim about the HTTP-200 reuse: accurate in spirit, just
   drops D1's first clause. No action needed.
+
+---
+
+## Re-review: fix commit `6b5972c`
+
+Creative Director pushed `6b5972c` on top of `51bcb8f` on the same branch/worktree. Diff
+checked directly (`git diff 51bcb8f..6b5972c`), not taken on trust:
+
+1. **Required fix — done, and accurate.** `docs/design/products.md` product 2's
+   special-copy heading now reads "styled as `git blame`'s default output" (was
+   "porcelain output"); the same relabel is made in the Section 1 curation-notes
+   sentence. `docs/prs/feat-design-products.md`'s "How to review" step 4 and "What
+   changed" Section 2 summary are relabeled the same way, and step 4 now adds a
+   parenthetical explicitly distinguishing default output from `--porcelain` ("a
+   different, multi-line machine-readable layout") so a future reviewer doesn't have to
+   look it up. The underlying displayed line of copy is unchanged (it was already
+   correct) — only the format name changed, which is exactly the fix required. No new
+   inaccuracy introduced by the reword.
+2. **Optional note taken.** Product 4's CLF hangtag lines now include the HTTP version
+   (`"GET /this-shirt HTTP/1.1"`, `"GET /that-shirt HTTP/1.1"`), matching real-world CLF
+   request-field convention. Not required, but a genuine improvement — no accuracy
+   objection.
+3. **Scope check.** `git diff main..6b5972c --stat` still shows exactly two files
+   changed (`docs/design/products.md`, `docs/prs/feat-design-products.md`), both
+   Creative-Director-owned paths. No unrelated content changed — prices, tags, product
+   count/structure, the hidden-13th-product handling, and every other technical claim
+   are untouched from the first pass (confirmed by the diff being limited to the three
+   hunks above plus the new "Revision note" section the PR file adds to document the
+   change).
+4. **Hygiene re-run against `6b5972c`** (detached worktree at that commit, since the
+   branch is checked out live elsewhere):
+   - `npm install` — succeeds, 0 vulnerabilities.
+   - `npm run scan-secrets` — `93 files scanned, 0 skipped, 0 error(s), 0 warning(s) ->
+     PASS`.
+   - `npm audit` — `found 0 vulnerabilities`.
+   - No external URLs/asset references in either file (grep, no matches).
+
+All required-change items from the first pass are resolved, nothing new was broken, and
+scope/hygiene stay clean. **Approved.**
