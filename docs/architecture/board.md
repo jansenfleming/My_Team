@@ -27,7 +27,7 @@ old cybersecurity-terminal project (ADR 0003).
 | A2 | architect | Ongoing review, merge, and basic hygiene | every branch | ongoing |
 | A3 | architect | MVP readiness report and Phase 2 board | all below | todo |
 | D1 | creative-director | Brand identity and voice | none | done |
-| D2 | creative-director | Design tokens and style guide | D1 | approved |
+| D2 | creative-director | Design tokens and style guide | D1 | done |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | todo |
@@ -48,9 +48,8 @@ old cybersecurity-terminal project (ADR 0003).
    data if D3 isn't merged yet — swap in real data when it lands.
    **E1 status:** done, merged to `main` (PR #33, review PR #34) — see
    `docs/architecture/reviews/feat-web-shell.md`. E2 can start now.
-   **D2 status (2026-09-24):** Architect **approved** `feat/design-tokens` — see
-   `docs/architecture/reviews/feat-design-tokens.md`. Waiting on the lead to merge;
-   E2/E5 can use real tokens once the lead confirms the merge.
+   **D2 status:** done, merged to `main` (PR #38, review PR #39) — see
+   `docs/architecture/reviews/feat-design-tokens.md`. E2/E5 can use real tokens now.
 3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
 5. After E2-E6 merge: E7, then A3.
