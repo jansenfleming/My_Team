@@ -2,6 +2,7 @@
 // on the board (home, catalog, product detail, lookbook, about, 404) inside the shared
 // Layout. See docs/architecture/board.md task E1.
 import { useEffect } from "react";
+import { CartProvider } from "./cart/CartContext";
 import { Layout } from "./layout/Layout";
 import { AboutPage } from "./pages/AboutPage";
 import { CatalogPage } from "./pages/CatalogPage";
@@ -48,10 +49,12 @@ function Pages() {
 
 export function App() {
   return (
-    <RouterProvider>
-      <Layout>
-        <Pages />
-      </Layout>
-    </RouterProvider>
+    <CartProvider>
+      <RouterProvider>
+        <Layout>
+          <Pages />
+        </Layout>
+      </RouterProvider>
+    </CartProvider>
   );
 }

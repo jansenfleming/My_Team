@@ -72,6 +72,7 @@ body {
    never a box-shadow-only substitute. */
 a:focus-visible,
 button:focus-visible,
+input:focus-visible,
 [tabindex]:focus-visible {
   outline: var(--zjc-focus-width) solid var(--zjc-focus-ring);
   outline-offset: var(--zjc-focus-offset);
@@ -91,6 +92,23 @@ button:focus-visible,
   align-items: center;
   justify-content: space-between;
   gap: var(--zjc-space-4);
+}
+
+/* ---- Header cart indicator (board task E3) ------------------------------------- */
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--zjc-space-3);
+}
+
+.cart-indicator {
+  margin: 0;
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  font-weight: var(--zjc-weight-bold);
+  color: var(--zjc-fg);
+  white-space: nowrap;
 }
 
 .brand {
@@ -343,6 +361,155 @@ button:focus-visible,
   .catalog-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* ---- Product detail page (board task E3) --------------------------------------- */
+
+.product-detail__category {
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  letter-spacing: var(--zjc-tracking-wide);
+  text-transform: uppercase;
+  color: var(--zjc-fg-muted);
+  margin: 0 0 var(--zjc-space-2);
+}
+
+.product-detail__price {
+  font-family: var(--zjc-font-mono);
+  font-weight: var(--zjc-weight-bold);
+  font-size: var(--zjc-text-lg);
+  margin: 0 0 var(--zjc-space-5);
+}
+
+.product-detail__description {
+  font-size: var(--zjc-text-md);
+  line-height: var(--zjc-leading-normal);
+  max-width: var(--zjc-measure);
+  margin: 0 0 var(--zjc-space-5);
+}
+
+.product-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--zjc-space-2);
+  margin: 0 0 var(--zjc-space-6);
+  padding: 0;
+  list-style: none;
+}
+
+/* Tags/chips (style-guide.md §3): mono, small, wide-tracked, uppercase, muted text on a
+   control-weight border. */
+.tag {
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  letter-spacing: var(--zjc-tracking-wide);
+  text-transform: uppercase;
+  color: var(--zjc-fg-muted);
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+  border-radius: var(--zjc-radius-sm);
+  padding: var(--zjc-space-1) var(--zjc-space-2);
+}
+
+/* Dark-panel component (style-guide.md §3, --zjc-panel-* tokens): reserved for
+   structural tech-joke copy blocks — a care label, hangtag, or size note formatted as a
+   real technical artifact. Used once per product detail page, never as a section or page
+   background. */
+.product-detail__special-copy {
+  background: var(--zjc-panel-bg);
+  color: var(--zjc-panel-fg);
+  border-radius: var(--zjc-radius-md);
+  padding: var(--zjc-space-5);
+  margin: 0 0 var(--zjc-space-6);
+  max-width: var(--zjc-measure);
+}
+
+.product-detail__special-copy-label {
+  margin: 0 0 var(--zjc-space-3);
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-sm);
+  color: var(--zjc-panel-fg-muted);
+}
+
+.product-detail__special-copy-block {
+  margin: 0;
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  line-height: var(--zjc-leading-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.product-detail__variants {
+  border: 0;
+  padding: 0;
+  margin: 0 0 var(--zjc-space-5);
+}
+
+.product-detail__variants legend {
+  font-weight: var(--zjc-weight-bold);
+  font-size: var(--zjc-text-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--zjc-tracking-wide);
+  color: var(--zjc-fg-muted);
+  padding: 0;
+  margin: 0 0 var(--zjc-space-2);
+}
+
+.product-detail__variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--zjc-space-2);
+}
+
+.product-detail__variant-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zjc-space-2);
+  min-height: var(--zjc-tap-min);
+  padding: var(--zjc-space-2) var(--zjc-space-4);
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+  border-radius: var(--zjc-radius-md);
+  font-weight: var(--zjc-weight-medium);
+  cursor: pointer;
+}
+
+.product-detail__variant-option[data-selected="true"] {
+  border-color: var(--zjc-signal);
+  border-width: var(--zjc-border-width-thick);
+  color: var(--zjc-signal);
+}
+
+.product-detail__variant-option input {
+  margin: 0;
+}
+
+/* Buttons (style-guide.md §3). Primary CTA = --zjc-signal fill + --zjc-fg-on-signal
+   label; a destructive variant (--zjc-alert fill) is E4's cart-drawer "remove" button,
+   not needed yet. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--zjc-tap-min);
+  padding: var(--zjc-space-3) var(--zjc-space-6);
+  border-radius: var(--zjc-radius-md);
+  font-weight: var(--zjc-weight-bold);
+  font-size: var(--zjc-text-base);
+  cursor: pointer;
+  border: var(--zjc-border-width-thick) solid transparent;
+}
+
+.button--primary {
+  background: var(--zjc-signal);
+  color: var(--zjc-fg-on-signal);
+  border-color: var(--zjc-signal);
+}
+
+.product-detail__confirmation {
+  margin-top: var(--zjc-space-4);
+  min-height: 1.5em;
+  color: var(--zjc-ok);
+  font-size: var(--zjc-text-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
