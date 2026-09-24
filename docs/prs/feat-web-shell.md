@@ -1,85 +1,163 @@
-# feat/web-shell: web app shell (task F1)
+# feat/web-shell: app shell and client-side routing (E1)
 
-Author: frontend-engineer. Branch: `feat/web-shell`. Base: `main` at 08e589b. Worktree: `.worktrees/web`.
+Author: engineer. Branch: `feat/web-shell`. Base: `main` (f44f356, after PR #29,
+`chore/agent-roster-reconcile`).
 
 ## What changed
-`apps/web` only, plus the lockfile entries produced by `npm install -w @site/web`. A neutral, working shell: no terminal, no API calls, no visual identity (Creative Director specs are not merged yet; F5 adds tokens).
-- `package.json`: scripts `dev`, `build`, `preview`, `test`, `test:watch`, `typecheck`.
-- `vite.config.ts`: dev server `127.0.0.1:5173` (`strictPort`), preview `127.0.0.1:4173`, both proxy `/api` to `http://127.0.0.1:3001`; Vitest config (jsdom, setup file) lives in the same file.
-- `tsconfig.json` extends `../../tsconfig.base.json` (strict; adds DOM lib, `jsx: react-jsx`, `vite/client` types).
-- `index.html` (no inline script, no external URLs, `data:,` favicon so the browser makes no favicon request), `src/main.tsx`, `src/App.tsx` (placeholder `<main>` + `<h1>`), `src/index.css` (neutral dark, system monospace stack).
-- Tests: `src/App.test.tsx`, `src/index-html.test.ts`, `src/config.test.ts`; `src/test/setup.ts` (jest-dom matchers, explicit RTL cleanup because Vitest globals are off).
-- `apps/web/README.md` updated with the scripts.
+Board task E1 (`docs/architecture/board.md`): the `apps/web` app shell — client-side
+routing for all 6 route shapes, a mobile-first responsive layout skeleton, and
+placeholder copy/nav until the Creative Director's specs (D1-D4) land. No product data,
+cart, lookbook/about content, or easter eggs — those are E2-E6, scoped separately on the
+board.
 
-## New dependencies (all in `apps/web`, all as the ADR / kickoff specify)
-| Package | Type | Why |
-|---|---|---|
-| `react`, `react-dom` `^19` | runtime | UI (ADR). Only runtime deps. |
-| `vite` `^7` (7.3.6) | dev | Dev server and build (ADR; not upgraded past 7, Node 22.12) |
-| `@vitejs/plugin-react` `^5` (5.2.0) | dev | JSX/Fast Refresh (plugin-react 6 needs Vite 8) |
-| `vitest` `^5` (5.0.1) | dev | Test runner (ADR) |
-| `jsdom` `^28` (28.1.0) | dev | DOM for tests (29+ needs newer Node 22) |
-| `@testing-library/react` `^16`, `@testing-library/dom` `^10` | dev | Component tests; `dom` is RTL's peer dependency |
-| `@testing-library/jest-dom` `^7` | dev | `toBeInTheDocument` etc. matchers |
-| `@types/react`, `@types/react-dom` `^19` | dev | Types |
+**Routing — `src/router/matchRoute.ts` + `src/router/Router.tsx`**
+Chose a minimal hand-rolled router over a library (e.g. `react-router-dom`):
+- Route matching (`matchRoute`) is a pure function from `pathname` to a discriminated
+  union (`home | catalog | product | lookbook | about | not-found`), trivial to unit test
+  with no rendering involved.
+- `RouterProvider` holds the current `pathname` in React state, seeded from
+  `window.location.pathname` and kept in sync via a `popstate` listener.
+- `Link` is a real `<a href>` that calls `history.pushState`/`replaceState` and
+  intercepts only plain left-clicks — modified clicks (ctrl/cmd/shift/middle-click) fall
+  through to normal browser behavior so "open in new tab" still works.
+- Why hand-rolled: for ~6 static route shapes on a frontend-only mockup, this adds zero
+  dependencies, keeps the bundle small, and is easy to reason about end to end. If
+  routing needs grow later (nested layouts, real query-string handling, scroll
+  restoration), swapping in a library is a small, contained change — nothing else in the
+  app depends on the router's internals beyond the `Link`/`useRouter` exports.
 
-`@testing-library/user-event` was installed and removed again (not used yet; F2 adds it if needed). No router, state library, Tailwind, or UI kit.
+**Layout — `src/layout/Layout.tsx` + `src/index.css`**
+- Skip link, a header with a brand wordmark and a nav that collapses behind a real
+  `<button>` (`aria-expanded`/`aria-controls`) below the 640px breakpoint and sits inline
+  above it — no JS media-query duplication, CSS handles the breakpoint switch.
+  `aria-current="page"` marks the active nav link.
+  Skeleton is mobile-first: 2 columns below 640px, 3 at 640px+, 4 at 960px+.
+- `prefers-reduced-motion: reduce` disables the nav's collapse transition.
+- One `<main id="main-content">` landmark per page; footer carries an explicit,
+  non-final mock-cart honesty line plus a `[PLACEHOLDER: ...]` marker for the Creative
+  Director's real footer copy.
+
+**Pages — `src/pages/*.tsx`**
+Six placeholder pages (Home, Catalog, Product, Lookbook, About, NotFound), each a small
+component with a heading and a note on which later board task replaces it. The Catalog
+page renders an already-responsive grid-shaped skeleton (no data yet — that's E2). The
+product route is `/product/:slug` and renders the slug it received, proving the dynamic
+route shape resolves without any product data module yet (E3). About/NotFound both note
+where a Creative-Director-specified joke 404 / real brand copy will land later (E5/E6);
+neither invents any fact about the owner or brand.
+
+**`src/App.tsx`**: wires `RouterProvider` + `Layout` + a `Pages` switch over
+`matchRoute`, and sets `document.title` per route.
+
+**`apps/web/README.md`**: rewritten — it still described the old terminal project
+(Frontend Engineer role, F1-F6 tasks, an `/api` proxy that no longer exists). Now
+documents the actual dev/build/test commands, the router choice, and the no-network-call
+rule.
+
+No changes to `vite.config.ts`, `tsconfig.json`, `index.html`, or `package.json` — the
+existing config already fits (loopback-only dev/preview server, no proxy, strict CSP
+test already in place).
+
+## New dependencies
+None. Routing uses only the History API and React (already present). Tests use
+`@testing-library/user-event`, already a devDependency, to exercise click-navigation and
+back/forward.
 
 ## How to test
 ```
 npm install
-npm test -w @site/web
-npm run typecheck -w @site/web
-npm run build -w @site/web
-npm run lint                      # root ESLint, covers apps/web
-npm run dev -w @site/web          # http://127.0.0.1:5173
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npm run scan-secrets
+npm run audit:ci
 ```
+Manual: `npm run dev -w @site/web`, then visit `/`, `/catalog`, `/product/<anything>`,
+`/lookbook`, `/about`, and an unknown path — all render; nav links and back/forward work
+without a full page reload.
 
-## Output seen (2026-09-21, Node v22.12.0, npm 11.6.1), all from this branch's worktree
+## Real command output (run in `.claude/worktrees/agent-a600347ad4d62e45a`, Node v22.12.0)
 
-`npm test -w @site/web` (exit 0):
 ```
- RUN  v5.0.1 /Users/jansenfleming/Documents/My_Team/.worktrees/web/apps/web
+$ npm install
+npm warn EBADENGINE Unsupported engine { package: 'eslint-visitor-keys@5.0.1', ... }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. ...
+added 307 packages, and audited 309 packages in 2s
+found 0 vulnerabilities
+(both warnings pre-exist on this Node 22.12 baseline per ADR 0001; unrelated to this branch)
 
- Test Files  3 passed (3)
-      Tests  7 passed (7)
-   Duration  680ms
-```
-Tests: App renders a `main` landmark and level-1 heading, and no script/iframe/img nodes; `index.html` has only external-`src` module scripts, no inline handlers, no external origins, and a `#root`; the Vite config binds `127.0.0.1:5173` with `strictPort` and proxies `/api` to `127.0.0.1:3001` for dev and preview. `config.test.ts` runs under `@vitest-environment node` because esbuild (loaded by the config) does not run under jsdom.
+$ npm run typecheck
+> zerojance-site@0.0.0 typecheck
+> npm run typecheck --workspaces --if-present
+> @site/web@0.0.0 typecheck
+> tsc --noEmit -p tsconfig.json
+(clean, no output)
 
-Negative check that the inline-script test is live: I temporarily added `<script>alert(1)</script>` to `index.html`; the run failed (`× has no inline script ... AssertionError: expected null to be truthy`, `Tests 1 failed | 6 passed`, exit 1). File restored; it is not in the commit.
+$ npm run lint
+> zerojance-site@0.0.0 lint
+> eslint .
+(clean, no output)
 
-`npm run typecheck -w @site/web` (`tsc --noEmit -p tsconfig.json`): exit 0, no output.
+$ npm test
+> zerojance-site@0.0.0 test
+> npm run test --workspaces --if-present && node --test tools/*.test.mjs
+> @site/web@0.0.0 test
+> vitest run
+ RUN  v5.0.1 .../apps/web
+ Test Files  4 passed (4)
+      Tests  25 passed (25)
+   Start at  18:45:20
+   Duration  878ms
+# tools/*.test.mjs (scan-secrets self-test, unrelated to this branch, run by root `npm test`)
+# tests 9
+# pass 9
+# fail 0
 
-`npm run build -w @site/web` (exit 0):
-```
+$ npm run build
+> zerojance-site@0.0.0 build
+> npm run build --workspaces --if-present
+> @site/web@0.0.0 build
+> vite build
 vite v7.3.6 building client environment for production...
-✓ 29 modules transformed.
+✓ 38 modules transformed.
 dist/index.html                   0.48 kB │ gzip:  0.29 kB
-dist/assets/index-B25urSPA.css    0.19 kB │ gzip:  0.17 kB
-dist/assets/index-BPUhLTGv.js   222.77 kB │ gzip: 69.43 kB
-✓ built in 445ms
+dist/assets/index-B8Te94on.css    2.22 kB │ gzip:  0.94 kB
+dist/assets/index-IDxxx1Bq.js   227.73 kB │ gzip: 71.07 kB
+✓ built in 435ms
+
+$ npm run scan-secrets
+scan-secrets [working-tree]: 98 files scanned, 0 skipped, 0 error(s), 0 warning(s) -> PASS
+
+$ npm run audit:ci
+found 0 vulnerabilities
+
+$ npm run dev -w @site/web (backgrounded), then curl each route
+/ -> 200
+/catalog -> 200
+/product/circuit-hoodie -> 200
+/lookbook -> 200
+/about -> 200
+/nope -> 200
+(Vite's dev server serves index.html for unrecognized paths, which is exactly the
+SPA-fallback behavior this client-side router needs; confirms the same 6 shapes work
+through an actual HTTP request, not just in jsdom.)
 ```
-JS is 69.4 kB gzipped against the 250 kB budget. `dist/index.html` (whole `<head>` script/link lines): `<script type="module" crossorigin src="/assets/index-BPUhLTGv.js"></script>` and one stylesheet link; `grep -c "<script"` returns 1, and that one has a `src` (no inline script).
 
-`npm run lint` (root, `eslint .`): exit 0, no output. `npm audit --audit-level=high`: `found 0 vulnerabilities`. Root `npm run typecheck`, `npm test`, `npm run build` fan out to `@site/web` and pass with the same output as above (the other workspaces define no scripts yet).
+Test breakdown (25 in `@site/web`): `src/router/matchRoute.test.ts` (10 — pure route
+matching, trailing slash, encoded slug, missing-slug fallback), `src/App.test.tsx` (10 —
+one smoke test per route shape plus `document.title`, click-navigation, browser
+back/forward, `aria-current`, no injected `<script>`/`<iframe>`), `src/config.test.ts`
+(2, pre-existing, untouched), `src/index-html.test.ts` (3, pre-existing, untouched — the
+no-inline-script CSP test named in the board's done criteria still passes).
 
-`npm run dev -w @site/web` (run in the background, then stopped):
-```
-  VITE v7.3.6  ready in 152 ms
-  ➜  Local:   http://127.0.0.1:5173/
-```
-`curl -i http://127.0.0.1:5173/` returned `HTTP/1.1 200 OK` with the HTML; `curl http://127.0.0.1:5173/src/main.tsx` returned 200.
-
-Proxy check: the real API does not exist yet, so I ran a throwaway 3-line Node stub on `127.0.0.1:3001` (kept in the session scratchpad, not in the repo) that echoes the path. `curl -i http://127.0.0.1:5173/api/health` returned `HTTP/1.1 200 OK` with `{"stub":true,"url":"/api/health"}`, so the `/api` proxy path works. Both processes were stopped afterwards (`lsof` on 5173 and 3001 shows nothing).
-
-## Not verified / notes for reviewers
-- **No browser was opened.** I did not look at the page or the console in a browser and did not run `npm run preview`; jsdom tests, `curl`, and the build output are the only evidence. The React tree mounting in a real browser is untested.
-- **Proxy tested against a stub**, not the real API (B2 is not merged). Cookies and the real `/api/health` body are untested.
-- **Dev-only inline script:** in `npm run dev`, `@vitejs/plugin-react` injects an inline React-refresh `<script type="module">` into the served HTML. That is dev-server behavior and is not in the production build (`dist/index.html` has none). QA's `check-dist` should target `dist/`, not the dev server.
-- `npm install` prints `EBADENGINE` for `eslint-visitor-keys@5.0.1` (needs Node ^22.13, pulled in by the root's `typescript-eslint`, not by `apps/web`). It is a warning only and lint passes; Architect may want to note it next to the ESLint deprecation in the ADR.
-- `apps/web/dist/` is gitignored and not committed. `package-lock.json` changes are only those produced by `npm install -w @site/web`; if it conflicts on merge, take `main`'s and re-run `npm install` (per ownership map).
-- No `@site/shared` import yet (B1 not merged). No design tokens or content files (F5 / F4).
+## Known follow-ups (not this branch)
+- Client-side `pushState` routing needs a static-host fallback (e.g. GitHub Pages'
+  404.html-redirect trick) once hosting is decided — noted in ADR 0003 as a decision to
+  make later, not guessed here.
+- Nav links are currently Catalog/Lookbook/About; Home is reachable via the brand
+  wordmark. The Creative Director may want a different nav shape in D1 — happy to adjust
+  once that spec exists.
 
 ## Status
-Ready for QA gate. Nothing pushed; `origin` untouched.
+Ready for Architect review. Board status for E1: `todo` -> please move to `review`.
