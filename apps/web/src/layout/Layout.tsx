@@ -3,6 +3,7 @@
 // see index.css), a single <main> landmark, and a footer. Placeholder nav labels/copy
 // until the Creative Director's specs (D1-D4) land — see board task E1.
 import { useState, type ReactNode } from "react";
+import { useCart } from "../cart/CartContext";
 import { Link, useRouter } from "../router/Router";
 
 const NAV_LINKS = [
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 export function Layout({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const { pathname } = useRouter();
+  const { totalQuantity } = useCart();
 
   return (
     <div className="shell">
@@ -25,16 +27,24 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link to="/" className="brand" onClick={() => setNavOpen(false)}>
             ZeroJance
           </Link>
-          <button
-            type="button"
-            className="nav-toggle"
-            aria-expanded={navOpen}
-            aria-controls="primary-nav"
-            onClick={() => setNavOpen((open) => !open)}
-          >
-            <span className="sr-only">{navOpen ? "Close menu" : "Open menu"}</span>
-            <span aria-hidden="true">{navOpen ? "✕" : "☰"}</span>
-          </button>
+          <div className="site-header__actions">
+            {/* Cart count only (board task E3) — no drawer/checkout link yet, that's
+                board task E4. Not interactive on purpose: there is nothing for it to
+                open until E4 builds the drawer. */}
+            <p className="cart-indicator" aria-live="polite">
+              Cart ({totalQuantity})
+            </p>
+            <button
+              type="button"
+              className="nav-toggle"
+              aria-expanded={navOpen}
+              aria-controls="primary-nav"
+              onClick={() => setNavOpen((open) => !open)}
+            >
+              <span className="sr-only">{navOpen ? "Close menu" : "Open menu"}</span>
+              <span aria-hidden="true">{navOpen ? "✕" : "☰"}</span>
+            </button>
+          </div>
         </div>
         <nav id="primary-nav" className="site-nav" data-open={navOpen} aria-label="Primary">
           <ul>
