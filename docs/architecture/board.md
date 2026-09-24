@@ -29,7 +29,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D1 | creative-director | Brand identity and voice | none | done |
 | D2 | creative-director | Design tokens and style guide | D1 | done |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
-| D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
+| D4 | creative-director | Lookbook and about-page copy/spec | D1 | approved |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | done |
 | E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
@@ -59,6 +59,9 @@ old cybersecurity-terminal project (ADR 0003).
    `docs/architecture/reviews/feat-design-eggs.md`. E6 (and the `ProductPage`-lookup
    part of E3) can start once this merges and each egg's target page(s) are also merged.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
+   **D4 status:** approved, waiting for the lead to merge — see
+   `docs/architecture/reviews/feat-design-pages.md`. E5 can start once this merges (E1
+   and D2 are already merged).
 5. After E2-E6 merge: E7, then A3.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
