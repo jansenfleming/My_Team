@@ -4,19 +4,7 @@
 // broken <img>, a stock photo, or a fetched external image.
 import { Link } from "../router/Router";
 import type { Product } from "../data/products";
-
-const CATEGORY_LABEL: Record<Product["category"], string> = {
-  shirt: "Shirt",
-  sweatshirt: "Sweatshirt",
-  hat: "Hat",
-};
-
-const CURRENCY = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-});
+import { CATEGORY_LABEL, CURRENCY } from "../utils/format";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
