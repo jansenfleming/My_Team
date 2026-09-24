@@ -31,7 +31,7 @@ on D1 (`docs/design/concept.md`, done and merged). It adds one new file:
     price, a deadpan description built on a technically-correct in-joke, 1-3 tags, and
     (for 7 of the 12) exact special copy: a care label or hangtag styled as a real
     format — a config file, a `crontab -l` listing, an INI-style two-environment config,
-    a Common Log Format access-log excerpt, `git blame` porcelain output, and a TCP
+    a Common Log Format access-log excerpt, `git blame`'s default output, and a TCP
     handshake trace. Every format is real and used correctly (see "Checks run" below).
   - **Section 3** — the hidden 13th product, "200 OK Tee," called out with a bolded
     constraint that the Engineer must not wire it into the grid, listing data, sitemap,
@@ -72,9 +72,10 @@ gimmick repeated 7 times.
 3. Confirm every product is a shirt, sweatshirt, or hat — no accessories (check the
    Category column in Section 4).
 4. Spot-check the technical claims for accuracy (this is the rule a technical reviewer
-   would actually wince at if wrong): `git blame`'s porcelain output format (hash,
-   author, date, time, UTC offset, line number), Common Log Format's field order and its
-   `-` convention for unavailable fields, `crontab`'s 5-field syntax
+   would actually wince at if wrong): `git blame`'s default output format (hash,
+   author, date, time, UTC offset, line number — not the `--porcelain` format, which is
+   a different, multi-line machine-readable layout), Common Log Format's field order and
+   its `-` convention for unavailable fields, `crontab`'s 5-field syntax
    (minute/hour/day-of-month/month/day-of-week), the TCP three-way handshake sequence
    (SYN, SYN/ACK, ACK), the 403-vs-404 semantic distinction, and exit code 0 meaning
    success. None of these should be approximated or wrong.
@@ -99,6 +100,29 @@ verifies prose against protocol specs.
 
 ## Status
 
-Ready for Architect review. Not pushed, no PR opened — the lead handles the remote side
-after Architect review. D5 (easter-egg specs) can start once this merges, since it
-depends on D3 for the hidden 13th product's identity.
+Ready for re-review. Not pushed, no PR opened — the lead handles the remote side after
+Architect review. D5 (easter-egg specs) can start once this merges, since it depends on
+D3 for the hidden 13th product's identity.
+
+### Revision note (post-review fix)
+
+First-pass Architect review (`docs/architecture/reviews/feat-design-products.md`,
+branch `docs/review-design-products`) approved everything except one required fix:
+product 2's hangtag copy was labeled `git blame` **porcelain** output, but the displayed
+line is `git blame`'s *default* output format — porcelain (`--porcelain`) is a different,
+multi-line, machine-readable format (full 40-char hash, one `key value` line per field,
+tab-indented). The line of copy itself was correct; only the format name was wrong,
+which is exactly the failure mode D1's voice guide warns about (a specific, checkable
+technical term used incorrectly).
+
+Fixed in this branch: relabeled to "`git blame`'s default output" in
+`docs/design/products.md` (product 2's special-copy heading, and the matching mention in
+the Section 1 curation notes) and in this PR file (the "What changed" Section 2 summary
+and "How to review" step 4, which now also notes explicitly that porcelain is a
+different format so a reviewer doesn't have to look it up).
+
+Also took the Architect's non-blocking optional note: the Common Log Format example in
+product 4 ("403 / 404 Tee") was missing the HTTP version in the request field, which real
+CLF entries include. Added `HTTP/1.1` to both log lines in `docs/design/products.md`.
+No other content changed — copy, prices, tags, and the hidden-13th-product handling are
+unchanged from the first pass.

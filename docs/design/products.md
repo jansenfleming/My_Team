@@ -63,7 +63,7 @@ as a real technical artifact (a config file, a crontab listing, an access-log ex
 intentionally plain-copy: not every product needs the gimmick, and repeating the same
 "config.yaml" trick on all 13 would itself become the generic-streetwear failure mode
 D1 warns against. Five different real formats are used across the 8 (config file,
-crontab, INI-style two-block config, Common Log Format access log, `git blame` porcelain
+crontab, INI-style two-block config, Common Log Format access log, `git blame`'s default
 output, a handshake trace) — deliberately varied, not one joke copy-pasted.
 
 ---
@@ -92,7 +92,7 @@ this doc later).
 - **Category:** Shirt · **Price:** $36
 - **Tags:** `git`, `version-control`
 - **Description:** "Every line has an author. This one's on you now."
-- **Special copy — hangtag, styled as `git blame` porcelain output** (real format:
+- **Special copy — hangtag, styled as `git blame`'s default output** (real format:
   abbreviated hash, author, date, time, UTC offset, line number, then the line):
   ```
   a3f9c21 (you  2026-01-01 09:14:02 -0500  1) sized true. no exceptions.
@@ -113,8 +113,8 @@ this doc later).
   host, ident, authuser, timestamp, request line, status, bytes — `-` for unavailable
   fields is standard CLF convention, used correctly here, not invented):
   ```
-  10.0.0.4 - - [24/Sep/2026:00:00:00 +0000] "GET /this-shirt"  403 -
-  10.0.0.4 - - [24/Sep/2026:00:00:00 +0000] "GET /that-shirt"  404 -
+  10.0.0.4 - - [24/Sep/2026:00:00:00 +0000] "GET /this-shirt HTTP/1.1"  403 -
+  10.0.0.4 - - [24/Sep/2026:00:00:00 +0000] "GET /that-shirt HTTP/1.1"  404 -
   ```
 
 ### 5. Works on My Machine Tee
