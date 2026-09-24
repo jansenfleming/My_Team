@@ -7,11 +7,11 @@ before this branch was stale content from the old, superseded terminal project t
 happened to reuse the same branch/file slug; left alone per the ownership map, now
 correctly replaced).
 
-## Verdict: **Changes needed** — one small, specific fix, everything else approved
+## Verdict: **Approved** (after re-review of two follow-up commits — see §6)
 
-Everything below passed except §5 (modified-click test coverage). This is not a design
-or ownership problem, just a missing test for behavior that's already correctly
-implemented. Should be a fast turnaround; happy to re-review as soon as it's pushed.
+Everything below (§1-5) passed on the first pass except the one gap noted in §5
+(modified-click test coverage), which is now fixed and independently re-verified in §6.
+Ready to merge.
 
 ## 1. Does it deliver E1's board scope?
 
@@ -162,8 +162,88 @@ high-contrast. No images yet (nothing to alt-text). No broken links: all `Link t
 resolve to one of the 6 registered routes. Nothing further to flag — this is a skeleton,
 full a11y pass is E7 per the board.
 
+## 6. Re-review (commits `83f9b88`, `13605b3`)
+
+Engineer pushed two follow-up commits on the same branch: `83f9b88` (`test(web): cover
+Link's modified-click fall-through`) and `13605b3` (`docs(prs): note Router.test.tsx and
+re-review status`). Confirmed with `git diff f378388..feat/web-shell --stat` that these
+are the *only* two commits added since my first review (`f378388` was the tip I reviewed
+in §1-5) and they touch exactly two files:
+
+```
+apps/web/src/router/Router.test.tsx | 83 +++++++++++++++++++++++++++++++++++++
+docs/prs/feat-web-shell.md          | 36 ++++++++++++----
+2 files changed, 111 insertions(+), 8 deletions(-)
+```
+
+No changes to `Router.tsx`, `App.tsx`, or anything else already reviewed — this is
+exactly the scoped fix requested, nothing more.
+
+**`Router.test.tsx` (read in full):** renders `Link` directly against a bare
+`RouterProvider` (not the whole `App`, which keeps the test focused on the router, not
+incidental page content) and adds a sibling component that reads `useRouter().pathname`
+so the test can assert the router's own state didn't change, not just that
+`window.location` happened to stay put. Five tests:
+- plain left click (`button: 0`) — navigates, `fireEvent.click` returns `false` (i.e.
+  `preventDefault` was called), pathname updates to `/catalog`.
+- ctrl-click — does not navigate, `fireEvent.click` returns `true` (`preventDefault` not
+  called), pathname stays `/`.
+- meta-click (cmd on macOS) — same, not intercepted.
+- shift-click and alt-click (one test, two assertions) — same, not intercepted.
+- middle-click (`button: 1`) — same, not intercepted.
+
+Using `fireEvent.click`'s return value (`dispatchEvent`'s result: `false` once
+`preventDefault()` was called on a cancelable event, `true` otherwise) is a precise,
+direct way to prove the handler's exact behavior without needing jsdom to actually
+perform a cross-document navigation. This is exactly the required fix from §5, correctly
+implemented — a solid test, not a token one.
+
+**Re-ran every command myself** against the actual new tip (`git checkout --detach
+13605b3`, fresh `npm install`, this worktree, Node v22.12.0, npm 11.6.1, 2026-09-24):
+
+```
+$ npm install
+added 50 packages, and audited 309 packages in 453ms
+found 0 vulnerabilities
+
+$ npm run typecheck   -> exit 0, no output
+$ npm run lint        -> exit 0, no output
+
+$ npm test
+Not implemented: navigation to another Document   (x5)
+ Test Files  5 passed (5)
+      Tests  30 passed (30)
+   Duration  1.06s
+(tools/*.test.mjs: 9/9 pass, unrelated)
+
+$ npm run build
+✓ 38 modules transformed.
+dist/index.html                   0.48 kB │ gzip:  0.29 kB
+dist/assets/index-B8Te94on.css    2.22 kB │ gzip:  0.94 kB
+dist/assets/index-IDxxx1Bq.js   227.73 kB │ gzip: 71.07 kB
+✓ built in 432ms
+
+$ npm run scan-secrets
+scan-secrets [working-tree]: 99 files scanned, 0 skipped, 0 error(s), 0 warning(s) -> PASS
+
+$ npm run audit:ci
+found 0 vulnerabilities
+```
+
+30/30 tests (was 25/25), one more file scanned by scan-secrets (99 vs. 98 — the new test
+file), identical build output/bundle hashes to the first pass (confirms `Router.tsx`
+itself is unchanged). The five "Not implemented: navigation to another Document" jsdom
+console lines are expected and correctly explained in the PR file's "Re-review" section:
+jsdom logs this when an anchor's default click behavior is *not* prevented and it
+attempts (and can't perform) a real navigation — i.e., their presence is itself evidence
+that the four modified-click tests and the button:1 test did **not** call
+`preventDefault`, proving the fall-through behavior rather than masking a problem. Not a
+failure, not something to silence.
+
 ## Summary
-Scope, ownership, hard rules, dependencies, and every command I ran myself all check out
-clean and match the PR file's claims exactly. The only gap is the missing modified-click
-test noted in §5. Once that lands (same branch, new commit, updated PR file test-count),
-message me and I'll re-review quickly — expect a fast approval.
+First pass: scope, ownership, hard rules, dependencies, and every command matched the PR
+file's claims exactly, with one gap — modified-click behavior was implemented but
+untested. Re-review: the requested test was added, scoped to exactly the two files it
+needed to touch, reads as a genuine test (not a rubber-stamp), and every command was
+re-run independently against the real new commit with results matching the PR file.
+Approved.
