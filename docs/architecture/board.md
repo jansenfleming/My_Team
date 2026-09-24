@@ -32,7 +32,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | done |
 | E1 | engineer | Web shell and routing | none | approved |
-| E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | todo |
+| E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | approved |
 | E3 | engineer | Product detail page + cart core | E2 | todo |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | todo |
@@ -50,6 +50,10 @@ old cybersecurity-terminal project (ADR 0003).
    `docs/architecture/reviews/feat-web-shell.md`. E2 can start now.
    **D2 status:** done, merged to `main` (PR #38, review PR #39) — see
    `docs/architecture/reviews/feat-design-tokens.md`. E2/E5 can use real tokens now.
+   **E2 status:** `approved` — Architect review 2026-09-24 (`feat/web-catalog-grid`, PR
+   file `docs/prs/feat-web-catalog-grid.md`), no required changes. Full findings:
+   `docs/architecture/reviews/feat-web-catalog-grid.md`. Waiting on the lead to push/merge
+   the real PR; E3 can start once that merge lands.
 3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
    **D5 status:** approved, waiting for the lead to merge — see
    `docs/architecture/reviews/feat-design-eggs.md`. E6 (and the `ProductPage`-lookup
