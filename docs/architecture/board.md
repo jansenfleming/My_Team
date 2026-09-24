@@ -31,7 +31,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | todo |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | todo |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | todo |
-| E1 | engineer | Web shell and routing | none | todo |
+| E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | todo |
 | E3 | engineer | Product detail page + cart core | E2 | todo |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
@@ -46,6 +46,10 @@ old cybersecurity-terminal project (ADR 0003).
 2. **Now that `feat/design-brand` is merged:** D2, D3, D4 can all start (independent of
    each other). E2 can start once E1 merges, using placeholder product
    data if D3 isn't merged yet — swap in real data when it lands.
+   **E1 status (2026-09-24):** Architect **approved** — see
+   `docs/architecture/reviews/feat-web-shell.md`. Waiting on the lead to merge
+   `feat/web-shell`; E2 can start once the lead confirms the merge (do not start
+   against the unmerged branch, per the worktree working agreement).
 3. After D2 + D3 + E2 merge: E3. After D3 (+ D1) merges: D5.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
 5. After E2-E6 merge: E7, then A3.
