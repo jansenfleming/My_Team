@@ -104,8 +104,12 @@ describe("ProductPage (board task E3)", () => {
     expect(screen.getByRole("link", { name: "Back to home" })).toBeInTheDocument();
   });
 
-  it("does not reveal the hidden 13th product by its slug via ordinary navigation", () => {
-    renderProduct("200-ok-tee");
+  it("does not reveal the hidden 13th product by its fixed slug via ordinary navigation", () => {
+    // "200-ok" is the fixed slug for the Konami-code hidden product
+    // (docs/design/easter-eggs.md §3, /product/200-ok). Without the unlock flag set
+    // (board task E6, not implemented here), this must fall through to NotFoundPage —
+    // that's what makes the product unreachable by direct navigation or a guessed URL.
+    renderProduct("200-ok");
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
   });

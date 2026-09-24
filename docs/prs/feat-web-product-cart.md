@@ -72,23 +72,28 @@ have to revisit it (see below).
   task E6's job, not E3's. The function carries a comment describing exactly the branch
   E6 will add (checking `localStorage.getItem("zj_unlocked_200ok") === "1"` and returning
   the hidden product for its slug) so E6 can extend this function without restructuring
-  it. Today, visiting `/product/200-ok` or `/product/200-ok-tee` both correctly fall
-  through to `NotFoundPage` — the specified pre-unlock behavior.
-- **Flagging a data/spec mismatch for the Architect/Creative Director:** D5
-  (`docs/design/easter-eggs.md` §3) fixes the hidden product's slug as `200-ok`
-  (`/product/200-ok`), written to resolve the "exact slug" D3 deliberately left open. But
-  `src/data/products.ts`'s `hiddenProduct.id` (built for board task E2, merged before D5
-  landed) is `"200-ok-tee"`, not `"200-ok"`. I did not change `products.ts` myself — that
-  file's `hiddenProduct` content is D3/E2 territory and reconciling it is naturally part
-  of E6's Konami-gate wiring, not this branch's scope — but flagging now so whoever picks
-  up E6 knows to either update the `id` to `200-ok` or use `"200-ok-tee"` as the real
-  fixed slug (and tell the Creative Director if the route in D5 needs a matching update).
+  it. Today, visiting `/product/200-ok` correctly falls through to `NotFoundPage` — the
+  specified pre-unlock behavior.
+- **Resolved: `hiddenProduct.id` now matches D5's fixed slug.** My first pass flagged a
+  mismatch — `src/data/products.ts`'s `hiddenProduct.id` (written for board task E2,
+  merged before D5 landed) was `"200-ok-tee"`, while D5 (`docs/design/easter-eggs.md` §3,
+  already Architect-reviewed and approved) fixes the slug as `200-ok`
+  (`/product/200-ok`). The lead decided D5's route is the more specific, intentional, and
+  load-bearing decision for the whole Konami mechanism, so `hiddenProduct.id` changes to
+  `"200-ok"` to match it, not the other way around. Fixed in this branch: `id` updated in
+  `src/data/products.ts` (with a comment explaining why, for anyone who finds
+  `"200-ok-tee"` in git blame), and every test reference to the old value updated
+  (`data/products.test.ts`, `pages/ProductPage.test.tsx`) — see "Real command output"
+  below for the re-run confirming nothing else broke. The one place this old value is
+  *not* changed is `docs/architecture/reviews/feat-web-catalog-grid.md`: that's the
+  Architect's review record of an already-merged PR, accurate to what was true at the
+  time, and not mine to rewrite after the fact.
 - Tests: known product renders name/category/price/description/tags; special-copy block
   renders distinctly with its exact content (verbatim spot-check) and is absent for a
   product with none; shirt shows a 4-size picker defaulting to S, hat shows a one-size
   picker; picking a different size updates the checked radio; an unknown id renders
-  `NotFoundPage`'s real content (not a duplicate); `200-ok-tee` (today's unmatched hidden
-  slug) also renders `NotFoundPage`; Add to Cart shows the exact confirmation copy and
+  `NotFoundPage`'s real content (not a duplicate); `200-ok` (today, with no unlock flag
+  set) also renders `NotFoundPage`; Add to Cart shows the exact confirmation copy and
   increments the cart's total quantity; two clicks increment quantity rather than adding
   a duplicate line; Add to Cart never calls `fetch`.
 
@@ -255,9 +260,10 @@ confirm it's never invoked.
   similar) to `CartContext.tsx`, which this branch deliberately didn't add to stay
   scoped to E3's "Add to Cart" + persistence ask.
 - E6 (easter eggs) can wire the Konami-code gate into `ProductPage.tsx`'s `findProduct`
-  per the comment left there — see the flagged slug mismatch above
-  (`hiddenProduct.id` is `"200-ok-tee"` in `products.ts`, but D5 fixed the slug as
-  `"200-ok"`) before doing so.
+  per the comment left there. The slug mismatch flagged in an earlier draft of this PR is
+  now resolved — `hiddenProduct.id` is `"200-ok"`, matching D5's fixed route
+  (`/product/200-ok`) exactly — so E6 doesn't need to reconcile anything, just add the
+  unlock-flag branch.
 - The dark-panel component (`--zjc-panel-*` tokens) is now in real use for the first
   time, exactly where D2 reserved it (structural special-copy blocks), and only once per
   page as the style guide asks.

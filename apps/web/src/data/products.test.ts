@@ -47,12 +47,15 @@ describe("products data module", () => {
   });
 
   it("excludes the hidden 13th product (200 OK Tee) from the main catalog array", () => {
-    expect(products.some((product) => product.id === "200-ok-tee")).toBe(false);
+    expect(products.some((product) => product.id === "200-ok")).toBe(false);
     expect(products.some((product) => product.name === "200 OK Tee")).toBe(false);
   });
 
   it("keeps the hidden product as a separate export, tagged 'hidden', not in `products`", () => {
-    expect(hiddenProduct.id).toBe("200-ok-tee");
+    // Fixed slug per docs/design/easter-eggs.md §3 ("Fixed slug: `200-ok`. Route:
+    // `/product/200-ok`.") — the Architect-approved, load-bearing id for the Konami
+    // mechanism (board task E6). Not "200-ok-tee", an earlier draft value from before D5.
+    expect(hiddenProduct.id).toBe("200-ok");
     expect(hiddenProduct.tags).toContain("hidden");
     expect(products).not.toContain(hiddenProduct);
   });

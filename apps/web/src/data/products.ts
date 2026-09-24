@@ -205,9 +205,15 @@ connection established. true to size.`,
 /** The hidden 13th product (docs/design/products.md §3) — Konami-code only. NOT part of
  * `products`, not routed anywhere yet, and not rendered by the catalog grid. Kept here so
  * the data (and its exact copy) exists ahead of D5's trigger spec and E6's wiring; do not
- * import this into CatalogPage or any "all products" view. */
+ * import this into CatalogPage or any "all products" view.
+ *
+ * `id` is fixed at "200-ok" per docs/design/easter-eggs.md §3 ("Fixed slug: `200-ok`.
+ * Route: `/product/200-ok`."), which is the Architect-approved, load-bearing decision for
+ * the whole Konami mechanism. An earlier draft of this file (board task E2, merged before
+ * D5 landed) used "200-ok-tee" instead; that was a real mismatch, not an alternate valid
+ * spelling — fixed here per the lead's explicit direction, not silently. */
 export const hiddenProduct: Product = {
-  id: "200-ok-tee",
+  id: "200-ok",
   name: "200 OK Tee",
   category: "shirt",
   price: 38,
