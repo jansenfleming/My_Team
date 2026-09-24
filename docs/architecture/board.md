@@ -33,7 +33,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | done |
 | E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
-| E3 | engineer | Product detail page + cart core | E2 | approved |
+| E3 | engineer | Product detail page + cart core | E2 | done |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | todo |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
