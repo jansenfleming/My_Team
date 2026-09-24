@@ -46,10 +46,8 @@ old cybersecurity-terminal project (ADR 0003).
 2. **Now that `feat/design-brand` is merged:** D2, D3, D4 can all start (independent of
    each other). E2 can start once E1 merges, using placeholder product
    data if D3 isn't merged yet — swap in real data when it lands.
-   **E1 status (2026-09-24):** Architect **approved** — see
-   `docs/architecture/reviews/feat-web-shell.md`. Waiting on the lead to merge
-   `feat/web-shell`; E2 can start once the lead confirms the merge (do not start
-   against the unmerged branch, per the worktree working agreement).
+   **E1 status:** done, merged to `main` (PR #33, review PR #34) — see
+   `docs/architecture/reviews/feat-web-shell.md`. E2 can start now.
    **D2 status (2026-09-24):** Architect **approved** `feat/design-tokens` — see
    `docs/architecture/reviews/feat-design-tokens.md`. Waiting on the lead to merge;
    E2/E5 can use real tokens once the lead confirms the merge.
