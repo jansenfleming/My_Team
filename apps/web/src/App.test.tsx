@@ -24,10 +24,15 @@ describe("App routing (smoke test per route — board task E1)", () => {
     expect(document.title).toBe("Catalog — ZeroJance");
   });
 
-  it("renders a product detail route with the slug from the URL", () => {
+  it("renders a known product's detail route with its real content (board task E3)", () => {
+    renderAt("/product/exit-code-0-tee");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Exit Code 0 Tee");
+    expect(document.title).toBe("Product — ZeroJance");
+  });
+
+  it("renders the existing NotFoundPage for an unknown product slug", () => {
     renderAt("/product/circuit-hoodie");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Product detail");
-    expect(screen.getByText("circuit-hoodie")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
   });
 
   it("renders the lookbook route", () => {
@@ -80,5 +85,34 @@ describe("App navigation", () => {
     renderAt("/catalog");
     const catalogLink = screen.getByRole("link", { name: "Catalog" });
     expect(catalogLink).toHaveAttribute("aria-current", "page");
+  });
+});
+
+describe("App cart (board task E3 — mock cart core)", () => {
+  it("shows a visible cart count in the header that starts at zero", () => {
+    renderAt("/");
+    expect(screen.getByText("Cart (0)")).toBeInTheDocument();
+  });
+
+  it("updates the header cart count when a product is added to cart", async () => {
+    renderAt("/product/exit-code-0-tee");
+    const user = userEvent.setup();
+
+    expect(screen.getByText("Cart (0)")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+
+    expect(screen.getByText("Cart (1)")).toBeInTheDocument();
+  });
+
+  it("keeps the cart count after navigating away from the product page and back", async () => {
+    renderAt("/product/exit-code-0-tee");
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+    expect(screen.getByText("Cart (1)")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("link", { name: "Catalog" }));
+    expect(screen.getByText("Cart (1)")).toBeInTheDocument();
   });
 });
