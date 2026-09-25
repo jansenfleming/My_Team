@@ -1085,3 +1085,100 @@ h1.about-hero__title {
 .cart-drawer__actions .button {
   flex: 1;
 }
+
+/* ---- Joke 404 page (board task E6, docs/design/easter-eggs.md §2) ------------------
+   Grid-motif background applied directly to the page section, per style-guide.md §3's
+   sanctioned case ("the 404 page background"). `.page` (above) already handles the
+   max-width/centering; `.site-main` already handles the outer gutter, so no horizontal
+   padding is added here. */
+.page-not-found {
+  padding: var(--zjc-space-6) 0;
+  background-color: var(--zjc-bg);
+  background-image:
+    linear-gradient(to right, var(--zjc-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zjc-grid-line) 1px, transparent 1px);
+  background-size: var(--zjc-grid-size) var(--zjc-grid-size);
+}
+
+.page-not-found h1 {
+  color: var(--zjc-alert);
+}
+
+.page-not-found__status {
+  margin: 0 0 var(--zjc-space-4);
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-base);
+  color: var(--zjc-fg-muted);
+  overflow-wrap: anywhere;
+}
+
+.page-not-found__body {
+  margin: 0 0 var(--zjc-space-5);
+  color: var(--zjc-fg);
+}
+
+.page-not-found__links {
+  display: flex;
+  gap: var(--zjc-space-5);
+  margin: 0;
+}
+
+.page-not-found__links a {
+  color: var(--zjc-link);
+  text-decoration: underline;
+}
+
+/* ---- Konami-code confirmation banner (board task E6, docs/design/easter-eggs.md §3) -
+   Non-modal, dismissible, no fixed timer. `--zjc-z-toast` is the same layer style-
+   guide.md already names for the "added to bag" toast — this is the same category of
+   ephemeral confirmation UI, not a new z-index tier. No entrance transition: a static
+   appear/disappear is D5's explicitly sanctioned simpler baseline. */
+.konami-banner-region {
+  position: fixed;
+  z-index: var(--zjc-z-toast);
+  left: var(--zjc-space-4);
+  right: var(--zjc-space-4);
+  bottom: var(--zjc-space-4);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.konami-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--zjc-space-4);
+  max-width: 28rem;
+  width: 100%;
+  padding: var(--zjc-space-3) var(--zjc-space-4);
+  background: var(--zjc-bg-surface);
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+  border-left: var(--zjc-border-width-thick) solid var(--zjc-ok);
+  border-radius: var(--zjc-radius-md);
+  pointer-events: auto;
+}
+
+.konami-banner__text {
+  flex: 1;
+  margin: 0;
+  color: var(--zjc-fg);
+  font-size: var(--zjc-text-sm);
+}
+
+.konami-banner__link {
+  color: var(--zjc-link);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.konami-banner__dismiss {
+  flex-shrink: 0;
+  min-width: var(--zjc-tap-min);
+  min-height: var(--zjc-tap-min);
+  background: transparent;
+  border: none;
+  color: var(--zjc-fg-muted);
+  font-size: var(--zjc-text-md);
+  line-height: 1;
+  cursor: pointer;
+}

@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
+import { KONAMI_SEQUENCE, resetKonamiMemoryFlagForTests } from "./eggs/konami";
 
 // Renders the app with the browser at `path` before mount, the way a direct URL load
 // (or a static-file server serving index.html for any path) would.
@@ -117,6 +118,10 @@ describe("App cart (board task E3 — mock cart core)", () => {
   });
 });
 
+afterEach(() => {
+  resetKonamiMemoryFlagForTests();
+});
+
 describe("App cart drawer + mock checkout (board task E4, wired through the real header button)", () => {
   it("opens the drawer from the header's cart toggle and shows the item added on the product page", async () => {
     renderAt("/product/exit-code-0-tee");
@@ -152,5 +157,55 @@ describe("App cart drawer + mock checkout (board task E4, wired through the real
     await user.keyboard("{Escape}");
 
     expect(toggle).toHaveFocus();
+  });
+});
+
+describe("App easter eggs (board task E6)", () => {
+  it("logs the dev-console message exactly once on mount, and not again on a route change", async () => {
+    const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    renderAt("/");
+    const user = userEvent.setup();
+
+    expect(consoleLogSpy).toHaveBeenCalledTimes(3);
+
+    await user.click(screen.getByRole("link", { name: "Catalog" }));
+
+    expect(consoleLogSpy).toHaveBeenCalledTimes(3);
+    consoleLogSpy.mockRestore();
+  });
+
+  it("renders the joke 404 page's exact copy and links for an unmatched path", () => {
+    renderAt("/this-does-not-exist");
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
+    expect(screen.getByText("GET /this-does-not-exist → 404 Not Found")).toBeInTheDocument();
+    expect(screen.getByText("Not in the catalog. Try the catalog instead.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to catalog" })).toHaveAttribute(
+      "href",
+      "/catalog",
+    );
+    expect(screen.getByRole("link", { name: "Back home" })).toHaveAttribute("href", "/");
+  });
+
+  it("keeps the hidden product unreachable by direct navigation before the Konami code is entered", () => {
+    renderAt("/product/200-ok");
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
+  });
+
+  it("entering the Konami code anywhere on the site unlocks the hidden product for direct navigation", () => {
+    renderAt("/about");
+
+    for (const key of KONAMI_SEQUENCE) {
+      fireEvent.keyDown(window, { key });
+    }
+
+    expect(screen.getByText("Item unlocked.")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("link", { name: "View 200 OK Tee" }));
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("200 OK Tee");
+    expect(window.location.pathname).toBe("/product/200-ok");
+>>>>>>> 22b8b63 (style(web): D2-token styling for the 404 page and Konami banner; App-level egg tests)
   });
 });
