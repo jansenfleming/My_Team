@@ -36,7 +36,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E3 | engineer | Product detail page + cart core | E2 | done |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | done |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
-| E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
+| E6 | engineer | Easter eggs implementation | D5, relevant pages merged | approved |
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
 
 ## Suggested waves (parallel starts)
@@ -59,6 +59,13 @@ old cybersecurity-terminal project (ADR 0003).
    `docs/architecture/reviews/feat-design-eggs.md`. E6 (and the `ProductPage`-lookup
    part of E3) can start once this merges and each egg's target page(s) are also merged.
 4. After E3 merges: E4. After D4 (+ D2) merges: E5. After D5 (+ its target pages) merges: E6.
+   **E6 status:** `approved` — Architect review 2026-09-25 (`feat/web-easter-eggs`, PR
+   file `docs/prs/feat-web-easter-eggs.md`), no required changes; traced the Konami
+   sequence-matcher and the `ProductPage` gating logic directly, confirmed 128/128 tests
+   and a clean `dist/index.html` build myself. Full findings:
+   `docs/architecture/reviews/feat-web-easter-eggs.md`. Waiting on the lead to push/merge
+   the real PR (reviewed in isolation from `feat/web-checkout`/E4, which is under
+   separate concurrent review; merge ordering between the two is the lead's call).
    **D4 status:** approved, waiting for the lead to merge — see
    `docs/architecture/reviews/feat-design-pages.md`. E5 can start once this merges (E1
    and D2 are already merged).
