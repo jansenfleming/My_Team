@@ -517,3 +517,306 @@ input:focus-visible,
     transition: none;
   }
 }
+
+/* ---- Shared button (board task E5, style-guide.md §3 "Buttons") --------------------
+   Only the secondary/ghost variant is built so far — no primary CTA exists yet (that's
+   E3/E4's "Add to Cart" territory). */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--zjc-tap-min);
+  padding: var(--zjc-space-2) var(--zjc-space-5);
+  border-radius: var(--zjc-radius-md);
+  font-weight: var(--zjc-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button--ghost {
+  color: var(--zjc-fg);
+  background: transparent;
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+}
+
+/* ---- Lookbook page (board task E5, docs/design/lookbook.md — D4) ------------------- */
+
+/* Kicker device shared by the lookbook hero, each look section, and the about page's
+   hero (D4 lookbook.md §2/§3, about.md §1 "same treatment... for cross-page
+   consistency"). */
+.lookbook-kicker {
+  margin: 0 0 var(--zjc-space-2);
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  color: var(--zjc-fg-muted);
+  letter-spacing: var(--zjc-tracking-wide);
+}
+
+/* Body-copy styling shared by the hero subhead and each look's intro paragraph
+   (lookbook.md §2 and §3). The hero variant below bumps the size to --zjc-text-md per
+   §2's explicit value; the base rule here is §3's explicit --zjc-text-base. */
+.lookbook-copy {
+  margin: 0;
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-base);
+  color: var(--zjc-fg);
+  line-height: var(--zjc-leading-normal);
+  max-width: var(--zjc-measure);
+}
+
+/* Hero (D4 §2): grid-motif background applied directly to the section, per
+   style-guide.md §3's sanctioned case ("use only on --zjc-bg-colored sections...
+   directly") — the same CSS block used by each look section and the placeholder-card
+   image area below. */
+.lookbook-hero {
+  padding: var(--zjc-space-7) 0;
+  background-color: var(--zjc-bg);
+  background-image:
+    linear-gradient(to right, var(--zjc-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zjc-grid-line) 1px, transparent 1px);
+  background-size: var(--zjc-grid-size) var(--zjc-grid-size);
+}
+
+.lookbook-hero .lookbook-copy {
+  font-size: var(--zjc-text-md);
+}
+
+h1.lookbook-hero__title {
+  margin: 0 0 var(--zjc-space-4);
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-xl);
+  font-weight: var(--zjc-weight-black);
+  line-height: var(--zjc-leading-tight);
+}
+
+/* Each look section (D4 §3): same grid-motif background as the hero, directly on the
+   section. Mobile-first vertical rhythm: --zjc-space-7 between looks (§6); the desktop
+   step-up to --zjc-space-9 is in the 960px breakpoint below, reusing E1's existing
+   640/960 breakpoints per §6's explicit permission to do so instead of inventing new
+   768/1024 ones. */
+.lookbook-look {
+  margin-top: var(--zjc-space-7);
+  padding: var(--zjc-space-6) 0;
+  background-color: var(--zjc-bg);
+  background-image:
+    linear-gradient(to right, var(--zjc-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zjc-grid-line) 1px, transparent 1px);
+  background-size: var(--zjc-grid-size) var(--zjc-grid-size);
+}
+
+.lookbook-look__intro {
+  margin-bottom: var(--zjc-space-4);
+}
+
+.lookbook-look__heading {
+  margin: 0 0 var(--zjc-space-3);
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-2xl);
+  font-weight: var(--zjc-weight-bold);
+  line-height: var(--zjc-leading-snug);
+}
+
+/* Cards (D4 §6): mobile-first single column, gap --zjc-space-4. */
+.lookbook-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--zjc-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---- Placeholder-block card (D4 §4, reusable) --------------------------------------- */
+
+.lookbook-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zjc-space-2);
+  color: inherit;
+  text-decoration: none;
+}
+
+.lookbook-card__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 4 / 5;
+  background: var(--zjc-bg-surface);
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+  border-radius: var(--zjc-radius-md);
+  overflow: hidden;
+}
+
+.lookbook-card__image-area {
+  flex: 3;
+  background-color: var(--zjc-bg);
+  background-image:
+    linear-gradient(to right, var(--zjc-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zjc-grid-line) 1px, transparent 1px);
+  background-size: var(--zjc-grid-size) var(--zjc-grid-size);
+  border-bottom: var(--zjc-border-width) solid var(--zjc-border-control);
+}
+
+.lookbook-card__tag {
+  position: absolute;
+  top: var(--zjc-space-3);
+  right: var(--zjc-space-3);
+  padding: var(--zjc-space-1) var(--zjc-space-2);
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-sm);
+  letter-spacing: var(--zjc-tracking-wide);
+  text-transform: uppercase;
+  color: var(--zjc-fg-muted);
+  background: var(--zjc-bg-surface);
+  border: var(--zjc-border-width) solid var(--zjc-border-control);
+  border-radius: var(--zjc-radius-sm);
+}
+
+.lookbook-card__nameplate {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--zjc-space-3) var(--zjc-space-4);
+  background: var(--zjc-bg-surface);
+}
+
+.lookbook-card__name {
+  margin: 0;
+  font-family: var(--zjc-font-mono);
+  font-size: var(--zjc-text-md);
+  font-weight: var(--zjc-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--zjc-tracking-wide);
+  color: var(--zjc-fg);
+  line-height: var(--zjc-leading-snug);
+}
+
+.lookbook-card__caption {
+  margin: var(--zjc-space-2) 0 0;
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-sm);
+  color: var(--zjc-fg-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lookbook-card__tile {
+    transition: transform var(--zjc-dur-base) var(--zjc-ease-out);
+  }
+
+  .lookbook-card:hover .lookbook-card__tile,
+  .lookbook-card:focus-visible .lookbook-card__tile {
+    transform: translateY(-2px);
+  }
+}
+
+.lookbook-closing {
+  margin-top: var(--zjc-space-7);
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Scroll-reveal motion (D4 §5) ---------------------------------------------------
+   Two independent reduced-motion layers, per D4/style-guide.md §5's "belt and
+   suspenders": (1) this whole block is gated behind
+   `prefers-reduced-motion: no-preference`, and (2) LookbookPage.tsx's JS gate never even
+   adds a `data-motion` attribute at all when reduced motion is requested or
+   IntersectionObserver/matchMedia aren't supported — so the base (no-attribute) state
+   below, which is fully visible with no transform, is what renders in every one of
+   those cases. tokens.css's own `--zjc-dur-*` collapse under
+   `prefers-reduced-motion: reduce` is the backstop under this belt. */
+@media (prefers-reduced-motion: no-preference) {
+  .lookbook-look[data-motion="pending"] .lookbook-look__intro,
+  .lookbook-look[data-motion="pending"] .lookbook-card {
+    opacity: 0;
+    transform: translateY(var(--zjc-space-4));
+  }
+
+  .lookbook-look[data-motion="visible"] .lookbook-look__intro,
+  .lookbook-look[data-motion="visible"] .lookbook-card {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--zjc-dur-slow) var(--zjc-ease-out),
+      transform var(--zjc-dur-slow) var(--zjc-ease-out);
+  }
+
+  /* Stagger (D4 §5): --zjc-dur-fast (120ms) between the 3 cards within a look, card
+     index × 120ms — expressed as calc() against the token rather than a hardcoded
+     millisecond value, so no new duration is introduced. */
+  .lookbook-cards > li:nth-child(2) .lookbook-card {
+    transition-delay: var(--zjc-dur-fast);
+  }
+
+  .lookbook-cards > li:nth-child(3) .lookbook-card {
+    transition-delay: calc(var(--zjc-dur-fast) * 2);
+  }
+}
+
+@media (min-width: 640px) {
+  h1.lookbook-hero__title {
+    font-size: var(--zjc-text-3xl);
+  }
+
+  /* 2-up; the 3rd card naturally wraps alone onto its own row (D4 §6) since a 3-item
+     grid in 2 columns leaves the second cell of that row empty. */
+  .lookbook-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--zjc-space-5);
+  }
+}
+
+@media (min-width: 960px) {
+  .lookbook-look {
+    margin-top: var(--zjc-space-9);
+  }
+
+  .lookbook-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--zjc-space-6);
+  }
+}
+
+/* ---- About page (board task E5, docs/design/about.md — D4) ------------------------- */
+
+.page-about {
+  max-width: var(--zjc-measure);
+}
+
+h1.about-hero__title {
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-xl);
+  font-weight: var(--zjc-weight-black);
+  line-height: var(--zjc-leading-tight);
+}
+
+.about-section__heading {
+  margin-top: var(--zjc-space-7);
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-2xl);
+  font-weight: var(--zjc-weight-bold);
+  line-height: var(--zjc-leading-snug);
+}
+
+.about-copy {
+  margin: 0 0 var(--zjc-space-4);
+  font-family: var(--zjc-font-sans);
+  font-size: var(--zjc-text-base);
+  font-weight: var(--zjc-weight-regular);
+  color: var(--zjc-fg);
+  line-height: var(--zjc-leading-normal);
+}
+
+.about-copy code {
+  font-family: var(--zjc-font-mono);
+  font-size: 0.9em;
+}
+
+@media (min-width: 640px) {
+  h1.about-hero__title {
+    font-size: var(--zjc-text-3xl);
+  }
+
+  .about-section__heading {
+    margin-top: var(--zjc-space-9);
+  }
+}
