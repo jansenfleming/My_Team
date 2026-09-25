@@ -24,4 +24,26 @@ describe("index.html", () => {
   it("mounts the app into #root", () => {
     expect(doc.getElementById("root")).not.toBeNull();
   });
+
+  // Egg 1a — view-source message (docs/design/easter-eggs.md §1a, board task E6): a
+  // static HTML comment, always present in the raw markup, found by "View Page Source."
+  // Located by title/head position rather than matched as one fragile whitespace-exact
+  // string, since incidental comment indentation doesn't change what a "View Page
+  // Source" reader sees — the two content lines below are checked verbatim.
+  it("contains the exact view-source easter-egg comment, between </title> and </head>", () => {
+    const titleIndex = indexHtml.indexOf("<title>ZeroJance</title>");
+    const headCloseIndex = indexHtml.indexOf("</head>");
+    expect(titleIndex).toBeGreaterThan(-1);
+    expect(headCloseIndex).toBeGreaterThan(titleIndex);
+
+    const commentStart = indexHtml.indexOf("<!--", titleIndex);
+    expect(commentStart).toBeGreaterThan(titleIndex);
+    const commentEnd = indexHtml.indexOf("-->", commentStart);
+    expect(commentEnd).toBeGreaterThan(commentStart);
+    expect(commentEnd).toBeLessThan(headCloseIndex);
+
+    const commentBlock = indexHtml.slice(commentStart, commentEnd);
+    expect(commentBlock).toContain("view-source: 200 OK.");
+    expect(commentBlock).toContain("Nothing else is hidden in the markup — try the console.");
+  });
 });

@@ -1,8 +1,9 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProductPage } from "./ProductPage";
 import { CartProvider, useCart } from "../cart/CartContext";
+import { KONAMI_STORAGE_KEY, resetKonamiMemoryFlagForTests } from "../eggs/konami";
 import { RouterProvider } from "../router/Router";
 
 // ProductPage needs a CartProvider (Add to Cart) and a RouterProvider (the NotFoundPage
@@ -35,6 +36,10 @@ function renderProductWithCartProbe(slug: string) {
     </CartProvider>,
   );
 }
+
+afterEach(() => {
+  resetKonamiMemoryFlagForTests();
+});
 
 describe("ProductPage (board task E3)", () => {
   it("renders a known product's name, category, price, description, and tags", () => {
@@ -101,7 +106,9 @@ describe("ProductPage (board task E3)", () => {
     renderProduct("this-product-does-not-exist");
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
-    expect(screen.getByRole("link", { name: "Back to home" })).toBeInTheDocument();
+    // "Back home" is D5's exact 404 copy (docs/design/easter-eggs.md §2, board task E6),
+    // which replaced E3's original placeholder "Back to home" link text.
+    expect(screen.getByRole("link", { name: "Back home" })).toBeInTheDocument();
   });
 
   it("does not reveal the hidden 13th product by its fixed slug via ordinary navigation", () => {
@@ -147,5 +154,59 @@ describe("ProductPage (board task E3)", () => {
 
     expect(fetchSpy).not.toHaveBeenCalled();
     globalThis.fetch = originalFetch;
+  });
+});
+
+// Hidden 13th product gating (docs/design/easter-eggs.md §3, board task E6). The "still
+// 404s before unlock" direction is covered by the existing test above ("does not reveal
+// the hidden 13th product..."); these cover the unlock direction and persistence.
+describe("ProductPage — hidden 13th product (board task E6)", () => {
+  it("renders the real 200 OK Tee detail content once the Konami unlock flag is set", () => {
+    window.localStorage.setItem(KONAMI_STORAGE_KEY, "1");
+
+    renderProduct("200-ok");
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("200 OK Tee");
+    expect(screen.getByText("$38")).toBeInTheDocument();
+    expect(
+      screen.getByText("Everything you asked for, nothing you didn't."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Care label, styled as a config file")).toBeInTheDocument();
+    const block = document.querySelector(".product-detail__special-copy");
+    expect(block?.textContent).toContain("code: 200");
+    // Full normal treatment, same as any of the other 12 — size picker and Add to Cart.
+    expect(screen.getByRole("radio", { name: "S" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add to Cart" })).toBeInTheDocument();
+  });
+
+  it("stays 404 for a guessed/direct-navigation visit even with a stray unrelated flag set", () => {
+    window.localStorage.setItem("some-other-flag", "1");
+
+    renderProduct("200-ok");
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404");
+  });
+
+  it("the unlock persists across a simulated reload (a fresh render reads the same localStorage)", () => {
+    window.localStorage.setItem(KONAMI_STORAGE_KEY, "1");
+    const first = renderProduct("200-ok");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("200 OK Tee");
+
+    // Simulate a reload: unmount and mount fresh — only localStorage carries the flag
+    // across this boundary (same pattern as CartContext.test.tsx's persistence test).
+    first.unmount();
+    renderProduct("200-ok");
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("200 OK Tee");
+  });
+
+  it("lets Add to Cart work normally on the hidden product once unlocked", async () => {
+    window.localStorage.setItem(KONAMI_STORAGE_KEY, "1");
+    renderProductWithCartProbe("200-ok");
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+
+    expect(screen.getByTestId("probe-quantity")).toHaveTextContent("1");
   });
 });

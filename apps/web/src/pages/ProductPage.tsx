@@ -6,21 +6,24 @@
 // than duplicating its markup.
 import { useState } from "react";
 import { useCart } from "../cart/CartContext";
-import { products, type Product } from "../data/products";
+import { hiddenProduct, products, type Product } from "../data/products";
+import { isKonamiUnlocked } from "../eggs/konami";
 import { VARIANTS } from "../data/variants";
 import { CATEGORY_LABEL, CURRENCY } from "../utils/format";
 import { NotFoundPage } from "./NotFoundPage";
 
-// Plain search against the 12-item main catalog only — never `hiddenProduct`
-// (src/data/products.ts), which this file doesn't import. The Konami-code easter egg
-// (docs/design/easter-eggs.md §3, board task E6) will extend this lookup with a branch
-// that returns the hidden product for its slug when
-// `localStorage.getItem("zj_unlocked_200ok") === "1"`, falling through to the same
-// not-found path when it isn't. This function's shape (a slug in, a Product or undefined
-// out, NotFoundPage on a miss) doesn't need to change for that — only a new branch goes
-// inside it. Not implemented here: that's E6's job, not E3's (see board task E3's
-// kickoff note).
+// Search the 12-item main catalog, plus a gated branch for the Konami-code hidden
+// product (docs/design/easter-eggs.md §3, board task E6). The gate is a runtime check
+// inside this lookup, not a route that simply doesn't exist until unlocked — a visitor
+// who guesses or types /product/200-ok directly, without ever entering the code, still
+// gets `undefined` here and falls through to NotFoundPage below, same as any other
+// unmatched slug. No prop or context passes from the Konami listener (src/eggs/
+// KonamiEasterEgg.tsx) to this page — they're decoupled entirely through localStorage,
+// read fresh on every call via `isKonamiUnlocked()`.
 function findProduct(slug: string): Product | undefined {
+  if (slug === hiddenProduct.id) {
+    return isKonamiUnlocked() ? hiddenProduct : undefined;
+  }
   return products.find((product) => product.id === slug);
 }
 
