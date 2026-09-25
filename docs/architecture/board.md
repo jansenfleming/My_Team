@@ -35,7 +35,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
 | E3 | engineer | Product detail page + cart core | E2 | done |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
-| E5 | engineer | Lookbook and about pages | E1, D4, D2 | approved |
+| E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
 
