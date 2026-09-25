@@ -36,9 +36,15 @@ self-mocking), not a claimed etymology. `[PLACEHOLDER: real meaning/origin of th
 if the owner has one — do not guess further or present the above as fact in any
 customer-facing copy]`.
 
-`[PLACEHOLDER: brand founding story — who started it, when, why, where]`. No founding
-year, location, headcount, or backstory appears anywhere in this or later design docs
-until the owner supplies it.
+The *why* behind ZeroJance is now real, owner-supplied material: a solo, personal
+intersection of technology and fashion — translating tech's precision, creativity, and
+futuristic feeling into wearable, minimalist streetwear with character, with no strict
+rules, built first as the brand the founder wants to wear (full text:
+`docs/design/about.md` §4, "Where this started"). What's still open is the
+*who/when/where*:
+`[PLACEHOLDER: brand founding story — who started it, when, where]`. No founding year,
+location, or founder name/detail appears anywhere in this or later design docs until the
+owner supplies it.
 
 ---
 
@@ -145,5 +151,6 @@ trigger/output/discoverability-hint specs are D5's job, once D3's product list e
 ## 5. Open placeholders
 
 - `[PLACEHOLDER: real meaning/origin of the name "ZeroJance"]`
-- `[PLACEHOLDER: brand founding story — who, when, why, where]`
+- `[PLACEHOLDER: brand founding story — who, when, where (the why is now real,
+  owner-supplied material — see docs/design/about.md §4, "Where this started")]`
 - No other owner-specific facts are referenced in this document.
