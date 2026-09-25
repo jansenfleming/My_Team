@@ -25,7 +25,7 @@ old cybersecurity-terminal project (ADR 0003).
 |---|---|---|---|---|
 | A1 | architect | Repo cleanup, stack decision, plan (this task) | none | done |
 | A2 | architect | Ongoing review, merge, and basic hygiene | every branch | ongoing |
-| A3 | architect | MVP readiness report and Phase 2 board | all below | review |
+| A3 | architect | MVP readiness report and Phase 2 board | all below | done |
 | D1 | creative-director | Brand identity and voice | none | done |
 | D2 | creative-director | Design tokens and style guide | D1 | done |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
