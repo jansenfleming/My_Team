@@ -3,6 +3,7 @@
 // Layout. See docs/architecture/board.md task E1.
 import { useEffect } from "react";
 import { CartProvider } from "./cart/CartContext";
+import { logDevConsoleMessage } from "./eggs/devConsole";
 import { Layout } from "./layout/Layout";
 import { AboutPage } from "./pages/AboutPage";
 import { CatalogPage } from "./pages/CatalogPage";
@@ -48,6 +49,14 @@ function Pages() {
 }
 
 export function App() {
+  // Dev-console/view-source message, egg 1b (docs/design/easter-eggs.md §1b, board task
+  // E6): fires exactly once per full browser page load. App itself only mounts once —
+  // only Pages above re-renders on a client-side route change — so this effect's empty
+  // dependency array is exactly "once per load," not "once per route."
+  useEffect(() => {
+    logDevConsoleMessage();
+  }, []);
+
   return (
     <CartProvider>
       <RouterProvider>
