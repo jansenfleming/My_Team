@@ -34,7 +34,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E1 | engineer | Web shell and routing | none | approved |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
 | E3 | engineer | Product detail page + cart core | E2 | done |
-| E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
+| E4 | engineer | Cart drawer and mock checkout screen | E3 | approved |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
@@ -72,6 +72,11 @@ old cybersecurity-terminal project (ADR 0003).
    file `docs/prs/feat-web-lookbook-about.md`), no required changes. Full findings:
    `docs/architecture/reviews/feat-web-lookbook-about.md`. Waiting on the lead to
    push/merge the real PR.
+   **E4 status:** `approved` — Architect review 2026-09-25 (`feat/web-checkout`, PR file
+   `docs/prs/feat-web-checkout.md`), no required changes. Full findings:
+   `docs/architecture/reviews/feat-web-checkout.md`. Waiting on the lead to push/merge
+   the real PR. A deferred a11y gap (cart drawer focus trap) is carried forward to E7 —
+   see that task's entry below.
 5. After E2-E6 merge: E7, then A3.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
@@ -173,6 +178,8 @@ placeholder content) and message the Architect if idle.
 - Done when: quantity edit/remove work and recompute the subtotal; checkout screen
   renders and does not attempt any network call; tests cover the cart math; PR is
   explicit about what's mocked.
+- Status: `approved` — Architect review 2026-09-25, no required changes. Full findings:
+  `docs/architecture/reviews/feat-web-checkout.md`.
 
 ### E5 Lookbook and about pages
 - Owner: engineer. Depends: E1, D4 (placeholder copy otherwise), D2 for styling.
@@ -197,3 +204,15 @@ placeholder content) and message the Architect if idle.
 - Done when: `npm test`, `npm run lint`, `npm run typecheck`, `npm run build` all pass
   with real output pasted in the PR; Architect review (including its own hygiene pass:
   `npm run scan-secrets`, `npm audit`, broken-link check).
+- **Carried over from E4's review** (`docs/architecture/reviews/feat-web-checkout.md`
+  §5): `CartDrawer.tsx` has no cyclic Tab/Shift+Tab focus trap. Tabbing past the
+  drawer's last focusable element (or Shift+Tab from its first) moves focus into the
+  page behind it rather than wrapping — verified in code, not just as claimed in the E4
+  PR. The backdrop blocks **mouse/pointer** clicks from reaching background content
+  (`pointer-events: auto` + full-viewport `inset: 0` while open), but that has no effect
+  on keyboard Tab order: a **keyboard-only** user tabbing out of the open drawer *can*
+  land on and activate a control (e.g. a header nav link) in the dimmed background while
+  the drawer is still visually open. This is more than a cosmetic "doesn't wrap" issue —
+  it's the actual "reach hidden content behind it" case for that one input mode. Add a
+  real cyclic focus trap (and a test that Tab/Shift+Tab stay confined to the dialog while
+  open) as part of this task's a11y pass.
