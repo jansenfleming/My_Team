@@ -116,3 +116,41 @@ describe("App cart (board task E3 — mock cart core)", () => {
     expect(screen.getByText("Cart (1)")).toBeInTheDocument();
   });
 });
+
+describe("App cart drawer + mock checkout (board task E4, wired through the real header button)", () => {
+  it("opens the drawer from the header's cart toggle and shows the item added on the product page", async () => {
+    renderAt("/product/exit-code-0-tee");
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+    await user.click(screen.getByRole("button", { name: "Open cart" }));
+
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Exit Code 0 Tee");
+    expect(dialog).toHaveTextContent("$36");
+  });
+
+  it("goes all the way through checkout to the honest mock disclosure, with the header count reflecting the cleared cart", async () => {
+    renderAt("/product/exit-code-0-tee");
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+    await user.click(screen.getByRole("button", { name: "Open cart" }));
+    await user.click(screen.getByRole("button", { name: "Checkout" }));
+    await user.click(screen.getByRole("button", { name: "Place Order" }));
+
+    expect(screen.getByText(/this is a demo — no real order was placed/i)).toBeInTheDocument();
+    expect(screen.getByText("Cart (0)")).toBeInTheDocument();
+  });
+
+  it("closing the drawer returns focus to the header's cart toggle button", async () => {
+    renderAt("/");
+    const user = userEvent.setup();
+
+    const toggle = screen.getByRole("button", { name: "Open cart" });
+    await user.click(toggle);
+    await user.keyboard("{Escape}");
+
+    expect(toggle).toHaveFocus();
+  });
+});

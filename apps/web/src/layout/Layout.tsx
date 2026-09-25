@@ -2,7 +2,14 @@
 // toggles visibility below the desktop breakpoint — CSS handles the breakpoint switch;
 // see index.css), a single <main> landmark, and a footer. Placeholder nav labels/copy
 // until the Creative Director's specs (D1-D4) land — see board task E1.
-import { useState, type ReactNode } from "react";
+//
+// Board task E4 adds the cart drawer toggle button (right next to the existing cart
+// count) and renders <CartDrawer>. Deliberately a small, additive change to this file —
+// same reasoning as E3's cart-count addition: another Engineer instance may be touching
+// this file on a parallel branch (easter eggs, board task E6), so nothing here is
+// restructured, just added to.
+import { useRef, useState, type ReactNode } from "react";
+import { CartDrawer } from "../cart/CartDrawer";
 import { useCart } from "../cart/CartContext";
 import { Link, useRouter } from "../router/Router";
 
@@ -14,8 +21,17 @@ const NAV_LINKS = [
 
 export function Layout({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const { pathname } = useRouter();
   const { totalQuantity } = useCart();
+  const cartToggleRef = useRef<HTMLButtonElement>(null);
+
+  // Returns focus to the button that opened the drawer, rather than leaving it on
+  // whatever the drawer's own close control was (which just unmounted).
+  function closeCart() {
+    setCartOpen(false);
+    cartToggleRef.current?.focus();
+  }
 
   return (
     <div className="shell">
@@ -28,12 +44,23 @@ export function Layout({ children }: { children: ReactNode }) {
             ZeroJance
           </Link>
           <div className="site-header__actions">
-            {/* Cart count only (board task E3) — no drawer/checkout link yet, that's
-                board task E4. Not interactive on purpose: there is nothing for it to
-                open until E4 builds the drawer. */}
+            {/* Cart count (board task E3) stays plain text — the button beside it (board
+                task E4) is the one interactive cart control, so the count itself doesn't
+                need to duplicate that affordance. */}
             <p className="cart-indicator" aria-live="polite">
               Cart ({totalQuantity})
             </p>
+            <button
+              ref={cartToggleRef}
+              type="button"
+              className="cart-toggle"
+              aria-haspopup="dialog"
+              aria-expanded={cartOpen}
+              aria-controls="cart-drawer"
+              onClick={() => setCartOpen(true)}
+            >
+              Open cart
+            </button>
             <button
               type="button"
               className="nav-toggle"
@@ -71,6 +98,7 @@ export function Layout({ children }: { children: ReactNode }) {
           sends a real order. [PLACEHOLDER: real footer copy from the Creative Director.]
         </p>
       </footer>
+      <CartDrawer open={cartOpen} onClose={closeCart} />
     </div>
   );
 }

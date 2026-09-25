@@ -1,8 +1,16 @@
-// Mock cart state (board task E3): a React context holding cart items (product +
-// variant + quantity), persisted across the session via localStorage. Frontend-only,
-// per ADR 0003 — no server, no network call, ever, for cart or checkout. The comment at
-// the exact point a real payment/order integration would go lives in
-// src/pages/ProductPage.tsx, next to the "Add to Cart" action.
+// Mock cart state (board task E3, extended for E4): a React context holding cart items
+// (product + variant + quantity), persisted across the session via localStorage.
+// Frontend-only, per ADR 0003 — no server, no network call, ever, for cart or checkout.
+// The comment at the exact point a real payment/order integration would go lives in
+// src/cart/CartDrawer.tsx's "Place Order" handler (board task E4) — src/pages/
+// ProductPage.tsx carries the equivalent comment for "Add to Cart" (board task E3).
+//
+// E4 additions: `updateQuantity` and `removeItem` are deliberately separate actions (the
+// board's cart drawer spec calls for both "a way to edit quantity" and "a way to remove
+// an item" as distinct affordances) rather than overloading one function with a
+// quantity-reaches-zero-means-remove rule. `updateQuantity` always clamps to a minimum
+// of 1 — going to zero is what the Remove button is for. `subtotal` and `clearCart` back
+// the cart drawer and the mock checkout step.
 //
 // localStorage access is wrapped in try/catch on both read and write: a blocked or full
 // localStorage (private browsing, quota exceeded, disabled storage) must never crash the
@@ -31,11 +39,22 @@ export interface CartItem {
 interface CartContextValue {
   items: CartItem[];
   totalQuantity: number;
+  /** Sum of price × quantity across every line item. */
+  subtotal: number;
   addItem: (
     product: Pick<Product, "id" | "name" | "price" | "category">,
     variant: string,
     quantity?: number,
   ) => void;
+  /** Sets an existing line's quantity outright (not a delta). Clamped to a minimum of 1
+   * — pass through `removeItem` to take a line to zero. A no-op if no line matches
+   * `productId` + `variant`. */
+  updateQuantity: (productId: string, variant: string, quantity: number) => void;
+  /** Removes the one line matching `productId` + `variant` entirely. */
+  removeItem: (productId: string, variant: string) => void;
+  /** Empties the cart. Used when the mock checkout "places" an order (board task E4) —
+   * see the comment at that call site for why nothing is sent anywhere. */
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -112,11 +131,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const updateQuantity = useCallback<CartContextValue["updateQuantity"]>((productId, variant, quantity) => {
+    const clamped = Math.max(1, Math.trunc(quantity));
+    setItems((current) =>
+      current.map((item) =>
+        item.productId === productId && item.variant === variant
+          ? { ...item, quantity: clamped }
+          : item,
+      ),
+    );
+  }, []);
+
+  const removeItem = useCallback<CartContextValue["removeItem"]>((productId, variant) => {
+    setItems((current) =>
+      current.filter((item) => !(item.productId === productId && item.variant === variant)),
+    );
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
   const totalQuantity = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
+  const subtotal = useMemo(
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [items],
+  );
 
   const value = useMemo<CartContextValue>(
-    () => ({ items, totalQuantity, addItem }),
-    [items, totalQuantity, addItem],
+    () => ({ items, totalQuantity, subtotal, addItem, updateQuantity, removeItem, clearCart }),
+    [items, totalQuantity, subtotal, addItem, updateQuantity, removeItem, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
