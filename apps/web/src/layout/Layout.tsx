@@ -96,7 +96,8 @@ export function Layout({ children }: { children: ReactNode }) {
       <footer className="site-footer">
         <p>
           ZeroJance is a mockup catalog. Nothing on this site processes a real payment or
-          sends a real order. [PLACEHOLDER: real footer copy from the Creative Director.]
+          sends a real order. Browse like it&apos;s localhost — nothing you do here leaves
+          the browser.
         </p>
       </footer>
       <CartDrawer open={cartOpen} onClose={closeCart} />

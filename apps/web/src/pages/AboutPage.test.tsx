@@ -11,7 +11,6 @@ const PLACEHOLDERS = [
   "[PLACEHOLDER: year]",
   "[PLACEHOLDER: founder name or detail]",
   "[PLACEHOLDER: location]",
-  "[PLACEHOLDER: the specific reason ZeroJance exists — what problem, whose idea, why apparel]",
 ];
 
 describe("AboutPage — board task E5 (docs/design/about.md)", () => {
@@ -51,13 +50,29 @@ describe("AboutPage — board task E5 (docs/design/about.md)", () => {
 
   it("does not invent any founding facts around the placeholders (no real year/place committed)", () => {
     const { container } = render(<AboutPage />);
-    // The whole "Where this started" paragraph is still placeholder-shaped, not a filled
-    // in sentence — e.g. it must not contain a real-looking 4-digit founding year outside
-    // of the [PLACEHOLDER: year] marker itself.
+    // The closing "Founded in ... by ... in ..." sentence (now the third paragraph of
+    // "Where this started") is still placeholder-shaped, not a filled in sentence — e.g.
+    // it must not contain a real-looking 4-digit founding year outside of the
+    // [PLACEHOLDER: year] marker itself.
     const text = container.textContent ?? "";
-    const foundedSentence = text.slice(text.indexOf("Founded in"), text.indexOf("Founded in") + 200);
+    const foundedSentence = text.slice(text.indexOf("Founded in"), text.indexOf("Founded in") + 120);
     expect(foundedSentence).toContain("[PLACEHOLDER: year]");
+    expect(foundedSentence).toContain("[PLACEHOLDER: founder name or detail]");
+    expect(foundedSentence).toContain("[PLACEHOLDER: location]");
     expect(foundedSentence).not.toMatch(/Founded in \d{4}/);
+  });
+
+  it("renders the real founder's-story content in 'Where this started' (not just what's still missing)", () => {
+    const { container } = render(<AboutPage />);
+    const text = container.textContent ?? "";
+    // Paragraph 1: the tech+fashion intersection, first-person voice.
+    expect(text).toContain(
+      "ZeroJance started with two things I've always been drawn to: technology and fashion",
+    );
+    // Paragraph 2: the minimalist-streetwear-with-character philosophy and the
+    // no-strict-rules/"brand I want to wear" closing beat.
+    expect(text).toContain("minimalist streetwear with character");
+    expect(text).toContain("I'm building the brand I want to wear");
   });
 
   it("renders inline commands in a code-styled element (git blame)", () => {
@@ -76,8 +91,8 @@ describe("AboutPage — board task E5 (docs/design/about.md)", () => {
     expect(container.querySelectorAll(".lookbook-card")).toHaveLength(0);
   });
 
-  it("renders six paragraphs of body copy (two-paragraph hero + one per named section)", () => {
+  it("renders eight paragraphs of body copy (two-paragraph hero + three-paragraph founder's story + one per remaining named section)", () => {
     const { container } = render(<AboutPage />);
-    expect(container.querySelectorAll("p.about-copy")).toHaveLength(6);
+    expect(container.querySelectorAll("p.about-copy")).toHaveLength(8);
   });
 });

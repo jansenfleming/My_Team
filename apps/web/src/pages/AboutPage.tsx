@@ -36,9 +36,25 @@ export function AboutPage() {
 
       <h2 className="about-section__heading">Where this started</h2>
       <p className="about-copy">
+        ZeroJance started with two things I&apos;ve always been drawn to: technology and
+        fashion — the way technology creates, solves problems, and expresses ideas, and the
+        way clothing communicates a personality without saying a word. This is where those
+        two things meet. Not clothing that screams &quot;technology,&quot; but the
+        precision, creativity, and futuristic feeling of it, translated into something you
+        can actually wear.
+      </p>
+      <p className="about-copy">
+        The foundation is minimalist streetwear with character: clean silhouettes, subtle
+        details, graphics with something going on, pieces that feel intentional rather than
+        over-designed. Sometimes that&apos;s a detail nobody notices but you. Sometimes
+        it&apos;s loud enough to turn heads. There aren&apos;t strict rules — I&apos;m not
+        building a brand around what I think everyone else should wear. I&apos;m building
+        the brand I want to wear, and if it means something to the people who find it too,
+        that&apos;s the whole upside.
+      </p>
+      <p className="about-copy">
         Founded in [PLACEHOLDER: year] by [PLACEHOLDER: founder name or detail], in
-        [PLACEHOLDER: location]. [PLACEHOLDER: the specific reason ZeroJance exists — what
-        problem, whose idea, why apparel]
+        [PLACEHOLDER: location].
       </p>
 
       <h2 className="about-section__heading">What we make</h2>
