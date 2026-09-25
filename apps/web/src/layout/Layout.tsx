@@ -11,6 +11,7 @@
 import { useRef, useState, type ReactNode } from "react";
 import { CartDrawer } from "../cart/CartDrawer";
 import { useCart } from "../cart/CartContext";
+import { KonamiEasterEgg } from "../eggs/KonamiEasterEgg";
 import { Link, useRouter } from "../router/Router";
 
 const NAV_LINKS = [
@@ -99,6 +100,12 @@ export function Layout({ children }: { children: ReactNode }) {
         </p>
       </footer>
       <CartDrawer open={cartOpen} onClose={closeCart} />
+      {/* Konami-code easter egg (docs/design/easter-eggs.md §3, board task E6): a global
+          keydown listener + its confirmation banner, mounted once here so it's alive for
+          every route without remounting on navigation. Kept as a single self-contained
+          component (own state, own effect) so it's additive here — one import, one line —
+          rather than restructuring this file. */}
+      <KonamiEasterEgg />
     </div>
   );
 }
