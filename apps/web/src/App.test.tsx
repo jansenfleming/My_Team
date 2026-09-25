@@ -158,6 +158,29 @@ describe("App cart drawer + mock checkout (board task E4, wired through the real
 
     expect(toggle).toHaveFocus();
   });
+
+  it(
+    "keeps a background nav link unreachable by Tab while the drawer is open (board " +
+      "task E7, carried over from E4's review §5: the backdrop already blocked pointer " +
+      "clicks on background content, but Tab could previously escape the drawer and land " +
+      "on a control like this one, e.g. a header nav link, while still visually open)",
+    async () => {
+      renderAt("/");
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole("button", { name: "Open cart" }));
+      const dialog = await screen.findByRole("dialog");
+      const catalogNavLink = screen.getByRole("link", { name: "Catalog" });
+
+      // Tab far more times than the dialog has focusable elements — if the trap were
+      // missing, this would eventually land on the header nav link behind the drawer.
+      for (let i = 0; i < 15; i++) {
+        await user.tab();
+        expect(catalogNavLink).not.toHaveFocus();
+        expect(dialog.contains(document.activeElement)).toBe(true);
+      }
+    },
+  );
 });
 
 describe("App easter eggs (board task E6)", () => {

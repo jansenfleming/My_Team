@@ -46,16 +46,68 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   }, [open]);
 
   // Focus the panel on open (so keyboard/screen-reader users land inside the dialog
-  // immediately) and close on Escape. Returning focus to the trigger button on close is
-  // the caller's job (src/layout/Layout.tsx) — it owns the button that opened this.
+  // immediately), close on Escape, and trap Tab/Shift+Tab so keyboard focus can never
+  // reach the dimmed background page while the drawer is open (carried over from E4's
+  // Architect review, docs/architecture/reviews/feat-web-checkout.md §5 — the backdrop's
+  // pointer-events already blocked mouse/pointer users from reaching background content,
+  // but had no effect on keyboard Tab order; this closes that gap for keyboard users
+  // specifically). Returning focus to the trigger button on close is the caller's job
+  // (src/layout/Layout.tsx) — it owns the button that opened this.
   useEffect(() => {
     if (!open) {
       return;
     }
     panelRef.current?.focus();
+
+    // Queried live on every Tab keypress, not memoized, since the set of focusable
+    // elements changes as `step` changes (cart → checkout → placed each render different
+    // buttons/links). Order matches source order, which matches visual/tab order here —
+    // nothing in this panel uses a custom `tabindex`.
+    function getFocusable(): HTMLElement[] {
+      const panel = panelRef.current;
+      if (!panel) return [];
+      return Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+    }
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         onClose();
+        return;
+      }
+      if (event.key !== "Tab") {
+        return;
+      }
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        // Nothing focusable inside (shouldn't happen — every step renders at least a
+        // close/back button — but keep focus pinned to the panel itself rather than
+        // letting it leak out if it ever does).
+        event.preventDefault();
+        panelRef.current?.focus();
+        return;
+      }
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      const activeIndex = focusable.indexOf(document.activeElement as HTMLElement);
+      if (event.shiftKey) {
+        // Shift+Tab from the first focusable element, or from the panel itself (the
+        // initial-focus target right after open, which isn't in the focusable list) —
+        // wrap to the last element instead of escaping into the background.
+        if (activeIndex <= 0) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        // Tab from the last focusable element, or from anywhere focus has drifted
+        // outside the tracked list — wrap to the first element.
+        if (activeIndex === -1 || activeIndex === focusable.length - 1) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     }
     document.addEventListener("keydown", onKeyDown);

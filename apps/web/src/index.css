@@ -91,6 +91,14 @@ input:focus-visible,
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Wraps below ~360-390px (board task E7): the brand wordmark plus the cart indicator,
+     "Open cart" button, and nav toggle together don't fit on one row at the narrowest
+     real phone widths (320-375px) without this — verified with a headless-browser
+     overflow check, not guessed. This is a fluid fix, not a new breakpoint: no media
+     query, just a flex property that only takes effect when content genuinely doesn't
+     fit, at whatever width that turns out to be for a given font/zoom. */
+  flex-wrap: wrap;
+  row-gap: var(--zjc-space-2);
   gap: var(--zjc-space-4);
 }
 
@@ -99,6 +107,11 @@ input:focus-visible,
 .site-header__actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  /* Right-aligned so that when this wraps onto its own line under the brand (see
+     .site-header__bar above), it lines up with the row above rather than snapping to
+     the left edge — flex's default single-line justify-content behavior. */
+  flex: 1 0 auto;
   gap: var(--zjc-space-3);
 }
 
@@ -213,10 +226,16 @@ input:focus-visible,
 }
 
 /* Mobile-first grid: 2 columns base, 3 at the 640px breakpoint, 4 at 960px — same
-   breakpoint conventions board task E1 established for the placeholder skeleton. */
+   breakpoint conventions board task E1 established for the placeholder skeleton.
+   `minmax(0, 1fr)` rather than a bare `1fr` (board task E7 fix): a grid track's
+   default min-width is `auto`, which floors it at its content's min-content size —
+   verified with a headless-browser overflow check that a narrow product name/price
+   pair was enough to blow the grid past a 320-375px viewport before this. `minmax(0,
+   1fr)` lets the track shrink below that and wrap its text instead, which is what a
+   fixed 2-up (or 3-/4-up) grid needs at any width. */
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--zjc-space-5);
   margin: 0;
   padding: 0;
@@ -353,13 +372,13 @@ input:focus-visible,
   }
 
   .catalog-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 960px) {
   .catalog-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -760,7 +779,7 @@ h1.lookbook-hero__title {
   /* 2-up; the 3rd card naturally wraps alone onto its own row (D4 §6) since a 3-item
      grid in 2 columns leaves the second cell of that row empty. */
   .lookbook-cards {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--zjc-space-5);
   }
 }
@@ -771,7 +790,7 @@ h1.lookbook-hero__title {
   }
 
   .lookbook-cards {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--zjc-space-6);
   }
 }
