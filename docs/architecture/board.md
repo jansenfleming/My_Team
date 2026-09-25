@@ -37,7 +37,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | done |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | done |
-| E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | approved |
+| E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | done |
 
 ## Suggested waves (parallel starts)
 1. ~~**Start now:** D1 (brand identity)~~ — D1 **done**, merged to `main` (PR #30, review
