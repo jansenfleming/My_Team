@@ -25,7 +25,7 @@ old cybersecurity-terminal project (ADR 0003).
 |---|---|---|---|---|
 | A1 | architect | Repo cleanup, stack decision, plan (this task) | none | done |
 | A2 | architect | Ongoing review, merge, and basic hygiene | every branch | ongoing |
-| A3 | architect | MVP readiness report and Phase 2 board | all below | todo |
+| A3 | architect | MVP readiness report and Phase 2 board | all below | review |
 | D1 | creative-director | Brand identity and voice | none | done |
 | D2 | creative-director | Design tokens and style guide | D1 | done |
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
@@ -96,6 +96,14 @@ old cybersecurity-terminal project (ADR 0003).
    Full findings: `docs/architecture/reviews/feat-web-polish.md`. Waiting on the lead to
    push/merge the real PR; A3 (MVP readiness report) can start once this merges, since
    E2-E7 are now all approved or done.
+   **A3 status:** `review` — report written 2026-09-25 on branch
+   `docs/architecture-a3-mvp-readiness`: `docs/architecture/mvp-readiness.md` (full
+   check-suite output re-run independently, scope verified against the brief, every
+   `[PLACEHOLDER: ...]` marker inventoried, go recommendation given) and
+   `docs/architecture/phase-2-backlog.md` (proposed, prioritized candidate list — not
+   started). PR file: `docs/prs/docs-architecture-a3-mvp-readiness.md`. Per the standing
+   convention, the Architect doesn't merge or flip its own row to `done`; waiting on the
+   lead's sanity check and merge, same as A1.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
 against the roadmap without waiting on tokens; Engineer can build structure against
