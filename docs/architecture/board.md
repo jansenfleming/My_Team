@@ -37,7 +37,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | done |
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | done |
-| E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
+| E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | approved |
 
 ## Suggested waves (parallel starts)
 1. ~~**Start now:** D1 (brand identity)~~ — D1 **done**, merged to `main` (PR #30, review
@@ -85,6 +85,17 @@ old cybersecurity-terminal project (ADR 0003).
    the real PR. A deferred a11y gap (cart drawer focus trap) is carried forward to E7 —
    see that task's entry below.
 5. After E2-E6 merge: E7, then A3.
+   **E7 status:** `approved` — Architect review 2026-09-25 (`feat/web-polish`, PR file
+   `docs/prs/feat-web-polish.md`), no required changes; traced the `CartDrawer.tsx`
+   cyclic Tab/Shift+Tab focus trap directly (live-computed focusable set, correct wrap
+   at all four boundary cases, no trap while closed), confirmed both the unit-level and
+   header-integration focus tests actually test the claimed keyboard-escape scenario,
+   confirmed the `color-scheme` meta fix, the header `flex-wrap` fix, and all 5
+   `repeat(N, minmax(0, 1fr))` grid call sites, and re-ran all 7 checks myself
+   (157/157 tests across 17 files, clean typecheck/lint/build/scan-secrets/audit).
+   Full findings: `docs/architecture/reviews/feat-web-polish.md`. Waiting on the lead to
+   push/merge the real PR; A3 (MVP readiness report) can start once this merges, since
+   E2-E7 are now all approved or done.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
 against the roadmap without waiting on tokens; Engineer can build structure against
