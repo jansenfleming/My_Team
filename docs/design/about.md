@@ -113,17 +113,38 @@ still carries the actual answer.
 ## 4. Where this started
 
 - `<h2>`: `Where this started`
-- Body copy:
+- Body copy (three short paragraphs, first-person — see the note below on why this
+  section, alone on the page, switches voice):
 
+> ZeroJance started with two things I've always been drawn to: technology and fashion —
+> the way technology creates, solves problems, and expresses ideas, and the way clothing
+> communicates a personality without saying a word. This is where those two things meet.
+> Not clothing that screams "technology," but the precision, creativity, and futuristic
+> feeling of it, translated into something you can actually wear.
+>
+> The foundation is minimalist streetwear with character: clean silhouettes, subtle
+> details, graphics with something going on, pieces that feel intentional rather than
+> over-designed. Sometimes that's a detail nobody notices but you. Sometimes it's loud
+> enough to turn heads. There aren't strict rules — I'm not building a brand around what
+> I think everyone else should wear. I'm building the brand I want to wear, and if it
+> means something to the people who find it too, that's the whole upside.
+>
 > Founded in `[PLACEHOLDER: year]` by `[PLACEHOLDER: founder name or detail]`, in
-> `[PLACEHOLDER: location]`. `[PLACEHOLDER: the specific reason ZeroJance exists — what
-> problem, whose idea, why apparel]`.
+> `[PLACEHOLDER: location]`.
 
-Four distinct placeholders in one short paragraph, matching D1's list of what must not
-be invented (founding year, location, headcount/founder detail, backstory). No
-surrounding copy in this section asserts anything as fact — it's structured so the
-paragraph reads as a normal "founded in [year] by [founder]" sentence once the owner
-supplies real values, without needing to be rewritten.
+This is the one section on the page written in first person ("I," not "we") — the
+source material is the founder's own unsigned first-person account of *why* ZeroJance
+exists, and a founder's-note section is the one place on an About page where that
+register belongs. It doesn't extend elsewhere on the page or site; Sections 1, 5, and 6
+keep the plural, peer-to-peer "we" voice used everywhere else.
+
+The *why* is now real, owner-supplied content (technology and fashion as a personal,
+lifelong pull; translating tech's precision and creativity into wearable form; a
+minimalist-streetwear-with-character philosophy; no strict rules; a solo, personal-
+vision founding — "the brand I want to wear," not a brand built to please everyone). What
+the owner hasn't supplied is the *who/when/where*: those three facts stay literal,
+bracketed placeholders, matching D1's list of what must not be invented (founding year,
+location, founder name/detail). No other fact is asserted anywhere in this section.
 
 ---
 
