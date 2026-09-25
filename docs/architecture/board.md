@@ -31,7 +31,7 @@ old cybersecurity-terminal project (ADR 0003).
 | D3 | creative-director | Product concepts and copy (6-12 items) | D1 | done* |
 | D4 | creative-director | Lookbook and about-page copy/spec | D1 | done |
 | D5 | creative-director | Easter-egg specs (curated 2-3) | D1, D3 | done |
-| E1 | engineer | Web shell and routing | none | approved |
+| E1 | engineer | Web shell and routing | none | done |
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
 | E3 | engineer | Product detail page + cart core | E2 | done |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | done |
