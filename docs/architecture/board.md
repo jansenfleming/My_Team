@@ -35,7 +35,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E2 | engineer | Catalog grid | E1, D3 (data), D2 (styling) | done |
 | E3 | engineer | Product detail page + cart core | E2 | done |
 | E4 | engineer | Cart drawer and mock checkout screen | E3 | todo |
-| E5 | engineer | Lookbook and about pages | E1, D4, D2 | todo |
+| E5 | engineer | Lookbook and about pages | E1, D4, D2 | approved |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | todo |
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | todo |
 
@@ -68,6 +68,10 @@ old cybersecurity-terminal project (ADR 0003).
    the lead. Full findings: `docs/architecture/reviews/feat-web-product-cart.md`. Waiting
    on the lead to push/merge the real PR; E4 can start and E6's `ProductPage`-lookup
    dependency is satisfied once that merge lands.
+   **E5 status:** `approved` — Architect review 2026-09-24 (`feat/web-lookbook-about`, PR
+   file `docs/prs/feat-web-lookbook-about.md`), no required changes. Full findings:
+   `docs/architecture/reviews/feat-web-lookbook-about.md`. Waiting on the lead to
+   push/merge the real PR.
 5. After E2-E6 merge: E7, then A3.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
