@@ -25,6 +25,18 @@ describe("index.html", () => {
     expect(doc.getElementById("root")).not.toBeNull();
   });
 
+  // Board task E7: the HTML-level color-scheme hint must match tokens.css's `color-
+  // scheme: light` (docs/design/tokens.css, D2 — "light is the default and only
+  // full-site theme for v1"). A leftover `content="dark"` from the old, now-superseded
+  // dark-only terminal project (ADR 0003) shipped here through E1-E6; it told the
+  // browser to render native UI (scrollbars, form controls, etc.) in dark mode against
+  // this site's light page, before the CSS for those controls even loads.
+  it("declares a light color-scheme, matching tokens.css's :root { color-scheme: light }", () => {
+    const meta = doc.querySelector('meta[name="color-scheme"]');
+    expect(meta).not.toBeNull();
+    expect(meta?.getAttribute("content")).toBe("light");
+  });
+
   // Egg 1a — view-source message (docs/design/easter-eggs.md §1a, board task E6): a
   // static HTML comment, always present in the raw markup, found by "View Page Source."
   // Located by title/head position rather than matched as one fragile whitespace-exact

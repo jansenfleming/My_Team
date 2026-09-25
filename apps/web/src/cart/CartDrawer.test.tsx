@@ -242,4 +242,69 @@ describe("CartDrawer (board task E4 — cart drawer + mock checkout)", () => {
 
     expect(onClose).toHaveBeenCalled();
   });
+
+  it(
+    "traps Tab/Shift+Tab within the dialog while open: focus starts on the panel, " +
+      "Tab visits every focusable control in order and wraps from the last back to the " +
+      "first, and Shift+Tab from the first wraps to the last (board task E7, carried over " +
+      "from E4's review — no cyclic focus trap previously existed)",
+    async () => {
+      const user = userEvent.setup();
+      const onClose = vi.fn();
+      // Seed both items while the drawer is closed, then open it — the same rerender
+      // pattern as the "reopening the drawer" test above — so the seed-button clicks
+      // (which focus those sibling buttons) can't be mistaken for the drawer's own
+      // initial-focus behavior.
+      let open = false;
+      const { rerender } = render(
+        <CartProvider>
+          <RouterProvider>
+            <SeedProbe />
+            <CartDrawer open={open} onClose={onClose} />
+          </RouterProvider>
+        </CartProvider>,
+      );
+      await user.click(screen.getByRole("button", { name: "seed-a" }));
+      await user.click(screen.getByRole("button", { name: "seed-b" }));
+
+      open = true;
+      rerender(
+        <CartProvider>
+          <RouterProvider>
+            <SeedProbe />
+            <CartDrawer open={open} onClose={onClose} />
+          </RouterProvider>
+        </CartProvider>,
+      );
+
+      const dialog = await screen.findByRole("dialog");
+      expect(dialog).toHaveFocus();
+
+      // The real set of focusable elements inside the open dialog, in DOM/tab order —
+      // both items are freshly seeded at quantity 1, so each item's decrease button is
+      // disabled (and correctly excluded here, same selector CartDrawer.tsx itself uses).
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      // Close, (increase + remove) x 2 items, Checkout.
+      expect(focusable.length).toBe(6);
+
+      for (const el of focusable) {
+        await user.tab();
+        expect(el).toHaveFocus();
+      }
+
+      // Tab past the last focusable element wraps to the first — it must never land
+      // outside the dialog (e.g. on a control in the dimmed background page).
+      await user.tab();
+      expect(focusable[0]).toHaveFocus();
+
+      // Shift+Tab from the first focusable element wraps to the last, same reasoning in
+      // reverse.
+      await user.tab({ shift: true });
+      expect(focusable[focusable.length - 1]).toHaveFocus();
+    },
+  );
 });
