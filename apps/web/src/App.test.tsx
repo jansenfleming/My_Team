@@ -206,6 +206,5 @@ describe("App easter eggs (board task E6)", () => {
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("200 OK Tee");
     expect(window.location.pathname).toBe("/product/200-ok");
->>>>>>> 22b8b63 (style(web): D2-token styling for the 404 page and Konami banner; App-level egg tests)
   });
 });
