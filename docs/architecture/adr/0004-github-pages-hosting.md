@@ -137,7 +137,7 @@ build (see §5):
   root were `/` (`matchRoute`'s `normalize()` treats `/` as home; `Router.tsx`'s
   `currentPathname()` returns the raw `pathname`, and `navigate()` calls
   `pushState`/`replaceState` with the caller's `to` value directly, with no prefix
-  logic). Under `/My_Jance/` in production, `window.location.pathname` for the home page
+  logic). Under `/My_Team/` in production, `window.location.pathname` for the home page
   is `/My_Team/`, not `/`, and every `<Link to="/catalog">` needs to actually navigate to
   `/My_Team/catalog`, not `/catalog`. This needs a single shared basename constant
   (derived the same way as the Vite `base` value, e.g. from `import.meta.env.BASE_URL`,
