@@ -62,6 +62,13 @@ verification pass that client-side routes survive a hard refresh/direct URL hit 
 the chosen host.
 **Risk:** low. Static hosting for a no-backend mockup is a well-trodden path; the main
 risk is an under-specified routing fallback, which the ADR should address directly.
+**Status (2026-09-27):** ADR written — `docs/architecture/adr/0004-github-pages-
+hosting.md` (branch `docs/adr-0004-github-pages`, board task E8 for the follow-up
+implementation). Confirms GitHub Pages, decides the Actions-based deploy switch (with
+the `.nojekyll`/dotfile-exclusion research this backlog item called for), the
+conditional Vite `base`, and the SPA-fallback + router-basename fix. Decision only; no
+code changed yet — see the ADR's own kickoff note (§5) for the Engineer's follow-up
+task.
 
 ## Rank 4: `git log`-styled changelog page
 **What:** a real, nav-reachable page (not a curated "egg") styled like `git log`

@@ -38,6 +38,7 @@ old cybersecurity-terminal project (ADR 0003).
 | E5 | engineer | Lookbook and about pages | E1, D4, D2 | done |
 | E6 | engineer | Easter eggs implementation | D5, relevant pages merged | done |
 | E7 | engineer | Responsiveness, a11y pass, test cleanup | E2-E6 | done |
+| E8 | engineer | Implement GitHub Pages hosting (ADR 0004) | ADR 0004 merged | todo |
 
 ## Suggested waves (parallel starts)
 1. ~~**Start now:** D1 (brand identity)~~ — D1 **done**, merged to `main` (PR #30, review
@@ -104,6 +105,25 @@ old cybersecurity-terminal project (ADR 0003).
    started). PR file: `docs/prs/docs-architecture-a3-mvp-readiness.md`. Per the standing
    convention, the Architect doesn't merge or flip its own row to `done`; waiting on the
    lead's sanity check and merge, same as A1.
+6. **Phase 2, started 2026-09-27** (lead confirmed A1-A3/D1-D5/E1-E7 all done, plus a
+   follow-up founder-story content pass): Phase 2 backlog Rank 3 (hosting) picked up per
+   the lead's instruction. **ADR 0004 status:** `review` — written on branch
+   `docs/adr-0004-github-pages`
+   (`docs/architecture/adr/0004-github-pages-hosting.md`): confirms GitHub Pages,
+   decides switching the repo's Pages source from the legacy Jekyll branch-builder to a
+   GitHub Actions deploy (with a researched-and-confirmed `.nojekyll` requirement, plus a
+   `upload-pages-artifact` v4+ dotfile-exclusion gotcha flagged for whoever writes the
+   workflow), a conditional Vite `base` for the `/My_Team/` project-page subpath, and the
+   spa-github-pages 404-redirect pattern plus a basename fix needed in
+   `apps/web/src/router/{Router.tsx,matchRoute.ts}`. Decision and specification only, no
+   code changed. PR file: `docs/prs/docs-adr-0004-github-pages.md`. Per the standing
+   convention, the Architect doesn't merge or flip its own row to `done`; waiting on the
+   lead's sanity-check pass and merge, same as A1/A3.
+   **E8 status:** `todo`, blocked on ADR 0004 merging — kickoff note is ADR 0004 §5
+   (exact files to touch: `apps/web/vite.config.ts`, `apps/web/src/router/{Router.tsx,
+   matchRoute.ts}`, new `apps/web/public/404.html`, new
+   `.github/workflows/deploy-pages.yml`), so the Engineer can start directly from the ADR
+   without a separate task-board writeup.
 
 Blocked work should do its non-blocked part first (Creative Director can draft copy
 against the roadmap without waiting on tokens; Engineer can build structure against
